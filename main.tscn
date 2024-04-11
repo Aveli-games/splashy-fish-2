@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3 uid="uid://b20ptif3dcpca"]
+
+[ext_resource type="Script" path="res://sample_character.gd" id="1_u51ep"]
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_odvxq"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7kisf"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_v6vmw"]
+
+[node name="Main" type="Node"]
+
+[node name="PlayArea" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayArea"]
+shape = SubResource("WorldBoundaryShape3D_odvxq")
+
+[node name="SampleCharacter" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.20443, 0)
+script = ExtResource("1_u51ep")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SampleCharacter"]
+shape = SubResource("CapsuleShape3D_7kisf")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SampleCharacter"]
+mesh = SubResource("CapsuleMesh_v6vmw")
+
+[node name="CameraPivot" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.66228, 0.749256, 0, -0.749256, 0.66228, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot"]
+transform = Transform3D(1, 0, 0, 0, 0.993391, 0.114781, 0, -0.114781, 0.993391, 0, -0.444708, 6.88566)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.874899, 0.484306, 0, -0.484306, 0.874899, 0, 1.45541, 4.84404)
