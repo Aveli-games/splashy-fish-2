@@ -1,0 +1,86 @@
+[gd_scene load_steps=12 format=3 uid="uid://b20ptif3dcpca"]
+
+[ext_resource type="Texture2D" uid="uid://8ogwg62w5cje" path="res://TCom_GrassMedium2_header.jpg" id="1_fdcor"]
+[ext_resource type="Script" path="res://sample_character.gd" id="1_u51ep"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pmljg"]
+size = Vector3(0, 50, 50)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5vker"]
+size = Vector3(0, 50, 50)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rbb8a"]
+size = Vector3(50, 50, 0)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mshv0"]
+size = Vector3(50, 50, 0)
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_odvxq"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ycgav"]
+size = Vector2(50, 50)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dxuiy"]
+albedo_texture = ExtResource("1_fdcor")
+normal_scale = 5.67
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7kisf"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_v6vmw"]
+
+[node name="Main" type="Node"]
+
+[node name="Boundaries" type="Node3D" parent="."]
+
+[node name="Wall1" type="StaticBody3D" parent="Boundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boundaries/Wall1"]
+shape = SubResource("BoxShape3D_pmljg")
+
+[node name="Wall2" type="StaticBody3D" parent="Boundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boundaries/Wall2"]
+shape = SubResource("BoxShape3D_5vker")
+
+[node name="Wall3" type="StaticBody3D" parent="Boundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 25)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boundaries/Wall3"]
+shape = SubResource("BoxShape3D_rbb8a")
+
+[node name="Wall4" type="StaticBody3D" parent="Boundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -25)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boundaries/Wall4"]
+shape = SubResource("BoxShape3D_mshv0")
+
+[node name="PlayArea" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayArea"]
+shape = SubResource("WorldBoundaryShape3D_odvxq")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="PlayArea"]
+mesh = SubResource("PlaneMesh_ycgav")
+surface_material_override/0 = SubResource("StandardMaterial3D_dxuiy")
+
+[node name="SampleCharacter" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.20443, 0)
+script = ExtResource("1_u51ep")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SampleCharacter"]
+shape = SubResource("CapsuleShape3D_7kisf")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SampleCharacter"]
+mesh = SubResource("CapsuleMesh_v6vmw")
+
+[node name="CameraPivot" type="Marker3D" parent="SampleCharacter"]
+transform = Transform3D(1, 0, 0, 0, 0.66228, 0.749256, 0, -0.749256, 0.66228, 0, -2.20443, 0)
+
+[node name="Camera3D" type="Camera3D" parent="SampleCharacter/CameraPivot"]
+transform = Transform3D(1, 0, 0, 0, 0.988502, 0.151212, 0, -0.151212, 0.988502, 0, 1.7775, 8.33217)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.927615, -0.197912, -0.316799, 0.373538, 0.491479, 0.786713, 0, -0.848104, 0.52983, -3.14224, 7.12791, 4.88478)
+shadow_enabled = true
