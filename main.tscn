@@ -1,8 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://b20ptif3dcpca"]
+[gd_scene load_steps=13 format=3 uid="uid://b20ptif3dcpca"]
 
 [ext_resource type="Texture2D" uid="uid://8ogwg62w5cje" path="res://TCom_GrassMedium2_header.jpg" id="1_fdcor"]
+[ext_resource type="Script" path="res://main.gd" id="1_x5dvp"]
 [ext_resource type="PackedScene" uid="uid://cqn7vqisoert6" path="res://player.tscn" id="2_q3ywx"]
 [ext_resource type="Script" path="res://camera_controller.gd" id="3_fumwc"]
+[ext_resource type="PackedScene" uid="uid://caxs1alfnthk7" path="res://enemy.tscn" id="4_8pcd7"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pmljg"]
 size = Vector3(0, 50, 50)
@@ -27,6 +29,7 @@ albedo_texture = ExtResource("1_fdcor")
 normal_scale = 5.67
 
 [node name="Main" type="Node"]
+script = ExtResource("1_x5dvp")
 
 [node name="Boundaries" type="Node3D" parent="."]
 
@@ -72,6 +75,12 @@ script = ExtResource("3_fumwc")
 [node name="Camera3D" type="Camera3D" parent="Player/CameraController"]
 transform = Transform3D(-1, -6.18171e-08, 6.18171e-08, 0, 0.707107, 0.707107, -8.74226e-08, 0.707107, -0.707107, 0, 1.05544, -1.70543)
 
+[node name="Enemy" parent="." node_paths=PackedStringArray("target") instance=ExtResource("4_8pcd7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4774, 0, 8.83691)
+target = NodePath("../Player")
+
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.927615, -0.197912, -0.316799, 0.373538, 0.491479, 0.786713, 0, -0.848104, 0.52983, -3.14224, 7.12791, 4.88478)
 shadow_enabled = true
+
+[connection signal="hit_player" from="Enemy" to="." method="_on_enemy_hit_player"]
