@@ -1,7 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://b20ptif3dcpca"]
+[gd_scene load_steps=11 format=3 uid="uid://b20ptif3dcpca"]
 
 [ext_resource type="Texture2D" uid="uid://8ogwg62w5cje" path="res://TCom_GrassMedium2_header.jpg" id="1_fdcor"]
-[ext_resource type="Script" path="res://sample_character.gd" id="1_u51ep"]
+[ext_resource type="PackedScene" uid="uid://cqn7vqisoert6" path="res://player.tscn" id="2_q3ywx"]
+[ext_resource type="Script" path="res://camera_controller.gd" id="3_fumwc"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pmljg"]
 size = Vector3(0, 50, 50)
@@ -16,6 +17,7 @@ size = Vector3(50, 50, 0)
 size = Vector3(50, 50, 0)
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_odvxq"]
+margin = 0.0
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_ycgav"]
 size = Vector2(50, 50)
@@ -23,10 +25,6 @@ size = Vector2(50, 50)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dxuiy"]
 albedo_texture = ExtResource("1_fdcor")
 normal_scale = 5.67
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7kisf"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_v6vmw"]
 
 [node name="Main" type="Node"]
 
@@ -65,21 +63,14 @@ shape = SubResource("WorldBoundaryShape3D_odvxq")
 mesh = SubResource("PlaneMesh_ycgav")
 surface_material_override/0 = SubResource("StandardMaterial3D_dxuiy")
 
-[node name="SampleCharacter" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.20443, 0)
-script = ExtResource("1_u51ep")
+[node name="Player" parent="." instance=ExtResource("2_q3ywx")]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="SampleCharacter"]
-shape = SubResource("CapsuleShape3D_7kisf")
+[node name="CameraController" type="Marker3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 0.956305, 0.292372, 0, -0.292372, 0.956305, 0, 1.46977, -0.0832736)
+script = ExtResource("3_fumwc")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="SampleCharacter"]
-mesh = SubResource("CapsuleMesh_v6vmw")
-
-[node name="CameraPivot" type="Marker3D" parent="SampleCharacter"]
-transform = Transform3D(1, 0, 0, 0, 0.66228, 0.749256, 0, -0.749256, 0.66228, 0, -2.20443, 0)
-
-[node name="Camera3D" type="Camera3D" parent="SampleCharacter/CameraPivot"]
-transform = Transform3D(1, 0, 0, 0, 0.988502, 0.151212, 0, -0.151212, 0.988502, 0, 1.7775, 8.33217)
+[node name="Camera3D" type="Camera3D" parent="Player/CameraController"]
+transform = Transform3D(-1, -6.18171e-08, 6.18171e-08, 0, 0.707107, 0.707107, -8.74226e-08, 0.707107, -0.707107, 0, 1.05544, -1.70543)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.927615, -0.197912, -0.316799, 0.373538, 0.491479, 0.786713, 0, -0.848104, 0.52983, -3.14224, 7.12791, 4.88478)
