@@ -28,6 +28,7 @@ func _physics_process(delta):
 		velocity.y = JUMP_VELOCITY
 		
 	if Input.is_action_just_pressed("attack"):
+		#TODO: Player selection of what enemy in range to target
 		if not melee_targets.is_empty():
 			attack(melee_targets[0])
 
