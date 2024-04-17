@@ -4,8 +4,6 @@ extends CharacterBody3D
 
 const SPEED = 1.2
 const JUMP_VELOCITY = 4.5
-const CLOSE_RANGE = .75
-const MELEE_RANGE = 1.5
 
 var close_targets: Array
 var melee_targets: Array
@@ -19,19 +17,19 @@ func _physics_process(delta):
 		velocity.y -= gravity * delta
 
 	look_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true)
+	if target not in close_targets:
+		var direction = (target.transform.origin - transform.origin).normalized() * Vector3(1,0,1)
+		velocity = direction * SPEED
+		move_and_slide()
+	
+	$AnimationTree.set("parameters/conditions/idle", close_targets.find(target) != -1 && is_on_floor())
+	$AnimationTree.set("parameters/conditions/walk", close_targets.find(target) == -1 && is_on_floor())
+	
 	if target in melee_targets:
 		if $Abilities/Attack/AttackCooldownTimer.is_stopped():
 			$Abilities/Attack/AttackCooldownTimer.start()
 	else:
 		$Abilities/Attack/AttackCooldownTimer.stop()
-		var direction = (target.transform.origin - transform.origin).normalized() * Vector3(1,0,1)
-		
-		velocity = direction * SPEED
-
-	$AnimationTree.set("parameters/conditions/idle", close_targets.find(target) != -1 && is_on_floor())
-	$AnimationTree.set("parameters/conditions/walk", close_targets.find(target) == -1 && is_on_floor())
-
-	move_and_slide()
 
 func attack(target):
 	velocity = Vector3.ZERO
@@ -52,7 +50,7 @@ func _on_close_range_body_entered(body: Player):
 func _on_close_range_body_exited(body):
 	if body in close_targets:
 		close_targets.erase(body)
-		
+
 func on_hit():
 	queue_free()
 
