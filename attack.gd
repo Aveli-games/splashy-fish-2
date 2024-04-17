@@ -1,4 +1,4 @@
-extends Node
+extends Node3D
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -6,7 +6,7 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	pass
+	$AttackCooldownView/AttackCooldown.value = 100 - ($AttackCooldownTimer.time_left/$AttackCooldownTimer.wait_time) * 100
 
-func _on_player_hit():
-	get_tree().reload_current_scene()
+func use():
+	$AttackCooldownTimer.start()

@@ -2,10 +2,15 @@ extends CharacterBody3D
 
 class_name Player
 
-const SPEED = 3.8
+signal hit
+
+const SPEED = 1.6
 const JUMP_VELOCITY = 4.5
 
 @export var sensitivity := 5
+
+var close_targets: Array
+var melee_targets: Array
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -21,6 +26,11 @@ func _physics_process(delta):
 	# Handle jump.
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
+		
+	if Input.is_action_just_pressed("attack"):
+		#TODO: Player selection of what enemy in range to target
+		if not melee_targets.is_empty():
+			attack(melee_targets[0])
 
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
@@ -42,3 +52,19 @@ func _physics_process(delta):
 func _input(event):
 	if event is InputEventMouseMotion:
 		rotate_y(-event.relative.x / 1000 * sensitivity)
+
+func on_hit():
+	hit.emit()
+
+func _on_melee_range_body_entered(body):
+	if body not in melee_targets && body != self:
+		melee_targets.append(body)
+
+func _on_melee_range_body_exited(body):
+	if body in melee_targets:
+		melee_targets.erase(body)
+		
+func attack(target):
+	if $Abilities/Attack/AttackCooldownTimer.is_stopped():
+		$Abilities/Attack.use()
+		target.on_hit()

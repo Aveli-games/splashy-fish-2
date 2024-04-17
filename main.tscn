@@ -27,6 +27,8 @@ size = Vector2(50, 50)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dxuiy"]
 albedo_texture = ExtResource("1_fdcor")
 normal_scale = 5.67
+uv1_scale = Vector3(0.23, 0.23, 0.23)
+uv1_triplanar = true
 
 [node name="Main" type="Node"]
 script = ExtResource("1_x5dvp")
@@ -79,8 +81,12 @@ transform = Transform3D(-1, -6.18171e-08, 6.18171e-08, 0, 0.707107, 0.707107, -8
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4774, 0, 8.83691)
 target = NodePath("../Player")
 
+[node name="Enemy2" parent="." node_paths=PackedStringArray("target") instance=ExtResource("4_8pcd7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 19)
+target = NodePath("../Player")
+
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.927615, -0.197912, -0.316799, 0.373538, 0.491479, 0.786713, 0, -0.848104, 0.52983, -3.14224, 7.12791, 4.88478)
 shadow_enabled = true
 
-[connection signal="hit_player" from="Enemy" to="." method="_on_enemy_hit_player"]
+[connection signal="hit" from="Player" to="." method="_on_player_hit"]
