@@ -84,7 +84,7 @@ target = NodePath("../Objective")
 
 [node name="Enemy2" parent="." node_paths=PackedStringArray("target") groups=["Enemies"] instance=ExtResource("4_8pcd7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 19)
-target = NodePath("../Objective")
+target = NodePath("../Player")
 
 [node name="Objective" parent="." groups=["PlayerTargets"] instance=ExtResource("6_ue0ya")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
@@ -93,5 +93,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 transform = Transform3D(0.927615, -0.197912, -0.316799, 0.373538, 0.491479, 0.786713, 0, -0.848104, 0.52983, -3.14224, 7.12791, 4.88478)
 shadow_enabled = true
 
-[connection signal="hit" from="Player" to="." method="_on_player_hit"]
+[connection signal="died" from="Player" to="." method="_on_player_died"]
 [connection signal="died" from="Objective" to="." method="_on_objective_died"]
