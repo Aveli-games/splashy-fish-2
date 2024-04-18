@@ -1,6 +1,6 @@
 extends CharacterBody3D
 
-@export var target: Node3D
+@export var target : Node3D
 
 const SPEED = 1.2
 const JUMP_VELOCITY = 4.5
