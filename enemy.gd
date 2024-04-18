@@ -1,6 +1,6 @@
 extends CharacterBody3D
 
-@export var target : Player
+@export var target : Node3D
 
 const SPEED = 1.2
 const JUMP_VELOCITY = 4.5
@@ -35,16 +35,21 @@ func attack(target):
 	velocity = Vector3.ZERO
 	target.on_hit()
 
-func _on_melee_range_body_entered(body: Player):
-	if body not in melee_targets && body != self:
+func _on_melee_range_body_entered(body):
+	var player_targets = get_tree().get_nodes_in_group("PlayerTargets")
+	if body not in melee_targets && body in player_targets:
 		melee_targets.append(body)
+		if body == target && body.has_method("targeted"):
+			body.targeted()
 
 func _on_melee_range_body_exited(body):
 	if body in melee_targets:
 		melee_targets.erase(body)
+		if body == target && body.has_method("targeted"):
+			body.untargeted()
 
-func _on_close_range_body_entered(body: Player):
-	if body not in close_targets:
+func _on_close_range_body_entered(body):
+	if body not in close_targets && body in get_tree().get_nodes_in_group("PlayerTargets"):
 		close_targets.append(body)
 
 func _on_close_range_body_exited(body):

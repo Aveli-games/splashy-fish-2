@@ -57,7 +57,8 @@ func on_hit():
 	hit.emit()
 
 func _on_melee_range_body_entered(body):
-	if body not in melee_targets && body != self:
+	var enemies = get_tree().get_nodes_in_group("Enemies")
+	if body not in melee_targets && body in enemies:
 		melee_targets.append(body)
 
 func _on_melee_range_body_exited(body):
