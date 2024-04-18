@@ -10,3 +10,6 @@ func _process(delta):
 
 func _on_player_hit():
 	get_tree().reload_current_scene()
+
+func _on_objective_died():
+	get_tree().reload_current_scene()
