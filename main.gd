@@ -8,7 +8,7 @@ func _ready():
 func _process(delta):
 	pass
 
-func _on_player_hit():
+func _on_player_died():
 	get_tree().reload_current_scene()
 
 func _on_objective_died():

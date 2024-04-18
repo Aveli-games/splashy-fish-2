@@ -5,13 +5,26 @@ extends CharacterBody3D
 const SPEED = 1.2
 const JUMP_VELOCITY = 4.5
 
+var max_health = 1
+
+var health = max_health
+var melee_damage = 1
+
 var close_targets: Array
 var melee_targets: Array
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
+func _ready():
+	$HealthBarView/HealthLabel.text = str(health)
+	$HealthBarView/HealthBar.max_value = max_health
+	$HealthBarView/HealthBar.value = health
+
 func _physics_process(delta):
+	if health <= 0:
+		die()
+
 	# Add the gravity.
 	if not is_on_floor():
 		velocity.y -= gravity * delta
@@ -33,7 +46,7 @@ func _physics_process(delta):
 
 func attack(target):
 	velocity = Vector3.ZERO
-	target.on_hit()
+	target.on_hit(melee_damage)
 
 func _on_melee_range_body_entered(body):
 	var player_targets = get_tree().get_nodes_in_group("PlayerTargets")
@@ -56,7 +69,12 @@ func _on_close_range_body_exited(body):
 	if body in close_targets:
 		close_targets.erase(body)
 
-func on_hit():
+func on_hit(damage):
+	health = clamp(health - damage, 0, max_health)
+	$HealthBarView/HealthLabel.text = str(health)
+	$HealthBarView/HealthBar.value = health
+
+func die():
 	queue_free()
 
 func _on_attack_cooldown_timer_timeout():
