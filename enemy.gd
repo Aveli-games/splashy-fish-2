@@ -72,7 +72,8 @@ func _on_melee_range_body_exited(body):
 			body.untargeted()
 		
 		# When current target leaves melee range, target the latest added melee target
-		# If no available melee targets 
+		# If no available melee targets, signal that you have none
+		# TODO: Add a function to find possible target in view outside of melee range
 		if melee_targets.is_empty():
 			no_target_found.emit(self)
 		else:
