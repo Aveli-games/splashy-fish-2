@@ -12,7 +12,7 @@ height = 1.0
 viewport_path = NodePath("HealthBarView")
 
 [node name="Objective" type="StaticBody3D"]
-collision_layer = 2
+collision_layer = 4
 script = ExtResource("1_avjn6")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

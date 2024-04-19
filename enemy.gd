@@ -1,6 +1,8 @@
 extends CharacterBody3D
 
-@export var target : Node3D
+signal no_target_found
+
+var target : Node3D
 
 const SPEED = 1.2
 const JUMP_VELOCITY = 4.5
@@ -44,6 +46,13 @@ func _physics_process(delta):
 	else:
 		$Abilities/Attack/AttackCooldownTimer.stop()
 
+# This function will be called from the Main scene.
+func initialize(start_position, start_target):
+	# We position the enemy by placing it at start_position
+	global_position = start_position
+	add_to_group("Enemies")
+	set_target(start_target)
+
 func attack(target):
 	velocity = Vector3.ZERO
 	target.on_hit(melee_damage)
@@ -52,14 +61,23 @@ func _on_melee_range_body_entered(body):
 	var player_targets = get_tree().get_nodes_in_group("PlayerTargets")
 	if body not in melee_targets && body in player_targets:
 		melee_targets.append(body)
+		set_target(body)
 		if body == target && body.has_method("targeted"):
 			body.targeted()
 
 func _on_melee_range_body_exited(body):
 	if body in melee_targets:
 		melee_targets.erase(body)
-		if body == target && body.has_method("targeted"):
+		if body == target && body.has_method("untargeted"):
 			body.untargeted()
+		
+		# When current target leaves melee range, target the latest added melee target
+		# If no available melee targets 
+		if melee_targets.is_empty():
+			no_target_found.emit(self)
+		else:
+			if body == target:
+				set_target(melee_targets.back())
 
 func _on_close_range_body_entered(body):
 	if body not in close_targets && body in get_tree().get_nodes_in_group("PlayerTargets"):
@@ -76,6 +94,9 @@ func on_hit(damage):
 
 func die():
 	queue_free()
+	
+func set_target(new_target):
+	target = new_target
 
 func _on_attack_cooldown_timer_timeout():
 	attack(target)
