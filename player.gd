@@ -4,7 +4,8 @@ class_name Player
 
 signal died
 
-const SPEED = 1.6
+const WALK_SPEED = 1.6
+const RUN_SPEED = WALK_SPEED * 2
 const JUMP_VELOCITY = 4.5
 
 @export var sensitivity := 5
@@ -32,6 +33,7 @@ func _ready():
 	$HealthBarView/HealthBar.value = health
 
 func _physics_process(delta):
+	var speed = WALK_SPEED
 	if health <= 0:
 		die()
 	
@@ -56,12 +58,15 @@ func _physics_process(delta):
 	$AnimationTree.set("parameters/conditions/idle", input_dir == Vector2.ZERO && is_on_floor())
 	$AnimationTree.set("parameters/conditions/walk", input_dir != Vector2.ZERO && is_on_floor())
 	
+	if Input.is_action_pressed("run"):
+		speed = RUN_SPEED
+	
 	if direction:
-		velocity.x = direction.x * SPEED
-		velocity.z = direction.z * SPEED
+		velocity.x = direction.x * speed
+		velocity.z = direction.z * speed
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
+		velocity.x = move_toward(velocity.x, 0, speed)
+		velocity.z = move_toward(velocity.z, 0, speed)
 
 	move_and_slide()
 
