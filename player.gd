@@ -57,7 +57,6 @@ func _physics_process(delta):
 		running = false
 
 	# Stamina use and regen triggered based on running status
-	# TODO: Require X time from not running as "recovery" period to start regen 
 	if running:
 		stamina = clamp(stamina - stamina_use_rate * delta, 0, 100)
 	else:
