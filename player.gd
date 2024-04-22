@@ -11,9 +11,13 @@ const JUMP_VELOCITY = 4.5
 @export var sensitivity := 5
 
 var max_health = 5
-
 var health = max_health
 var melee_damage = 1
+
+var max_stamina = 100
+var stamina_use_rate = 10 # Amount per second
+var stamina_regen_rate = 10 # Amount per second
+var stamina = max_stamina
 
 var targeted_times = 0
 var health_bar_modulate
@@ -44,7 +48,20 @@ func _physics_process(delta):
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 
-	running = Input.is_action_pressed("run")
+	 # Can only run if you have stamina, need to not run for stamina to regen
+	if Input.is_action_just_pressed("run"):
+		if stamina > 10:
+			running = true
+
+	if Input.is_action_just_released("run") || stamina <= 0:
+		running = false
+
+	# Stamina use and regen triggered based on running status
+	# TODO: Require X time from not running as "recovery" period to start regen 
+	if running:
+		stamina = clamp(stamina - stamina_use_rate * delta, 0, 100)
+	else:
+		stamina = clamp(stamina + stamina_regen_rate * delta, 0, 100)
 
 	# Handle jump.
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
