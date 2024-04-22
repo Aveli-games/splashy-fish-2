@@ -4,18 +4,26 @@ class_name Player
 
 signal died
 
-const SPEED = 1.6
+const WALK_SPEED = 1.6
+const RUN_SPEED = WALK_SPEED * 2
 const JUMP_VELOCITY = 4.5
 
 @export var sensitivity := 5
 
 var max_health = 5
-
 var health = max_health
 var melee_damage = 1
 
+var max_stamina = 100
+var stamina_use_rate = 10 # Amount per second
+var stamina_regen_rate = 10 # Amount per second
+var stamina = max_stamina
+
 var targeted_times = 0
 var health_bar_modulate
+
+var running = false
+var cur_speed = WALK_SPEED
 
 var close_targets: Array
 var melee_targets: Array
@@ -39,6 +47,22 @@ func _physics_process(delta):
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 
+	 # Can only run if you have stamina, need to not run for stamina to regen
+	if Input.is_action_just_pressed("run"):
+		if stamina > 10:
+			running = true
+
+	if Input.is_action_just_released("run") || stamina <= 0:
+		running = false
+
+	# Stamina use and regen triggered based on running status
+	if running:
+		stamina = clamp(stamina - stamina_use_rate * delta, 0, 100)
+	else:
+		stamina = clamp(stamina + stamina_regen_rate * delta, 0, 100)
+
+	$Abilities/Run/StaminaBarView/StaminaBar.value = stamina
+
 	# Handle jump.
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
@@ -53,15 +77,14 @@ func _physics_process(delta):
 	var input_dir = Input.get_vector("move_right", "move_left", "move_back", "move_forward")
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 
-	$AnimationTree.set("parameters/conditions/idle", input_dir == Vector2.ZERO && is_on_floor())
-	$AnimationTree.set("parameters/conditions/walk", input_dir != Vector2.ZERO && is_on_floor())
+	set_motion(direction)
 	
 	if direction:
-		velocity.x = direction.x * SPEED
-		velocity.z = direction.z * SPEED
+		velocity.x = direction.x * cur_speed
+		velocity.z = direction.z * cur_speed
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
+		velocity.x = move_toward(velocity.x, 0, cur_speed)
+		velocity.z = move_toward(velocity.z, 0, cur_speed)
 
 	move_and_slide()
 
@@ -99,3 +122,21 @@ func untargeted():
 	targeted_times -= 1
 	if targeted_times <= 0:
 		$HealthBarView/HealthBar.set_modulate(health_bar_modulate)
+		
+func set_motion(direction):
+	reset_animation()
+	
+	if direction == Vector3.ZERO:
+		$AnimationTree.set("parameters/conditions/idle", is_on_floor())
+	else:
+		if running:
+			cur_speed = RUN_SPEED
+			$AnimationTree.set("parameters/conditions/run", is_on_floor())
+		else:
+			cur_speed = WALK_SPEED
+			$AnimationTree.set("parameters/conditions/walk", is_on_floor())
+
+func reset_animation():
+	$AnimationTree.set("parameters/conditions/run", false)
+	$AnimationTree.set("parameters/conditions/idle", false)
+	$AnimationTree.set("parameters/conditions/walk", false)
