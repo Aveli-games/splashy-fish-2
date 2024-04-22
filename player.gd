@@ -114,11 +114,12 @@ func set_motion(direction):
 	else:
 		if running:
 			cur_speed = RUN_SPEED
-			$AnimationTree.set("parameters/conditions/walk", is_on_floor()) # TODO: Add run animation
+			$AnimationTree.set("parameters/conditions/run", is_on_floor())
 		else:
 			cur_speed = WALK_SPEED
 			$AnimationTree.set("parameters/conditions/walk", is_on_floor())
 
 func reset_animation():
+	$AnimationTree.set("parameters/conditions/run", false)
 	$AnimationTree.set("parameters/conditions/idle", false)
 	$AnimationTree.set("parameters/conditions/walk", false)
