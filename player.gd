@@ -40,7 +40,6 @@ func _ready():
 	$HealthBarView/HealthBar.value = health
 
 func _physics_process(delta):
-	var speed = WALK_SPEED
 	if health <= 0:
 		die()
 	
@@ -84,8 +83,8 @@ func _physics_process(delta):
 		velocity.x = direction.x * cur_speed
 		velocity.z = direction.z * cur_speed
 	else:
-		velocity.x = move_toward(velocity.x, 0, speed)
-		velocity.z = move_toward(velocity.z, 0, speed)
+		velocity.x = move_toward(velocity.x, 0, cur_speed)
+		velocity.z = move_toward(velocity.z, 0, cur_speed)
 
 	move_and_slide()
 
