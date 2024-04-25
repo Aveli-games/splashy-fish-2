@@ -11,10 +11,12 @@ func _process(delta):
 	pass
 
 func _on_player_died():
-	get_tree().reload_current_scene()
+	if get_tree():
+		get_tree().reload_current_scene()
 
 func _on_objective_died():
-	get_tree().reload_current_scene()
+	if get_tree():
+		get_tree().reload_current_scene()
 
 func _on_enemy_spawn_timer_timeout():
 	# Create a new instance of the Enemy scene.

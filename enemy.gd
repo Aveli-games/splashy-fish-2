@@ -2,10 +2,20 @@ extends CharacterBody3D
 
 signal no_target_found
 
+enum states {
+	MOVING = Globals.movement_states.MOVING,
+	ATTACKING = Globals.movement_states.ATTACKING,
+	HIT = Globals.movement_states.HIT,
+	DYING = Globals.movement_states.DYING
+}
+
 var target : Node3D
 
 const SPEED = 1.2
 const JUMP_VELOCITY = 4.5
+const TURN_SPEED = 6
+
+var state = states.MOVING
 
 var max_health = 1
 
@@ -18,40 +28,64 @@ var melee_targets: Array
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
+var animation_tree
+var animation_state
+
 func _ready():
+	animation_tree = $AnimationTree
+	animation_state = animation_tree.get("parameters/playback")
 	$HealthBarView/HealthLabel.text = str(health)
 	$HealthBarView/HealthBar.max_value = max_health
 	$HealthBarView/HealthBar.value = health
 
 func _physics_process(delta):
-	if health <= 0:
-		die()
+	# Add the gravity.
+	if not is_on_floor():
+		velocity.y -= gravity * delta
+
+	match state:
+		states.MOVING:
+			move_state(delta)
+		states.ATTACKING:
+			attack_state(delta)
+		states.HIT:
+			hit_state(delta)
+		states.DYING:
+			death_state(delta)
 
 	# Add the gravity.
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 
-	look_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true)
-	if target not in close_targets:
-		var direction = (target.transform.origin - transform.origin).normalized() * Vector3(1,0,1)
-		velocity = direction * SPEED
-		move_and_slide()
-	
-	$AnimationTree.set("parameters/conditions/idle", close_targets.find(target) != -1 && is_on_floor())
-	$AnimationTree.set("parameters/conditions/walk", close_targets.find(target) == -1 && is_on_floor())
-	
-	if target in melee_targets:
-		if $Abilities/Attack/AttackCooldownTimer.is_stopped():
-			$Abilities/Attack/AttackCooldownTimer.start()
-	else:
-		$Abilities/Attack/AttackCooldownTimer.stop()
-
 # This function will be called from the Main scene.
 func initialize(start_position, start_target):
 	# We position the enemy by placing it at start_position
-	global_position = start_position
+	position = start_position
 	add_to_group("Enemies")
 	set_target(start_target)
+	
+func move_state(delta):
+	look_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true)
+	if target not in close_targets:
+		animation_state.travel("Walk")
+		var direction = (target.transform.origin - transform.origin).normalized() * Vector3(1,0,1)
+		velocity = direction * SPEED
+		move_and_slide()
+	else:
+		animation_state.travel("idle")
+	
+	if target in melee_targets:
+		state = states.ATTACKING
+
+func attack_state(delta):
+	transform = transform.interpolate_with(transform.looking_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true), delta * TURN_SPEED)
+	animation_state.travel("Attack")
+
+func hit_state(delta):
+	animation_state.travel("Hit")
+
+func death_state(delta):
+	animation_state.travel("Die")
 
 func attack(target):
 	velocity = Vector3.ZERO
@@ -73,7 +107,7 @@ func _on_melee_range_body_exited(body):
 		
 		# When current target leaves melee range, target the latest added melee target
 		# If no available melee targets, signal that you have none
-		# TODO: Add a function to find possible target in view outside of melee range
+		# TODO: Add aggro range
 		if melee_targets.is_empty():
 			no_target_found.emit(self)
 		else:
@@ -92,12 +126,22 @@ func on_hit(damage):
 	health = clamp(health - damage, 0, max_health)
 	$HealthBarView/HealthLabel.text = str(health)
 	$HealthBarView/HealthBar.value = health
+	if health > 0:
+		state = states.HIT
+	else:
+		# Remove collision and info so it's just untargetable animation left
+		$CollisionShape3D.queue_free()
+		$HealthBarSprite.queue_free()
+		state = states.DYING
 
-func die():
-	queue_free()
-	
 func set_target(new_target):
 	target = new_target
 
-func _on_attack_cooldown_timer_timeout():
+func attack_connects():
 	attack(target)
+
+func _on_action_animation_finished():
+	state = states.MOVING
+
+func _on_death_animation_finished():
+	queue_free()
