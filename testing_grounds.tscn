@@ -1,0 +1,111 @@
+[gd_scene load_steps=15 format=3 uid="uid://couqrrov0i003"]
+
+[ext_resource type="Script" path="res://testing_grounds.gd" id="1_b75ur"]
+[ext_resource type="PackedScene" uid="uid://caxs1alfnthk7" path="res://enemy.tscn" id="2_vl7dp"]
+[ext_resource type="Texture2D" uid="uid://8ogwg62w5cje" path="res://TCom_GrassMedium2_header.jpg" id="3_6tqpp"]
+[ext_resource type="PackedScene" uid="uid://cqn7vqisoert6" path="res://player.tscn" id="4_4gc4p"]
+[ext_resource type="Script" path="res://camera_controller.gd" id="5_3du0x"]
+[ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="6_i4xss"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pmljg"]
+size = Vector3(0, 50, 50)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5vker"]
+size = Vector3(0, 50, 50)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rbb8a"]
+size = Vector3(50, 50, 0)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mshv0"]
+size = Vector3(50, 50, 0)
+
+[sub_resource type="Curve3D" id="Curve3D_u76du"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -25, 0, -25, 0, 0, 0, 0, 0, 0, 25, 0, -25, 0, 0, 0, 0, 0, 0, 25, 0, 25, 0, 0, 0, 0, 0, 0, -25, 0, 25, 0, 0, 0, 0, 0, 0, -25, 0, -25),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0)
+}
+point_count = 5
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_odvxq"]
+margin = 0.0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ycgav"]
+size = Vector2(50, 50)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dxuiy"]
+albedo_texture = ExtResource("3_6tqpp")
+normal_scale = 5.67
+uv1_scale = Vector3(0.23, 0.23, 0.23)
+uv1_triplanar = true
+
+[node name="testing_grounds" type="Node"]
+script = ExtResource("1_b75ur")
+enemy_scene = ExtResource("2_vl7dp")
+
+[node name="Boundaries" type="Node3D" parent="."]
+
+[node name="Wall1" type="StaticBody3D" parent="Boundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 0)
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boundaries/Wall1"]
+shape = SubResource("BoxShape3D_pmljg")
+
+[node name="Wall2" type="StaticBody3D" parent="Boundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 0, 0)
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boundaries/Wall2"]
+shape = SubResource("BoxShape3D_5vker")
+
+[node name="Wall3" type="StaticBody3D" parent="Boundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 25)
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boundaries/Wall3"]
+shape = SubResource("BoxShape3D_rbb8a")
+
+[node name="Wall4" type="StaticBody3D" parent="Boundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -25)
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boundaries/Wall4"]
+shape = SubResource("BoxShape3D_mshv0")
+
+[node name="SpawnPath" type="Path3D" parent="."]
+curve = SubResource("Curve3D_u76du")
+
+[node name="SpawnLocation" type="PathFollow3D" parent="SpawnPath"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -25, 0, -25)
+
+[node name="PlayArea" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayArea"]
+shape = SubResource("WorldBoundaryShape3D_odvxq")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="PlayArea"]
+mesh = SubResource("PlaneMesh_ycgav")
+surface_material_override/0 = SubResource("StandardMaterial3D_dxuiy")
+
+[node name="Player" parent="." groups=["PlayerTargets"] instance=ExtResource("4_4gc4p")]
+
+[node name="CameraController" type="Marker3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.48453, 0)
+script = ExtResource("5_3du0x")
+
+[node name="Camera3D" type="Camera3D" parent="Player/CameraController"]
+transform = Transform3D(-1, -6.18171e-08, 6.18171e-08, 0, 0.707107, 0.707107, -8.74226e-08, 0.707107, -0.707107, 0, 1.05544, -1.70543)
+
+[node name="Objective" parent="." groups=["PlayerTargets"] instance=ExtResource("6_i4xss")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.927615, -0.197912, -0.316799, 0.373538, 0.491479, 0.786713, 0, -0.848104, 0.52983, -3.14224, 7.12791, 4.88478)
+shadow_enabled = true
+
+[node name="EnemySpawnTimer" type="Timer" parent="."]
+autostart = true
+
+[connection signal="died" from="Player" to="." method="_on_player_died"]
+[connection signal="died" from="Objective" to="." method="_on_objective_died"]
+[connection signal="timeout" from="EnemySpawnTimer" to="." method="_on_enemy_spawn_timer_timeout"]
