@@ -8,7 +8,8 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	pass
+	$CameraController.global_position.x = $Player.global_position.x
+	$CameraController.global_position.z = $Player.global_position.z
 
 func _on_player_died():
 	if get_tree():
