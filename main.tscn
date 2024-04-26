@@ -95,12 +95,12 @@ camera_controller = NodePath("../CameraController")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.48453, 0)
 script = ExtResource("3_fumwc")
 
-[node name="SpringArm3D" type="SpringArm3D" parent="CameraController"]
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraController" node_paths=PackedStringArray("focus_point")]
 transform = Transform3D(-1, -6.18171e-08, 6.18171e-08, 0, 0.707107, 0.707107, -8.74226e-08, 0.707107, -0.707107, 0, 1.05544, -1.70543)
-
-[node name="Camera3D" type="Camera3D" parent="CameraController/SpringArm3D" node_paths=PackedStringArray("focus_point")]
 script = ExtResource("6_d64wc")
-focus_point = NodePath("../..")
+focus_point = NodePath("..")
+
+[node name="Camera3D" type="Camera3D" parent="CameraController/SpringArm3D"]
 
 [node name="Objective" parent="." groups=["PlayerTargets"] instance=ExtResource("6_ue0ya")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
