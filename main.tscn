@@ -1,10 +1,11 @@
-[gd_scene load_steps=15 format=3 uid="uid://b20ptif3dcpca"]
+[gd_scene load_steps=16 format=3 uid="uid://b20ptif3dcpca"]
 
 [ext_resource type="Texture2D" uid="uid://8ogwg62w5cje" path="res://TCom_GrassMedium2_header.jpg" id="1_fdcor"]
 [ext_resource type="Script" path="res://main.gd" id="1_x5dvp"]
 [ext_resource type="PackedScene" uid="uid://cqn7vqisoert6" path="res://player.tscn" id="2_q3ywx"]
 [ext_resource type="PackedScene" uid="uid://caxs1alfnthk7" path="res://enemy.tscn" id="2_ydm48"]
 [ext_resource type="Script" path="res://camera_controller.gd" id="3_fumwc"]
+[ext_resource type="Script" path="res://camera.gd" id="6_d64wc"]
 [ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="6_ue0ya"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pmljg"]
@@ -87,14 +88,19 @@ shape = SubResource("WorldBoundaryShape3D_odvxq")
 mesh = SubResource("PlaneMesh_ycgav")
 surface_material_override/0 = SubResource("StandardMaterial3D_dxuiy")
 
-[node name="Player" parent="." groups=["PlayerTargets"] instance=ExtResource("2_q3ywx")]
+[node name="Player" parent="." node_paths=PackedStringArray("camera_controller") groups=["PlayerTargets"] instance=ExtResource("2_q3ywx")]
+camera_controller = NodePath("../CameraController")
 
-[node name="CameraController" type="Marker3D" parent="Player"]
+[node name="CameraController" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.48453, 0)
 script = ExtResource("3_fumwc")
 
-[node name="Camera3D" type="Camera3D" parent="Player/CameraController"]
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraController" node_paths=PackedStringArray("focus_point")]
 transform = Transform3D(-1, -6.18171e-08, 6.18171e-08, 0, 0.707107, 0.707107, -8.74226e-08, 0.707107, -0.707107, 0, 1.05544, -1.70543)
+script = ExtResource("6_d64wc")
+focus_point = NodePath("..")
+
+[node name="Camera3D" type="Camera3D" parent="CameraController/SpringArm3D"]
 
 [node name="Objective" parent="." groups=["PlayerTargets"] instance=ExtResource("6_ue0ya")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)

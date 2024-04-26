@@ -4,6 +4,8 @@ class_name Player
 
 signal died
 
+@export var camera_controller : Marker3D
+
 enum states {
 	MOVING = Globals.movement_states.MOVING,
 	ATTACKING = Globals.movement_states.ATTACKING,
@@ -17,8 +19,6 @@ const JUMP_VELOCITY = 4.5
 const TURN_SPEED = 10
 const ATTACK_ANIMATION_DISTANCE = 1.001
 const ATTACK_ANIMATION_ROTATION = deg_to_rad(18.8)
-
-@export var sensitivity := 5
 
 var state = states.MOVING
 
@@ -76,10 +76,9 @@ func _physics_process(delta):
 		stamina = clamp(stamina + stamina_regen_rate * delta, 0, 100)
 	
 	$Abilities/Run/StaminaBarView/StaminaBar.value = stamina
-
-func _input(event):
-	if event is InputEventMouseMotion && state == states.MOVING:
-		rotate_y(-event.relative.x / 1000 * sensitivity)
+	
+	camera_controller.global_position.x = global_position.x
+	camera_controller.global_position.z = global_position.z
 
 func move_state(delta):
 	if Input.is_action_pressed("run"):
@@ -89,7 +88,6 @@ func move_state(delta):
 		running = false
 	
 	var input_dir = Input.get_vector("move_right", "move_left", "move_back", "move_forward")
-	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
 	if input_dir != Vector2.ZERO:
 		if running:
@@ -101,14 +99,17 @@ func move_state(delta):
 			animation_tree.set("parameters/Walk/blend_position", input_dir)
 			animation_state.travel("Walk")
 			cur_speed = WALK_SPEED
-	else:
-		running = false
-		animation_state.travel("idle")
-	
-	if direction:
+		
+		# Have player move smoothly to line up with camera
+		var camera_basis_filtered = Basis(camera_controller.transform.basis.x * Vector3(1,0,1), Vector3(0,1,0), camera_controller.transform.basis.z * Vector3(1,0,1))
+		transform.basis = transform.basis.slerp(camera_basis_filtered.orthonormalized(), delta * TURN_SPEED/3)
+		var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+		
 		velocity.x = direction.x * cur_speed
 		velocity.z = direction.z * cur_speed
 	else:
+		running = false
+		animation_state.travel("idle")
 		velocity.x = move_toward(velocity.x, 0, cur_speed)
 		velocity.z = move_toward(velocity.z, 0, cur_speed)
 

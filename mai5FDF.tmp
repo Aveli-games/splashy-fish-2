@@ -1,12 +1,12 @@
-[gd_scene load_steps=16 format=3 uid="uid://couqrrov0i003"]
+[gd_scene load_steps=16 format=3 uid="uid://b20ptif3dcpca"]
 
-[ext_resource type="Script" path="res://testing_grounds.gd" id="1_b75ur"]
-[ext_resource type="PackedScene" uid="uid://caxs1alfnthk7" path="res://enemy.tscn" id="2_vl7dp"]
-[ext_resource type="Texture2D" uid="uid://8ogwg62w5cje" path="res://TCom_GrassMedium2_header.jpg" id="3_6tqpp"]
-[ext_resource type="PackedScene" uid="uid://cqn7vqisoert6" path="res://player.tscn" id="4_4gc4p"]
-[ext_resource type="Script" path="res://camera_controller.gd" id="5_3du0x"]
-[ext_resource type="Script" path="res://camera.gd" id="6_evar8"]
-[ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="6_i4xss"]
+[ext_resource type="Texture2D" uid="uid://8ogwg62w5cje" path="res://TCom_GrassMedium2_header.jpg" id="1_fdcor"]
+[ext_resource type="Script" path="res://main.gd" id="1_x5dvp"]
+[ext_resource type="PackedScene" uid="uid://cqn7vqisoert6" path="res://player.tscn" id="2_q3ywx"]
+[ext_resource type="PackedScene" uid="uid://caxs1alfnthk7" path="res://enemy.tscn" id="2_ydm48"]
+[ext_resource type="Script" path="res://camera_controller.gd" id="3_fumwc"]
+[ext_resource type="Script" path="res://camera.gd" id="6_d64wc"]
+[ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="6_ue0ya"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pmljg"]
 size = Vector3(0, 50, 50)
@@ -34,14 +34,14 @@ margin = 0.0
 size = Vector2(50, 50)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dxuiy"]
-albedo_texture = ExtResource("3_6tqpp")
+albedo_texture = ExtResource("1_fdcor")
 normal_scale = 5.67
 uv1_scale = Vector3(0.23, 0.23, 0.23)
 uv1_triplanar = true
 
-[node name="testing_grounds" type="Node"]
-script = ExtResource("1_b75ur")
-enemy_scene = ExtResource("2_vl7dp")
+[node name="Main" type="Node"]
+script = ExtResource("1_x5dvp")
+enemy_scene = ExtResource("2_ydm48")
 
 [node name="Boundaries" type="Node3D" parent="."]
 
@@ -88,22 +88,21 @@ shape = SubResource("WorldBoundaryShape3D_odvxq")
 mesh = SubResource("PlaneMesh_ycgav")
 surface_material_override/0 = SubResource("StandardMaterial3D_dxuiy")
 
-[node name="Player" parent="." node_paths=PackedStringArray("camera_controller") groups=["PlayerTargets"] instance=ExtResource("4_4gc4p")]
+[node name="Player" parent="." node_paths=PackedStringArray("camera_controller") groups=["PlayerTargets"] instance=ExtResource("2_q3ywx")]
 camera_controller = NodePath("../CameraController")
 
 [node name="CameraController" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.48453, 0)
-script = ExtResource("5_3du0x")
+script = ExtResource("3_fumwc")
 
-[node name="SpringArm3D" type="SpringArm3D" parent="CameraController" node_paths=PackedStringArray("focus_point")]
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraController"]
 transform = Transform3D(-1, -6.18171e-08, 6.18171e-08, 0, 0.707107, 0.707107, -8.74226e-08, 0.707107, -0.707107, 0, 1.05544, -1.70543)
-collision_mask = 7
-script = ExtResource("6_evar8")
-focus_point = NodePath("..")
 
-[node name="Camera3D" type="Camera3D" parent="CameraController/SpringArm3D"]
+[node name="Camera3D" type="Camera3D" parent="CameraController/SpringArm3D" node_paths=PackedStringArray("focus_point")]
+script = ExtResource("6_d64wc")
+focus_point = NodePath("../..")
 
-[node name="Objective" parent="." groups=["PlayerTargets"] instance=ExtResource("6_i4xss")]
+[node name="Objective" parent="." groups=["PlayerTargets"] instance=ExtResource("6_ue0ya")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
