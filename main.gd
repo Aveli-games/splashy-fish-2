@@ -4,7 +4,13 @@ extends Node
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	var rng = RandomNumberGenerator.new()
+	rng.seed = hash("Splashy")
+	for tree_line in $Boundaries/TreeLines.get_children():
+		for tree in tree_line.get_children():
+			var tree_scale = rng.randf_range(2.4, 5)
+			tree.scale = Vector3(tree_scale, tree_scale, tree_scale)
+			tree.position.x = rng.randi_range(-25, -15)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
