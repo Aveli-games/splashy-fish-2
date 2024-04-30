@@ -6,7 +6,8 @@ enum states {
 	MOVING = Globals.movement_states.MOVING,
 	ATTACKING = Globals.movement_states.ATTACKING,
 	HIT = Globals.movement_states.HIT,
-	DYING = Globals.movement_states.DYING
+	DYING = Globals.movement_states.DYING,
+	DODGING = Globals.movement_states.DODGING
 }
 
 var target : Node3D
@@ -45,13 +46,15 @@ func _physics_process(delta):
 
 	match state:
 		states.MOVING:
-			move_state(delta)
+			move_state()
 		states.ATTACKING:
 			attack_state(delta)
 		states.HIT:
-			hit_state(delta)
+			hit_state()
 		states.DYING:
-			death_state(delta)
+			death_state()
+		states.DODGING:
+			dodge_state()
 
 	# Add the gravity.
 	if not is_on_floor():
@@ -64,7 +67,7 @@ func initialize(start_position, start_target):
 	add_to_group("Enemies")
 	set_target(start_target)
 	
-func move_state(delta):
+func move_state():
 	look_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true)
 	if target not in close_targets:
 		animation_state.travel("Walk")
@@ -81,11 +84,14 @@ func attack_state(delta):
 	transform = transform.interpolate_with(transform.looking_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true), delta * TURN_SPEED)
 	animation_state.travel("Attack")
 
-func hit_state(delta):
+func hit_state():
 	animation_state.travel("Hit")
 
-func death_state(delta):
+func death_state():
 	animation_state.travel("Die")
+
+func dodge_state():
+	animation_state.travel("Dodge")
 
 func attack(target):
 	velocity = Vector3.ZERO
@@ -134,11 +140,15 @@ func on_hit(damage):
 		$HealthBarSprite.queue_free()
 		state = states.DYING
 
+func on_miss():
+	state = states.DODGING
+
 func set_target(new_target):
 	target = new_target
 
 func attack_connects():
-	attack(target)
+	if target in melee_targets:
+		attack(target)
 
 func _on_action_animation_finished():
 	state = states.MOVING
