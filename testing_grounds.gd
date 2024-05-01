@@ -36,6 +36,5 @@ func _on_objective_died():
 	if get_tree():
 		get_tree().reload_current_scene()
 
-	
 func _on_enemy_no_target_found(enemy):
 	enemy.set_target(get_node("Objective"))

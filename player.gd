@@ -37,6 +37,8 @@ var health_bar_modulate
 var running = false
 var cur_speed = WALK_SPEED
 
+var attack_hit = false
+
 var target: CharacterBody3D
 var close_targets: Array
 var melee_targets: Array
@@ -119,22 +121,22 @@ func move_state(delta):
 		state = states.ATTACKING
 
 func attack_state(delta):
-	running = false
-	if target:
-		# Get the correct rotation for the punch attack
-		var attack_position = transform.looking_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true).rotated_local(Vector3.UP, ATTACK_ANIMATION_ROTATION)
-		
-		# Move toward the enemy if too far, move away if too close
-		if attack_position.origin.distance_to(target.transform.origin) > ATTACK_ANIMATION_DISTANCE:
-			attack_position.origin = attack_position.origin.move_toward(target.transform.origin, delta * TURN_SPEED)
-		if attack_position.origin.distance_to(target.transform.origin) < ATTACK_ANIMATION_DISTANCE:
-			attack_position.origin = attack_position.origin.move_toward(target.transform.origin * Vector3(-1, 0, -1), delta * TURN_SPEED)
-		
-		# Apply everything
-		transform = transform.interpolate_with(attack_position, delta * TURN_SPEED)
-		
 	if $Abilities/Attack/AttackCooldownTimer.is_stopped():
-		animation_state.travel("Attack")
+		if target:
+			# Get the correct rotation for the punch attack
+			var attack_position = transform.looking_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true).rotated_local(Vector3.UP, ATTACK_ANIMATION_ROTATION)
+			
+			# Move toward the enemy if too far, move away if too close
+			if attack_position.origin.distance_to(target.transform.origin) > ATTACK_ANIMATION_DISTANCE:
+				attack_position.origin = attack_position.origin.move_toward(target.transform.origin, delta * TURN_SPEED)
+			if attack_position.origin.distance_to(target.transform.origin) < ATTACK_ANIMATION_DISTANCE:
+				attack_position.origin = attack_position.origin.move_toward(target.transform.origin * Vector3(-1, 0, -1), delta * TURN_SPEED)
+			
+			# Apply everything
+			transform = transform.interpolate_with(attack_position, delta * TURN_SPEED)
+			
+			animation_state.travel("Attack")
+			running = false
 
 func hit_state(delta):
 	running = false
@@ -180,8 +182,17 @@ func untargeted():
 		$HealthBarView/HealthBar.set_modulate(health_bar_modulate)
 	
 func attack_connects():
-	if target:
-		target.on_hit(melee_damage)
+	if target && attack_hit:
+			target.on_hit(melee_damage)
+
+func attack_check():
+	var roll = randi_range(1,6)
+	print(roll)
+	if roll == 1:
+		attack_hit = false
+		target.on_miss()
+	else:
+		attack_hit = true
 	
 func _on_action_animation_finished():
 	state = states.MOVING

@@ -4,7 +4,8 @@ enum movement_states {
 	MOVING,
 	HIT,
 	ATTACKING,
-	DYING
+	DYING,
+	DODGING
 }
 
 # Called when the node enters the scene tree for the first time.
