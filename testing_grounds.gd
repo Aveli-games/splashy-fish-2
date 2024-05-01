@@ -8,6 +8,8 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
+	if Input.is_action_just_pressed("ui_accept"):
+		$SubViewport/DiceRoll.roll()
 	if Input.is_action_just_pressed("spawn_enemy"):
 		# Create a new instance of the Enemy scene.
 		var enemy = enemy_scene.instantiate()
