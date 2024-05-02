@@ -40,3 +40,6 @@ func _on_objective_died():
 
 func _on_enemy_no_target_found(enemy):
 	enemy.set_target(get_node("Objective"))
+
+func _on_dice_roll_finished(value):
+	$SubViewport/RollOverlay/RollResult.text = str(value)

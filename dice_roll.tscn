@@ -85,3 +85,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.378031, 2.96483, 0.227203)
 
 [node name="Die2" parent="Dice" instance=ExtResource("1_v0rtp")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.378031, 2.96483, -2.68998)
+
+[connection signal="roll_finished" from="Dice/Die" to="." method="_on_die_roll_finished"]
+[connection signal="roll_finished" from="Dice/Die2" to="." method="_on_die_roll_finished"]
