@@ -2,6 +2,7 @@ extends Node
 
 @export var enemy_scene: PackedScene
 
+var roll_requester
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
@@ -38,3 +39,22 @@ func _on_objective_died():
 
 func _on_enemy_no_target_found(enemy):
 	enemy.set_target(get_node("Objective"))
+	
+func _on_player_roll_requested(player):
+	# Speed up time while rolling so the simulation goes quick
+	# TODO: Add "Dice roll speed" setting in future options menu
+	get_tree().set_group_flags(0, "RollPause", "process_mode", PROCESS_MODE_DISABLED)
+	Engine.time_scale = 3
+	$DiceRollCanvas.show()
+	roll_requester = player
+	$DiceRollCanvas/DiceRollViewport.roll()
+
+func _on_roll_finished(value):
+	# Return time to normal speed
+	Engine.time_scale = 1
+	await get_tree().create_timer(.75).timeout # Give time for player to understand result
+	get_tree().set_group_flags(0, "RollPause", "process_mode", PROCESS_MODE_ALWAYS)
+	if roll_requester and roll_requester.has_method("set_roll_result"):
+		roll_requester.set_roll_result(value)
+		roll_requester = null
+	$DiceRollCanvas.hide()

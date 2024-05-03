@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://couqrrov0i003"]
+[gd_scene load_steps=18 format=3 uid="uid://couqrrov0i003"]
 
 [ext_resource type="Script" path="res://testing_grounds.gd" id="1_b75ur"]
 [ext_resource type="PackedScene" uid="uid://caxs1alfnthk7" path="res://enemy.tscn" id="2_jpsqg"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://camera_controller.gd" id="5_3du0x"]
 [ext_resource type="Script" path="res://camera.gd" id="6_evar8"]
 [ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="6_i4xss"]
+[ext_resource type="PackedScene" uid="uid://cef320n1hmlrj" path="res://dice_roll_viewport.tscn" id="8_r8ovj"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pmljg"]
 size = Vector3(0, 50, 50)
@@ -39,7 +40,10 @@ normal_scale = 5.67
 uv1_scale = Vector3(0.23, 0.23, 0.23)
 uv1_triplanar = true
 
-[node name="testing_grounds" type="Node"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_t11da"]
+viewport_path = NodePath("DiceRollCanvas/DiceRollViewport")
+
+[node name="testing_grounds" type="Node" groups=["RollPause"]]
 script = ExtResource("1_b75ur")
 enemy_scene = ExtResource("2_jpsqg")
 
@@ -93,6 +97,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.50669)
 camera_controller = NodePath("../CameraController")
 
 [node name="CameraController" type="Marker3D" parent="."]
+process_mode = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.48453, 6.50669)
 script = ExtResource("5_3du0x")
 
@@ -106,7 +111,6 @@ focus_point = NodePath("..")
 cull_mask = 1048063
 
 [node name="Objective" parent="." groups=["PlayerTargets"] instance=ExtResource("6_i4xss")]
-process_mode = 0
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.927615, -0.197912, -0.316799, 0.373538, 0.491479, 0.786713, 0, -0.848104, 0.52983, -3.14224, 7.12791, 4.88478)
@@ -115,6 +119,19 @@ shadow_enabled = true
 [node name="EnemySpawnTimer" type="Timer" parent="."]
 autostart = true
 
+[node name="DiceRollCanvas" type="CanvasLayer" parent="."]
+process_mode = 1
+visible = false
+
+[node name="DiceRollSprite" type="Sprite2D" parent="DiceRollCanvas"]
+position = Vector2(832, 336)
+scale = Vector2(0.671875, 0.671875)
+texture = SubResource("ViewportTexture_t11da")
+
+[node name="DiceRollViewport" parent="DiceRollCanvas" instance=ExtResource("8_r8ovj")]
+
 [connection signal="died" from="Player" to="." method="_on_player_died"]
+[connection signal="roll_requested" from="Player" to="." method="_on_player_roll_requested"]
 [connection signal="died" from="Objective" to="." method="_on_objective_died"]
 [connection signal="timeout" from="EnemySpawnTimer" to="." method="_on_enemy_spawn_timer_timeout"]
+[connection signal="roll_finished" from="DiceRollCanvas/DiceRollViewport" to="." method="_on_roll_finished"]

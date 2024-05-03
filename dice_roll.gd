@@ -15,10 +15,10 @@ func roll():
 			die.roll()
 			
 func reset():
-		rolling = false
-		num_dice = 0
-		num_dice_finished = 0
-		roll_result = 0
+	rolling = false
+	num_dice = 0
+	num_dice_finished = 0
+	roll_result = 0
 
 func _on_die_roll_finished(value):
 	num_dice_finished += 1
