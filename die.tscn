@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://die.gd" id="1_fgn38"]
 [ext_resource type="PackedScene" uid="uid://mif4hch5ak46" path="res://die_ray_cast.tscn" id="2_msg7i"]
 
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_68yxv"]
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_w35uw"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_o5dco"]
 size = Vector3(2, 2, 2)
@@ -23,8 +23,7 @@ height = 0.1
 [node name="Die" type="RigidBody3D"]
 collision_layer = 1024
 collision_mask = 1536
-physics_material_override = SubResource("PhysicsMaterial_68yxv")
-gravity_scale = 2.0
+physics_material_override = SubResource("PhysicsMaterial_w35uw")
 script = ExtResource("1_fgn38")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

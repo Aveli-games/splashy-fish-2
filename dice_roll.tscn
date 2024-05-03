@@ -24,6 +24,8 @@ size = Vector3(10, 1, 20)
 size = Vector3(10, 1, 20)
 
 [node name="DiceRoll" type="Node3D"]
+process_mode = 1
+top_level = true
 script = ExtResource("1_id7uq")
 
 [node name="Floor" type="StaticBody3D" parent="."]
@@ -32,6 +34,15 @@ collision_mask = 512
 physics_material_override = SubResource("PhysicsMaterial_wr5yy")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("BoxShape3D_dea5u")
+
+[node name="Ceiling" type="StaticBody3D" parent="."]
+collision_layer = 512
+collision_mask = 512
+physics_material_override = SubResource("PhysicsMaterial_wr5yy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ceiling"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
 shape = SubResource("BoxShape3D_dea5u")
 
 [node name="Wall1" type="StaticBody3D" parent="."]
@@ -77,6 +88,7 @@ cull_mask = 1048064
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.57985, 0.814723, 0, -0.814723, 0.57985, 0, 0.652794, 0)
 layers = 512
+light_cull_mask = 4293920256
 
 [node name="Dice" type="Node3D" parent="."]
 

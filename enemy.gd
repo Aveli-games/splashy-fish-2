@@ -93,9 +93,9 @@ func death_state():
 func dodge_state():
 	animation_state.travel("Dodge")
 
-func attack(target):
+func attack(atk_target):
 	velocity = Vector3.ZERO
-	target.on_hit(melee_damage)
+	atk_target.on_hit(melee_damage)
 
 func _on_melee_range_body_entered(body):
 	var player_targets = get_tree().get_nodes_in_group("PlayerTargets")

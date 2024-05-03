@@ -3,6 +3,8 @@ extends CharacterBody3D
 class_name Player
 
 signal died
+signal roll_requested(player: Player)
+signal roll_result_recieved
 
 @export var camera_controller : Marker3D
 
@@ -48,6 +50,8 @@ var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 var animation_tree
 var animation_state
+
+var latest_dice_roll = 0
 
 func _ready():
 	animation_tree = $AnimationTree
@@ -182,20 +186,27 @@ func untargeted():
 		$HealthBarView/HealthBar.set_modulate(health_bar_modulate)
 	
 func attack_connects():
-	if target && attack_hit:
+	if target in melee_targets && attack_hit:
 			target.on_hit(melee_damage)
 
 func attack_check():
-	var roll = randi_range(1,6)
-	print(roll)
-	if roll == 1:
-		attack_hit = false
-		target.on_miss()
-	else:
-		attack_hit = true
+	if target in melee_targets:
+		roll_requested.emit(self)
+		await roll_result_recieved
+		
+		if latest_dice_roll <= 3: #~9% chance to miss
+			attack_hit = false
+			if target:
+				target.on_miss()
+		else:
+			attack_hit = true
 	
 func _on_action_animation_finished():
 	state = states.MOVING
 	
 func _on_death_animation_finished():
 	died.emit()
+
+func set_roll_result(value: int):
+	latest_dice_roll = value
+	roll_result_recieved.emit()
