@@ -52,7 +52,7 @@ volumetric_fog_enabled = true
 volumetric_fog_density = 0.15
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_k1ww6"]
-viewport_path = NodePath(".")
+viewport_path = NodePath("DiceRollCanvas/DiceRollViewport")
 
 [node name="Level" type="Node" groups=["RollPause"]]
 process_mode = 3
