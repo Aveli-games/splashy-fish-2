@@ -50,6 +50,7 @@ height = 1.0
 viewport_path = NodePath("HealthBarView")
 
 [node name="Objective" type="StaticBody3D"]
+disable_mode = 2
 collision_layer = 4
 script = ExtResource("1_avjn6")
 

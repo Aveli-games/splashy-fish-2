@@ -1,0 +1,102 @@
+[gd_scene load_steps=10 format=3 uid="uid://64pdfp2nfs3d"]
+
+[ext_resource type="Script" path="res://dice_roll.gd" id="1_id7uq"]
+[ext_resource type="PackedScene" uid="uid://b3ploc3pqlub" path="res://die.tscn" id="1_v0rtp"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_wr5yy"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dea5u"]
+size = Vector3(20, 1, 20)
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_varkj"]
+bounce = 0.5
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_oxfsr"]
+size = Vector3(20, 1, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bvjmv"]
+size = Vector3(20, 1, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jxxld"]
+size = Vector3(10, 1, 20)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_j8bp6"]
+size = Vector3(10, 1, 20)
+
+[node name="DiceRoll" type="Node3D"]
+process_mode = 1
+top_level = true
+script = ExtResource("1_id7uq")
+
+[node name="Floor" type="StaticBody3D" parent="."]
+collision_layer = 512
+collision_mask = 512
+physics_material_override = SubResource("PhysicsMaterial_wr5yy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("BoxShape3D_dea5u")
+
+[node name="Ceiling" type="StaticBody3D" parent="."]
+collision_layer = 512
+collision_mask = 512
+physics_material_override = SubResource("PhysicsMaterial_wr5yy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ceiling"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+shape = SubResource("BoxShape3D_dea5u")
+
+[node name="Wall1" type="StaticBody3D" parent="."]
+collision_layer = 512
+collision_mask = 512
+physics_material_override = SubResource("PhysicsMaterial_varkj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Wall1"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 5, 10)
+shape = SubResource("BoxShape3D_oxfsr")
+
+[node name="Wall2" type="StaticBody3D" parent="."]
+collision_layer = 512
+collision_mask = 512
+physics_material_override = SubResource("PhysicsMaterial_varkj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Wall2"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5, -10)
+shape = SubResource("BoxShape3D_bvjmv")
+
+[node name="Wall3" type="StaticBody3D" parent="."]
+collision_layer = 512
+collision_mask = 512
+physics_material_override = SubResource("PhysicsMaterial_varkj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Wall3"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 10, 5, 0)
+shape = SubResource("BoxShape3D_jxxld")
+
+[node name="Wall4" type="StaticBody3D" parent="."]
+collision_layer = 512
+collision_mask = 512
+physics_material_override = SubResource("PhysicsMaterial_varkj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Wall4"]
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, -10, 5, 0)
+shape = SubResource("BoxShape3D_j8bp6")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 21.7929, 0)
+cull_mask = 1048064
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.57985, 0.814723, 0, -0.814723, 0.57985, 0, 0.652794, 0)
+layers = 512
+light_cull_mask = 4293920256
+
+[node name="Dice" type="Node3D" parent="."]
+
+[node name="Die" parent="Dice" instance=ExtResource("1_v0rtp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.378031, 2.96483, 0.227203)
+
+[node name="Die2" parent="Dice" instance=ExtResource("1_v0rtp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.378031, 2.96483, -2.68998)
+
+[connection signal="roll_finished" from="Dice/Die" to="." method="_on_die_roll_finished"]
+[connection signal="roll_finished" from="Dice/Die2" to="." method="_on_die_roll_finished"]
