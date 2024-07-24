@@ -211,4 +211,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 collision_mask = 512
 opposite_side = 6
 
+[node name="RollTimer" type="Timer" parent="."]
+wait_time = 10.0
+one_shot = true
+
 [connection signal="sleeping_state_changed" from="." to="." method="_on_sleeping_state_changed"]
+[connection signal="timeout" from="RollTimer" to="." method="_on_roll_timer_timeout"]

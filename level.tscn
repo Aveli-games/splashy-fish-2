@@ -2,10 +2,10 @@
 
 [ext_resource type="Texture2D" uid="uid://8ogwg62w5cje" path="res://TCom_GrassMedium2_header.jpg" id="1_fdcor"]
 [ext_resource type="Script" path="res://level.gd" id="1_x5dvp"]
-[ext_resource type="PackedScene" uid="uid://caxs1alfnthk7" path="res://enemy.tscn" id="2_3peg0"]
-[ext_resource type="PackedScene" uid="uid://cqn7vqisoert6" path="res://player.tscn" id="2_q3ywx"]
+[ext_resource type="PackedScene" uid="uid://qt3pkvldp4ub" path="res://enemy.tscn" id="2_6av1r"]
 [ext_resource type="Script" path="res://camera_controller.gd" id="3_fumwc"]
 [ext_resource type="PackedScene" uid="uid://cc8g11lvq6my3" path="res://tree.tscn" id="4_by425"]
+[ext_resource type="PackedScene" uid="uid://detjvvnieryge" path="res://player.tscn" id="5_jkfui"]
 [ext_resource type="Script" path="res://camera.gd" id="6_d64wc"]
 [ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="6_ue0ya"]
 [ext_resource type="PackedScene" uid="uid://cef320n1hmlrj" path="res://dice_roll_viewport.tscn" id="9_impms"]
@@ -51,13 +51,13 @@ fog_density = 0.1
 volumetric_fog_enabled = true
 volumetric_fog_density = 0.15
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_k1ww6"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_mwkq8"]
 viewport_path = NodePath("DiceRollCanvas/DiceRollViewport")
 
 [node name="Level" type="Node" groups=["RollPause"]]
 process_mode = 3
 script = ExtResource("1_x5dvp")
-enemy_scene = ExtResource("2_3peg0")
+enemy_scene = ExtResource("2_6av1r")
 
 [node name="Boundaries" type="Node3D" parent="."]
 
@@ -662,8 +662,8 @@ curve = SubResource("Curve3D_u76du")
 [node name="SpawnLocation" type="PathFollow3D" parent="SpawnPath"]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -25, 0, -25)
 
-[node name="Player" parent="." node_paths=PackedStringArray("camera_controller") groups=["PlayerTargets"] instance=ExtResource("2_q3ywx")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8.09621)
+[node name="Player" parent="." node_paths=PackedStringArray("camera_controller") groups=["PlayerTargets"] instance=ExtResource("5_jkfui")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8.096)
 camera_controller = NodePath("../CameraController")
 
 [node name="CameraController" type="Marker3D" parent="."]
@@ -699,7 +699,7 @@ visible = false
 [node name="DiceRollSprite" type="Sprite2D" parent="DiceRollCanvas"]
 position = Vector2(832, 336)
 scale = Vector2(0.671875, 0.671875)
-texture = SubResource("ViewportTexture_k1ww6")
+texture = SubResource("ViewportTexture_mwkq8")
 
 [node name="DiceRollViewport" parent="DiceRollCanvas" instance=ExtResource("9_impms")]
 

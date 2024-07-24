@@ -1,9 +1,9 @@
 [gd_scene load_steps=18 format=3 uid="uid://couqrrov0i003"]
 
 [ext_resource type="Script" path="res://testing_grounds.gd" id="1_b75ur"]
-[ext_resource type="PackedScene" uid="uid://caxs1alfnthk7" path="res://enemy.tscn" id="2_jpsqg"]
+[ext_resource type="PackedScene" uid="uid://qt3pkvldp4ub" path="res://enemy.tscn" id="2_jpsqg"]
 [ext_resource type="Texture2D" uid="uid://8ogwg62w5cje" path="res://TCom_GrassMedium2_header.jpg" id="3_6tqpp"]
-[ext_resource type="PackedScene" uid="uid://cqn7vqisoert6" path="res://player.tscn" id="4_4gc4p"]
+[ext_resource type="PackedScene" uid="uid://detjvvnieryge" path="res://player.tscn" id="4_qed8c"]
 [ext_resource type="Script" path="res://camera_controller.gd" id="5_3du0x"]
 [ext_resource type="Script" path="res://camera.gd" id="6_evar8"]
 [ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="6_i4xss"]
@@ -40,7 +40,7 @@ normal_scale = 5.67
 uv1_scale = Vector3(0.23, 0.23, 0.23)
 uv1_triplanar = true
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_t11da"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_73flq"]
 viewport_path = NodePath("DiceRollCanvas/DiceRollViewport")
 
 [node name="testing_grounds" type="Node" groups=["RollPause"]]
@@ -92,8 +92,8 @@ shape = SubResource("WorldBoundaryShape3D_odvxq")
 mesh = SubResource("PlaneMesh_ycgav")
 surface_material_override/0 = SubResource("StandardMaterial3D_dxuiy")
 
-[node name="Player" parent="." node_paths=PackedStringArray("camera_controller") groups=["PlayerTargets"] instance=ExtResource("4_4gc4p")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.50669)
+[node name="Player" parent="." node_paths=PackedStringArray("camera_controller") groups=["PlayerTargets"] instance=ExtResource("4_qed8c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6.81632)
 camera_controller = NodePath("../CameraController")
 
 [node name="CameraController" type="Marker3D" parent="."]
@@ -126,7 +126,7 @@ visible = false
 [node name="DiceRollSprite" type="Sprite2D" parent="DiceRollCanvas"]
 position = Vector2(832, 336)
 scale = Vector2(0.671875, 0.671875)
-texture = SubResource("ViewportTexture_t11da")
+texture = SubResource("ViewportTexture_73flq")
 
 [node name="DiceRollViewport" parent="DiceRollCanvas" instance=ExtResource("8_r8ovj")]
 

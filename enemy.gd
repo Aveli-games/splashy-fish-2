@@ -7,7 +7,7 @@ enum states {
 	ATTACKING = Globals.movement_states.ATTACKING,
 	HIT = Globals.movement_states.HIT,
 	DYING = Globals.movement_states.DYING,
-	DODGING = Globals.movement_states.DODGING
+	BLOCKING = Globals.movement_states.BLOCKING
 }
 
 var target : Node3D
@@ -53,12 +53,15 @@ func _physics_process(delta):
 			hit_state()
 		states.DYING:
 			death_state()
-		states.DODGING:
-			dodge_state()
+		states.BLOCKING:
+			block_state()
 
 	# Add the gravity.
 	if not is_on_floor():
 		velocity.y -= gravity * delta
+	var current_rotation = transform.basis.get_rotation_quaternion()
+	velocity = (current_rotation.normalized() * $AnimationTree.get_root_motion_position()) / delta
+	move_and_slide()
 
 # This function will be called from the Main scene.
 func initialize(start_position, start_target):
@@ -71,9 +74,6 @@ func move_state():
 	look_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true)
 	if target not in close_targets:
 		animation_state.travel("Walk")
-		var direction = (target.transform.origin - transform.origin).normalized() * Vector3(1,0,1)
-		velocity = direction * SPEED
-		move_and_slide()
 	else:
 		animation_state.travel("idle")
 	
@@ -90,8 +90,8 @@ func hit_state():
 func death_state():
 	animation_state.travel("Die")
 
-func dodge_state():
-	animation_state.travel("Dodge")
+func block_state():
+	animation_state.travel("Block")
 
 func attack(atk_target):
 	velocity = Vector3.ZERO
@@ -141,7 +141,7 @@ func on_hit(damage):
 		state = states.DYING
 
 func on_miss():
-	state = states.DODGING
+	state = states.BLOCKING
 
 func set_target(new_target):
 	target = new_target

@@ -31,6 +31,7 @@ func roll():
 	angular_velocity = throw_vector * roll_strength / 2
 	apply_central_impulse(throw_vector * roll_strength)
 	is_rolling = true
+	$RollTimer.start()
 	
 func _input(event):
 	if event.is_action_pressed("ui_accept") && not is_rolling:
@@ -47,3 +48,7 @@ func _on_sleeping_state_changed():
 		
 		if not landed_on_side:
 			roll()
+
+func _on_roll_timer_timeout():
+	if is_rolling:
+		roll()
