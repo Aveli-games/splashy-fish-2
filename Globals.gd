@@ -2,11 +2,13 @@ extends Node
 
 enum movement_states {
 	MOVING,
-	HIT,
 	ATTACKING,
+	HIT,
 	DYING,
-	DODGING,
-	BLOCKING
+	BLOCKING,
+	KNOCKBACK,
+	KICKING,
+	DODGING
 }
 
 # Called when the node enters the scene tree for the first time.

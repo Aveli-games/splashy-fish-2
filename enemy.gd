@@ -7,7 +7,10 @@ enum states {
 	ATTACKING = Globals.movement_states.ATTACKING,
 	HIT = Globals.movement_states.HIT,
 	DYING = Globals.movement_states.DYING,
-	BLOCKING = Globals.movement_states.BLOCKING
+	BLOCKING = Globals.movement_states.BLOCKING,
+	KNOCKBACK = Globals.movement_states.KNOCKBACK,
+	KICKING = Globals.movement_states.KICKING,
+	DODGING = Globals.movement_states.DODGING
 }
 
 var target : Node3D
@@ -32,6 +35,8 @@ var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var animation_tree
 var animation_state
 
+var attack_hit = false
+
 func _ready():
 	animation_tree = $AnimationTree
 	animation_state = animation_tree.get("parameters/playback")
@@ -55,6 +60,8 @@ func _physics_process(delta):
 			death_state()
 		states.BLOCKING:
 			block_state()
+		states.KICKING:
+			kick_state()
 
 	# Add the gravity.
 	if not is_on_floor():
@@ -78,7 +85,8 @@ func move_state():
 		animation_state.travel("idle")
 	
 	if target in melee_targets:
-		state = states.ATTACKING
+		if not target.has_method("is_invulnerable") or not target.is_invulnerable():
+			state = states.ATTACKING
 
 func attack_state(delta):
 	transform = transform.interpolate_with(transform.looking_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true), delta * TURN_SPEED)
@@ -93,9 +101,25 @@ func death_state():
 func block_state():
 	animation_state.travel("Block")
 
+func kick_state():
+	animation_state.travel("Kick")
+
 func attack(atk_target):
 	velocity = Vector3.ZERO
 	atk_target.on_hit(melee_damage)
+
+func kick(atk_target):
+	velocity = Vector3.ZERO
+	atk_target.on_knockback()
+
+# TODO: Redo the logic in this script to simply inform the target it is taking an attack
+#          The target should be what determines its reaction to the attack and report to this entity how ti reacted, if necessary
+func attack_check():
+	attack_hit = false
+	if target.has_method("is_blocking") and target.is_blocking():
+		target.on_block()
+	else:
+		attack_hit = true
 
 func _on_melee_range_body_entered(body):
 	var player_targets = get_tree().get_nodes_in_group("PlayerTargets")
@@ -141,17 +165,26 @@ func on_hit(damage):
 		state = states.DYING
 
 func on_miss():
-	state = states.BLOCKING
+	if randi() % 2 == 0:
+		state = states.BLOCKING
+	else:
+		state = states.KICKING
 
 func set_target(new_target):
 	target = new_target
 
 func attack_connects():
-	if target in melee_targets:
+	if target in melee_targets and attack_hit:
 		attack(target)
+	attack_hit = false
 
-func _on_action_animation_finished():
-	state = states.MOVING
+func kick_connects():
+	if target in melee_targets:
+		kick(target)
+
+func _on_action_animation_finished(call_state):
+	if call_state == states.keys()[state]:
+		state = states.MOVING
 
 func _on_death_animation_finished():
 	queue_free()

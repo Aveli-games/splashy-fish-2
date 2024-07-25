@@ -12,7 +12,11 @@ enum states {
 	MOVING = Globals.movement_states.MOVING,
 	ATTACKING = Globals.movement_states.ATTACKING,
 	HIT = Globals.movement_states.HIT,
-	DYING = Globals.movement_states.DYING
+	DYING = Globals.movement_states.DYING,
+	BLOCKING = Globals.movement_states.BLOCKING,
+	KNOCKBACK = Globals.movement_states.KNOCKBACK,
+	KICKING = Globals.movement_states.KICKING,
+	DODGING = Globals.movement_states.DODGING
 }
 
 const WALK_SPEED = 1.6
@@ -42,6 +46,8 @@ var health_bar_modulate
 var running = false
 var cur_speed = WALK_SPEED
 
+var blocking = false
+
 var attack_hit = true
 
 var target: CharacterBody3D
@@ -68,22 +74,28 @@ func _ready():
 	$HealthBarView/HealthBar.value = health
 
 func _physics_process(delta):
-
+	blocking = Input.is_action_pressed("block")
+	
 	match state:
 		states.MOVING:
 			move_state(delta)
 		states.ATTACKING:
 			attack_state(delta)
+		states.BLOCKING:
+			block_state()
+		states.KNOCKBACK:
+			knockback_state()
 		states.HIT:
-			hit_state(delta)
+			hit_state()
 		states.DYING:
-			death_state(delta)
+			death_state()
 	
 	var current_rotation = transform.basis.get_rotation_quaternion()
 	velocity = (current_rotation.normalized() * $AnimationTree.get_root_motion_position()) / delta
 	
 	# Add gravity if necessary
-	if is_on_floor():
+	# TODO: Figure out how to apply gravity if ABOVE floor
+	if is_on_floor() or state == states.DYING:
 		velocity.y = 0
 	else:
 		velocity.y -= gravity * delta
@@ -125,8 +137,6 @@ func move_state(delta):
 		animation_state.travel("idle")
 		velocity.x = move_toward(velocity.x, 0, cur_speed)
 		velocity.z = move_toward(velocity.z, 0, cur_speed)
-
-	#move_and_slide()
 	
 	if Input.is_action_just_pressed("attack") && target:
 		state = states.ATTACKING
@@ -149,11 +159,11 @@ func attack_state(delta):
 			animation_state.travel("Attack")
 			running = false
 
-func hit_state(delta):
+func hit_state():
 	running = false
 	animation_state.travel("Hit")
 
-func death_state(delta):
+func death_state():
 	running = false
 	animation_state.travel("Die")
 
@@ -166,6 +176,13 @@ func on_hit(damage):
 	else:
 		$CollisionShape3D.queue_free()
 		state = states.DYING
+		
+func on_block():
+	state = states.BLOCKING
+
+# TODO: react to kicks from different angles
+func on_knockback():
+	state = states.KNOCKBACK
 
 func _on_melee_range_body_entered(body):
 	var enemies = get_tree().get_nodes_in_group("Enemies")
@@ -209,9 +226,10 @@ func attack_check():
 		else:
 			attack_hit = true
 	
-func _on_action_animation_finished():
-	attack_hit = true
-	state = states.MOVING
+func _on_action_animation_finished(call_state):
+	if call_state == states.keys()[state]:
+		attack_hit = true
+		state = states.MOVING
 	
 func _on_death_animation_finished():
 	died.emit()
@@ -219,3 +237,19 @@ func _on_death_animation_finished():
 func set_roll_result(value: int):
 	latest_dice_roll = value
 	roll_result_recieved.emit()
+	
+func block_state():
+	running = false
+	animation_state.travel("Block")
+
+func is_blocking():
+	return blocking
+
+func knockback_state():
+	running = false
+	animation_state.travel("Knockback")
+	
+func is_invulnerable():
+	if state == states.KNOCKBACK:
+		return true
+	return false
