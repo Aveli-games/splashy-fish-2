@@ -26,6 +26,8 @@ const TURN_SPEED = 10
 const ATTACK_ANIMATION_DISTANCE = 1.001
 const ATTACK_ANIMATION_ROTATION = deg_to_rad(18.8)
 const CAMERA_SMOOTHING = .85
+const ACTIVE_COLOR = Color("#2bff0071")
+const INACTIVE_COLOR = Color("#ffffff71")
 
 var camera_y: float
 
@@ -74,7 +76,14 @@ func _ready():
 	$HealthBarView/HealthBar.value = health
 
 func _physics_process(delta):
-	blocking = Input.is_action_pressed("block")
+	if Input.is_action_pressed("block") and state != states.KNOCKBACK:
+		if not blocking:
+			blocking = true
+			$Abilities/Block/BlockView/BlockBackground.color = ACTIVE_COLOR
+	else:
+		if blocking:
+			blocking = false
+			$Abilities/Block/BlockView/BlockBackground.color = INACTIVE_COLOR
 	
 	match state:
 		states.MOVING:
