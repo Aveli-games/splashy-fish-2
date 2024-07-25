@@ -2,9 +2,12 @@ extends Node
 
 enum movement_states {
 	MOVING,
-	HIT,
 	ATTACKING,
+	HIT,
 	DYING,
+	BLOCKING,
+	KNOCKBACK,
+	KICKING,
 	DODGING
 }
 

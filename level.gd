@@ -14,11 +14,6 @@ func _ready():
 			tree.scale = Vector3(tree_scale, tree_scale, tree_scale)
 			tree.position.x = rng.randi_range(-25, -15)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	$CameraController.global_position.x = $Player.global_position.x
-	$CameraController.global_position.z = $Player.global_position.z
-
 func _on_player_died():
 	if get_tree():
 		get_tree().reload_current_scene()

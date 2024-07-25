@@ -12,7 +12,11 @@ enum states {
 	MOVING = Globals.movement_states.MOVING,
 	ATTACKING = Globals.movement_states.ATTACKING,
 	HIT = Globals.movement_states.HIT,
-	DYING = Globals.movement_states.DYING
+	DYING = Globals.movement_states.DYING,
+	BLOCKING = Globals.movement_states.BLOCKING,
+	KNOCKBACK = Globals.movement_states.KNOCKBACK,
+	KICKING = Globals.movement_states.KICKING,
+	DODGING = Globals.movement_states.DODGING
 }
 
 const WALK_SPEED = 1.6
@@ -21,6 +25,9 @@ const JUMP_VELOCITY = 4.5
 const TURN_SPEED = 10
 const ATTACK_ANIMATION_DISTANCE = 1.001
 const ATTACK_ANIMATION_ROTATION = deg_to_rad(18.8)
+const CAMERA_SMOOTHING = .85
+
+var camera_y: float
 
 var state = states.MOVING
 
@@ -39,7 +46,9 @@ var health_bar_modulate
 var running = false
 var cur_speed = WALK_SPEED
 
-var attack_hit = false
+var blocking = false
+
+var attack_hit = true
 
 var target: CharacterBody3D
 var close_targets: Array
@@ -54,6 +63,7 @@ var animation_state
 var latest_dice_roll = 0
 
 func _ready():
+	camera_y = camera_controller.global_position.y
 	animation_tree = $AnimationTree
 	animation_state = animation_tree.get("parameters/playback")
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -64,27 +74,40 @@ func _ready():
 	$HealthBarView/HealthBar.value = health
 
 func _physics_process(delta):
-	# Add the gravity.
-	if not is_on_floor():
-		velocity.y -= gravity * delta
-
+	blocking = Input.is_action_pressed("block")
+	
 	match state:
 		states.MOVING:
 			move_state(delta)
 		states.ATTACKING:
 			attack_state(delta)
+		states.BLOCKING:
+			block_state()
+		states.KNOCKBACK:
+			knockback_state()
 		states.HIT:
-			hit_state(delta)
+			hit_state()
 		states.DYING:
-			death_state(delta)
+			death_state()
 	
+	var current_rotation = transform.basis.get_rotation_quaternion()
+	velocity = (current_rotation.normalized() * $AnimationTree.get_root_motion_position()) / delta
+	
+	# Add gravity if necessary
+	# TODO: Figure out how to apply gravity if ABOVE floor
+	if is_on_floor() or state == states.DYING:
+		velocity.y = 0
+	else:
+		velocity.y -= gravity * delta
+	
+	move_and_slide()
 	if not running:
 		stamina = clamp(stamina + stamina_regen_rate * delta, 0, 100)
 	
 	$Abilities/Run/StaminaBarView/StaminaBar.value = stamina
 	
-	camera_controller.global_position.x = global_position.x
-	camera_controller.global_position.z = global_position.z
+	camera_controller.global_position = global_position.lerp(camera_controller.global_position, CAMERA_SMOOTHING)
+	camera_controller.global_position.y = camera_y
 
 func move_state(delta):
 	if Input.is_action_pressed("run"):
@@ -97,7 +120,7 @@ func move_state(delta):
 	
 	if input_dir != Vector2.ZERO:
 		if running:
-			animation_tree.set("parameters/Run/blend_position", input_dir)
+			animation_tree.set("parameters/Run/Run/blend_position", input_dir)
 			animation_state.travel("Run")
 			cur_speed = RUN_SPEED
 			stamina = clamp(stamina - stamina_use_rate * delta, 0, 100)
@@ -109,30 +132,24 @@ func move_state(delta):
 		# Have player move smoothly to line up with camera
 		var camera_basis_filtered = Basis(camera_controller.transform.basis.x * Vector3(1,0,1), Vector3(0,1,0), camera_controller.transform.basis.z * Vector3(1,0,1))
 		transform.basis = transform.basis.slerp(camera_basis_filtered.orthonormalized(), delta * TURN_SPEED/3)
-		var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-		
-		velocity.x = direction.x * cur_speed
-		velocity.z = direction.z * cur_speed
 	else:
 		running = false
 		animation_state.travel("idle")
 		velocity.x = move_toward(velocity.x, 0, cur_speed)
 		velocity.z = move_toward(velocity.z, 0, cur_speed)
-
-	move_and_slide()
 	
 	if Input.is_action_just_pressed("attack") && target:
 		state = states.ATTACKING
 
 func attack_state(delta):
 	if $Abilities/Attack/AttackCooldownTimer.is_stopped():
-		if target:
+		if target and attack_hit:
 			# Get the correct rotation for the punch attack
 			var attack_position = transform.looking_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true).rotated_local(Vector3.UP, ATTACK_ANIMATION_ROTATION)
 			
 			# Move toward the enemy if too far, move away if too close
 			if attack_position.origin.distance_to(target.transform.origin) > ATTACK_ANIMATION_DISTANCE:
-				attack_position.origin = attack_position.origin.move_toward(target.transform.origin, delta * TURN_SPEED)
+				attack_position.origin = attack_position.origin.move_toward(target.transform.origin * Vector3(1, 0, 1), delta * TURN_SPEED)
 			if attack_position.origin.distance_to(target.transform.origin) < ATTACK_ANIMATION_DISTANCE:
 				attack_position.origin = attack_position.origin.move_toward(target.transform.origin * Vector3(-1, 0, -1), delta * TURN_SPEED)
 			
@@ -142,11 +159,11 @@ func attack_state(delta):
 			animation_state.travel("Attack")
 			running = false
 
-func hit_state(delta):
+func hit_state():
 	running = false
 	animation_state.travel("Hit")
 
-func death_state(delta):
+func death_state():
 	running = false
 	animation_state.travel("Die")
 
@@ -159,6 +176,13 @@ func on_hit(damage):
 	else:
 		$CollisionShape3D.queue_free()
 		state = states.DYING
+		
+func on_block():
+	state = states.BLOCKING
+
+# TODO: react to kicks from different angles
+func on_knockback():
+	state = states.KNOCKBACK
 
 func _on_melee_range_body_entered(body):
 	var enemies = get_tree().get_nodes_in_group("Enemies")
@@ -191,18 +215,21 @@ func attack_connects():
 
 func attack_check():
 	if target in melee_targets:
+		var attack_target = target
 		roll_requested.emit(self)
 		await roll_result_recieved
 		
-		if latest_dice_roll <= 3: #~9% chance to miss
+		if latest_dice_roll <= 4: #~9% chance to miss
 			attack_hit = false
-			if target:
-				target.on_miss()
+			if attack_target:
+				attack_target.on_miss()
 		else:
 			attack_hit = true
 	
-func _on_action_animation_finished():
-	state = states.MOVING
+func _on_action_animation_finished(call_state):
+	if call_state == states.keys()[state]:
+		attack_hit = true
+		state = states.MOVING
 	
 func _on_death_animation_finished():
 	died.emit()
@@ -210,3 +237,19 @@ func _on_death_animation_finished():
 func set_roll_result(value: int):
 	latest_dice_roll = value
 	roll_result_recieved.emit()
+	
+func block_state():
+	running = false
+	animation_state.travel("Block")
+
+func is_blocking():
+	return blocking
+
+func knockback_state():
+	running = false
+	animation_state.travel("Knockback")
+	
+func is_invulnerable():
+	if state == states.KNOCKBACK:
+		return true
+	return false
