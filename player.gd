@@ -55,6 +55,7 @@ var attack_hit = true
 var target: CharacterBody3D
 var close_targets: Array
 var melee_targets: Array
+var far_targets: Array
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -262,3 +263,12 @@ func is_invulnerable():
 	if state == states.KNOCKBACK:
 		return true
 	return false
+
+func _on_far_range_body_entered(body):
+	var enemies = get_tree().get_nodes_in_group("Enemies")
+	if body not in far_targets && body in enemies:
+		far_targets.append(body)
+
+func _on_far_range_body_exited(body):
+	if body in far_targets:
+		far_targets.erase(body)
