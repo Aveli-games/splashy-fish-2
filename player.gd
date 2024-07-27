@@ -50,12 +50,14 @@ var cur_speed = WALK_SPEED
 
 var blocking = false
 
+var ranged_mode = false
+
 var attack_hit = true
 
 var target: CharacterBody3D
 var close_targets: Array
 var melee_targets: Array
-var far_targets: Array
+var ranged_targets: Array
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -77,6 +79,9 @@ func _ready():
 	$HealthBarView/HealthBar.value = health
 
 func _physics_process(delta):
+	if Input.is_action_pressed("aim_ranged") != ranged_mode:
+		toggle_ranged()
+	
 	if Input.is_action_pressed("block") and state != states.KNOCKBACK:
 		if not blocking:
 			blocking = true
@@ -153,20 +158,22 @@ func move_state(delta):
 
 func attack_state(delta):
 	if $Abilities/Attack/AttackCooldownTimer.is_stopped():
-		if target and attack_hit:
-			# Get the correct rotation for the punch attack
+		if target:
+			# Get the correct rotation for the attack
 			var attack_position = transform.looking_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true).rotated_local(Vector3.UP, ATTACK_ANIMATION_ROTATION)
-			
-			# Move toward the enemy if too far, move away if too close
-			if attack_position.origin.distance_to(target.transform.origin) > ATTACK_ANIMATION_DISTANCE:
-				attack_position.origin = attack_position.origin.move_toward(target.transform.origin * Vector3(1, 0, 1), delta * TURN_SPEED)
-			if attack_position.origin.distance_to(target.transform.origin) < ATTACK_ANIMATION_DISTANCE:
-				attack_position.origin = attack_position.origin.move_toward(target.transform.origin * Vector3(-1, 0, -1), delta * TURN_SPEED)
+			if target in melee_targets and animation_state.get_current_node() != "Throw":
+				# Move toward the enemy if too far, move away if too close
+				if attack_position.origin.distance_to(target.transform.origin) > ATTACK_ANIMATION_DISTANCE:
+					attack_position.origin = attack_position.origin.move_toward(target.transform.origin * Vector3(1, 0, 1), delta * TURN_SPEED)
+				if attack_position.origin.distance_to(target.transform.origin) < ATTACK_ANIMATION_DISTANCE:
+					attack_position.origin = attack_position.origin.move_toward(target.transform.origin * Vector3(-1, 0, -1), delta * TURN_SPEED)
+				
+				animation_state.travel("Punch")
+			elif target in ranged_targets and animation_state.get_current_node() != "Punch":
+				animation_state.travel("Throw")
 			
 			# Apply everything
 			transform = transform.interpolate_with(attack_position, delta * TURN_SPEED)
-			
-			animation_state.travel("Attack")
 			running = false
 
 func hit_state():
@@ -198,17 +205,14 @@ func _on_melee_range_body_entered(body):
 	var enemies = get_tree().get_nodes_in_group("Enemies")
 	if body not in melee_targets && body in enemies:
 		melee_targets.append(body)
-		if not target:
+		if not target and not ranged_mode:
 			target = body
 
 func _on_melee_range_body_exited(body):
 	if body in melee_targets:
 		melee_targets.erase(body)
 		if body == target:
-			if not melee_targets.is_empty():
-				target = melee_targets[0]
-			else:
-				target = null
+			_get_new_target()
 
 func targeted():
 	targeted_times += 1
@@ -266,9 +270,26 @@ func is_invulnerable():
 
 func _on_far_range_body_entered(body):
 	var enemies = get_tree().get_nodes_in_group("Enemies")
-	if body not in far_targets && body in enemies:
-		far_targets.append(body)
+	if body not in ranged_targets && body in enemies:
+		ranged_targets.append(body)
+		if not target and ranged_mode:
+			target = body
 
 func _on_far_range_body_exited(body):
-	if body in far_targets:
-		far_targets.erase(body)
+	if body in ranged_targets:
+		ranged_targets.erase(body)
+	if body == target:
+		_get_new_target()
+
+# Toggle ranged mode or not and take the first target that had entered the respective range
+func toggle_ranged():
+	ranged_mode = not ranged_mode
+	_get_new_target()
+
+func _get_new_target():
+	if not ranged_mode and not melee_targets.is_empty():
+		target = melee_targets[0]
+	elif ranged_mode and not ranged_targets.is_empty():
+		target = ranged_targets[0]
+	else:
+		target = null

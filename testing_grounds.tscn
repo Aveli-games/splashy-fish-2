@@ -40,7 +40,7 @@ normal_scale = 5.67
 uv1_scale = Vector3(0.23, 0.23, 0.23)
 uv1_triplanar = true
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_468wm"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_3c5n3"]
 viewport_path = NodePath("DiceRollCanvas/DiceRollViewport")
 
 [node name="testing_grounds" type="Node" groups=["RollPause"]]
@@ -126,7 +126,7 @@ visible = false
 [node name="DiceRollSprite" type="Sprite2D" parent="DiceRollCanvas"]
 position = Vector2(832, 336)
 scale = Vector2(0.671875, 0.671875)
-texture = SubResource("ViewportTexture_468wm")
+texture = SubResource("ViewportTexture_3c5n3")
 
 [node name="DiceRollViewport" parent="DiceRollCanvas" instance=ExtResource("8_r8ovj")]
 
