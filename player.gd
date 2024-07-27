@@ -29,6 +29,8 @@ const CAMERA_SMOOTHING = .85
 const ACTIVE_COLOR = Color("#2bff0071")
 const INACTIVE_COLOR = Color("#ffffff71")
 
+var target_change_threshold = 100 * Globals.mouse_sensitivity
+
 var camera_y: float
 
 var state = states.MOVING
@@ -51,6 +53,7 @@ var cur_speed = WALK_SPEED
 var blocking = false
 
 var ranged_mode = false
+var ranged_target_change = 0
 
 var attack_hit = true
 
@@ -297,3 +300,24 @@ func _get_new_target():
 		target = ranged_targets[0]
 	else:
 		target = null
+
+func _input(event):
+	if event is InputEventMouseMotion:
+		# TODO: Update this to cycle through possible targets from left to right,
+			#		rather than in the order that they entered the ranged_targets array
+		if ranged_mode and target and target in ranged_targets:
+			ranged_target_change += event.relative.x
+			if ranged_target_change >= target_change_threshold:
+				ranged_target_change = 0
+				if target == ranged_targets.back():
+					target = ranged_targets.front()
+				else:
+					target = ranged_targets[ranged_targets.find(target) + 1]
+			elif -ranged_target_change >= target_change_threshold:
+				ranged_target_change = 0
+				if target == ranged_targets.front():
+					target = ranged_targets.back()
+				else:
+					target = ranged_targets[ranged_targets.find(target) - 1]
+		else:
+			ranged_target_change = 0
