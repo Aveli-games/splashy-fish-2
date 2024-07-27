@@ -79,8 +79,7 @@ func _ready():
 	$HealthBarView/HealthBar.value = health
 
 func _physics_process(delta):
-	if Input.is_action_pressed("aim_ranged") != ranged_mode:
-		toggle_ranged()
+	toggle_ranged(Input.is_action_pressed("aim_ranged"))
 	
 	if Input.is_action_pressed("block") and state != states.KNOCKBACK:
 		if not blocking:
@@ -282,9 +281,11 @@ func _on_far_range_body_exited(body):
 		_get_new_target()
 
 # Toggle ranged mode or not and take the first target that had entered the respective range
-func toggle_ranged():
-	ranged_mode = not ranged_mode
-	_get_new_target()
+func toggle_ranged(is_ranged):
+	if ranged_mode != is_ranged:
+		ranged_mode = not ranged_mode
+		_get_new_target()
+		camera_controller.toggle_mouse_control(not ranged_mode)
 
 func _get_new_target():
 	if not ranged_mode and not melee_targets.is_empty():

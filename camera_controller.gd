@@ -4,12 +4,13 @@ extends Marker3D
 
 var mouse_position = Vector2.ZERO
 var total_pitch = 0.0
+var mouse_control = true
 
 func _process(delta):
 	transform.basis = transform.basis.orthonormalized()
 
 func _input(event):
-	if event is InputEventMouseMotion:
+	if mouse_control and event is InputEventMouseMotion:
 		mouse_position = event.relative * sensitivity
 		var yaw = mouse_position.x
 		var pitch = -mouse_position.y
@@ -21,3 +22,7 @@ func _input(event):
 	
 		rotate_y(deg_to_rad(-yaw))
 		rotate_object_local(Vector3(1,0,0), deg_to_rad(-pitch))
+
+func toggle_mouse_control(is_mouse_controlled):
+	if mouse_control != is_mouse_controlled:
+		mouse_control = not mouse_control
