@@ -120,6 +120,7 @@ func _physics_process(delta):
 	
 	$Abilities/Run/StaminaBarView/StaminaBar.value = stamina
 	
+	camera_controller.toggle_mouse_control(not (ranged_mode and target and target in ranged_targets))
 	camera_controller.global_position = global_position.lerp(camera_controller.global_position, CAMERA_SMOOTHING)
 	camera_controller.global_position.y = camera_y
 
@@ -131,6 +132,9 @@ func move_state(delta):
 		running = false
 	
 	var input_dir = Input.get_vector("move_right", "move_left", "move_back", "move_forward")
+	
+	if ranged_mode and target and target in ranged_targets:
+		camera_controller.transform.basis = camera_controller.transform.basis.slerp(transform.looking_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true).basis, delta * TURN_SPEED) 
 	
 	if input_dir != Vector2.ZERO:
 		if running:
@@ -285,7 +289,6 @@ func toggle_ranged(is_ranged):
 	if ranged_mode != is_ranged:
 		ranged_mode = not ranged_mode
 		_get_new_target()
-		camera_controller.toggle_mouse_control(not ranged_mode)
 
 func _get_new_target():
 	if not ranged_mode and not melee_targets.is_empty():
