@@ -40,7 +40,7 @@ normal_scale = 5.67
 uv1_scale = Vector3(0.23, 0.23, 0.23)
 uv1_triplanar = true
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_3c5n3"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_v2gna"]
 viewport_path = NodePath("DiceRollCanvas/DiceRollViewport")
 
 [node name="testing_grounds" type="Node" groups=["RollPause"]]
@@ -108,6 +108,7 @@ script = ExtResource("6_evar8")
 focus_point = NodePath("..")
 
 [node name="Camera3D" type="Camera3D" parent="CameraController/SpringArm3D"]
+transform = Transform3D(1, 2.84217e-14, -2.84217e-14, 0, 1, 0, 0, 0, 1, 1.25155e-06, -10.123, 10.123)
 cull_mask = 1048063
 
 [node name="Objective" parent="." groups=["PlayerTargets"] instance=ExtResource("6_i4xss")]
@@ -126,7 +127,7 @@ visible = false
 [node name="DiceRollSprite" type="Sprite2D" parent="DiceRollCanvas"]
 position = Vector2(832, 336)
 scale = Vector2(0.671875, 0.671875)
-texture = SubResource("ViewportTexture_3c5n3")
+texture = SubResource("ViewportTexture_v2gna")
 
 [node name="DiceRollViewport" parent="DiceRollCanvas" instance=ExtResource("8_r8ovj")]
 

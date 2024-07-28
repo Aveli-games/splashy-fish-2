@@ -7,6 +7,7 @@ signal roll_requested(player: Player)
 signal roll_result_recieved
 
 @export var camera_controller : Marker3D
+@export var projectile_scene : PackedScene
 
 enum states {
 	MOVING = Globals.movement_states.MOVING,
@@ -82,7 +83,8 @@ func _ready():
 	$HealthBarView/HealthBar.value = health
 
 func _physics_process(delta):
-	toggle_ranged(Input.is_action_pressed("aim_ranged"))
+	if state != states.ATTACKING:
+		toggle_ranged(Input.is_action_pressed("aim_ranged"))
 	
 	if Input.is_action_pressed("block") and state != states.KNOCKBACK:
 		if not blocking:
@@ -304,8 +306,8 @@ func _get_new_target():
 func _input(event):
 	if event is InputEventMouseMotion:
 		# TODO: Update this to cycle through possible targets from left to right,
-			#		rather than in the order that they entered the ranged_targets array
-		if ranged_mode and target and target in ranged_targets:
+			#       rather than in the order that they entered the ranged_targets array
+		if ranged_mode and animation_state.get_current_node() != "Throw" and target and target in ranged_targets:
 			ranged_target_change += event.relative.x
 			if ranged_target_change >= target_change_threshold:
 				ranged_target_change = 0
@@ -321,3 +323,11 @@ func _input(event):
 					target = ranged_targets[ranged_targets.find(target) - 1]
 		else:
 			ranged_target_change = 0
+
+func throw_donut():
+	if target and target in ranged_targets:
+		var right_hand_bone = $Armature/Skeleton3D.find_bone("mixamorig1_RightHand")
+		var right_hand_bone_position = $Armature/Skeleton3D.global_transform * $Armature/Skeleton3D.get_bone_global_pose(right_hand_bone)
+		var projectile = projectile_scene.instantiate()
+		add_sibling(projectile)
+		projectile.fire(1, 10, right_hand_bone_position.origin, target)

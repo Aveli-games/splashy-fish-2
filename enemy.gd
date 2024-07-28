@@ -188,3 +188,6 @@ func _on_action_animation_finished(call_state):
 
 func _on_death_animation_finished():
 	queue_free()
+
+func get_targeting_position():
+	return transform.origin + $TargetingPostion.transform.origin
