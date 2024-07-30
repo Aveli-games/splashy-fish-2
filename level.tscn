@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://detjvvnieryge" path="res://player.tscn" id="5_jkfui"]
 [ext_resource type="Script" path="res://camera.gd" id="6_d64wc"]
 [ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="6_ue0ya"]
+[ext_resource type="Texture2D" uid="uid://4g6gx3hnwe5r" path="res://dice_roll_view.tres" id="9_60bf3"]
 [ext_resource type="PackedScene" uid="uid://cef320n1hmlrj" path="res://dice_roll_viewport.tscn" id="9_impms"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pmljg"]
@@ -50,9 +51,6 @@ point_count = 5
 fog_density = 0.1
 volumetric_fog_enabled = true
 volumetric_fog_density = 0.15
-
-[sub_resource type="ViewportTexture" id="ViewportTexture_gu84b"]
-viewport_path = NodePath("DiceRollCanvas/DiceRollViewport")
 
 [node name="Level" type="Node" groups=["RollPause"]]
 process_mode = 3
@@ -699,7 +697,7 @@ visible = false
 [node name="DiceRollSprite" type="Sprite2D" parent="DiceRollCanvas"]
 position = Vector2(832, 336)
 scale = Vector2(0.671875, 0.671875)
-texture = SubResource("ViewportTexture_gu84b")
+texture = ExtResource("9_60bf3")
 
 [node name="DiceRollViewport" parent="DiceRollCanvas" instance=ExtResource("9_impms")]
 

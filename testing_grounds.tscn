@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://camera_controller.gd" id="5_3du0x"]
 [ext_resource type="Script" path="res://camera.gd" id="6_evar8"]
 [ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="6_i4xss"]
+[ext_resource type="Texture2D" uid="uid://4g6gx3hnwe5r" path="res://dice_roll_view.tres" id="8_b4dp5"]
 [ext_resource type="PackedScene" uid="uid://cef320n1hmlrj" path="res://dice_roll_viewport.tscn" id="8_r8ovj"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pmljg"]
@@ -39,9 +40,6 @@ albedo_texture = ExtResource("3_6tqpp")
 normal_scale = 5.67
 uv1_scale = Vector3(0.23, 0.23, 0.23)
 uv1_triplanar = true
-
-[sub_resource type="ViewportTexture" id="ViewportTexture_v2gna"]
-viewport_path = NodePath("DiceRollCanvas/DiceRollViewport")
 
 [node name="testing_grounds" type="Node" groups=["RollPause"]]
 script = ExtResource("1_b75ur")
@@ -127,7 +125,7 @@ visible = false
 [node name="DiceRollSprite" type="Sprite2D" parent="DiceRollCanvas"]
 position = Vector2(832, 336)
 scale = Vector2(0.671875, 0.671875)
-texture = SubResource("ViewportTexture_v2gna")
+texture = ExtResource("8_b4dp5")
 
 [node name="DiceRollViewport" parent="DiceRollCanvas" instance=ExtResource("8_r8ovj")]
 

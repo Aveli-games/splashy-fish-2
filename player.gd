@@ -214,7 +214,7 @@ func _on_melee_range_body_entered(body):
 	if body not in melee_targets && body in enemies:
 		melee_targets.append(body)
 		if not target and not ranged_mode:
-			target = body
+			_set_target(body)
 
 func _on_melee_range_body_exited(body):
 	if body in melee_targets:
@@ -281,7 +281,7 @@ func _on_far_range_body_entered(body):
 	if body not in ranged_targets && body in enemies:
 		ranged_targets.append(body)
 		if not target and ranged_mode:
-			target = body
+			_set_target(body)
 
 func _on_far_range_body_exited(body):
 	if body in ranged_targets:
@@ -295,13 +295,23 @@ func toggle_ranged(is_ranged):
 		ranged_mode = not ranged_mode
 		_get_new_target()
 
+func _set_target(new_target):
+	if target:
+		target.untargeted()
+	target = new_target
+	if target:
+		target.targeted()
+
 func _get_new_target():
+	var new_target
 	if not ranged_mode and not melee_targets.is_empty():
-		target = melee_targets[0]
+		new_target = melee_targets[0]
 	elif ranged_mode and not ranged_targets.is_empty():
-		target = ranged_targets[0]
+		new_target = ranged_targets[0]
 	else:
-		target = null
+		new_target = null
+	
+	_set_target(new_target)
 
 func _input(event):
 	if event is InputEventMouseMotion:
@@ -312,15 +322,15 @@ func _input(event):
 			if ranged_target_change >= target_change_threshold:
 				ranged_target_change = 0
 				if target == ranged_targets.back():
-					target = ranged_targets.front()
+					_set_target(ranged_targets.front())
 				else:
-					target = ranged_targets[ranged_targets.find(target) + 1]
+					_set_target(ranged_targets[ranged_targets.find(target) + 1])
 			elif -ranged_target_change >= target_change_threshold:
 				ranged_target_change = 0
 				if target == ranged_targets.front():
-					target = ranged_targets.back()
+					_set_target(ranged_targets.back())
 				else:
-					target = ranged_targets[ranged_targets.find(target) - 1]
+					_set_target(ranged_targets[ranged_targets.find(target) - 1])
 		else:
 			ranged_target_change = 0
 
