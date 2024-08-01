@@ -44,7 +44,8 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_fsqku")
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_flkv2"]
-height = 1.0
+height = 1.28869
+radius = 0.447949
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_n0vyl"]
 viewport_path = NodePath("HealthBarView")
@@ -60,7 +61,7 @@ mesh = SubResource("ArrayMesh_flvrc")
 skeleton = NodePath("")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.651621, 0)
 shape = SubResource("CylinderShape3D_flkv2")
 
 [node name="HealthBarSprite" type="Sprite3D" parent="."]

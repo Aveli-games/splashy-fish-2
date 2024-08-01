@@ -1,5 +1,7 @@
 extends Node
 
+var mouse_sensitivity = 2
+
 enum movement_states {
 	MOVING,
 	ATTACKING,
