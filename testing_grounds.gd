@@ -26,7 +26,7 @@ func _process(delta):
 		# Spawn the enemy by adding it to the Main scene.
 		add_child(enemy)
 		
-		# We connect the mob to the score label to update the score upon squashing one.
+		# We connect the mob's signal to give it a new target when none found.
 		enemy.no_target_found.connect(_on_enemy_no_target_found.bind())
 
 func _on_player_died():
