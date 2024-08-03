@@ -41,9 +41,11 @@ var health = max_health
 var melee_damage = 1
 
 var max_stamina = 100
-var stamina_use_rate = 10 # Amount per second
+var stamina_use_rate = -10 # Amount per second
 var stamina_regen_rate = 10 # Amount per second
 var stamina = max_stamina
+
+var roll_fail_threshold = 4 #~9% chance to fail
 
 var targeted_times = 0
 var health_bar_modulate
@@ -120,10 +122,8 @@ func _physics_process(delta):
 		velocity.y -= gravity * delta
 	
 	move_and_slide()
-	if not running:
-		stamina = clamp(stamina + stamina_regen_rate * delta, 0, 100)
-	
-	$Abilities/Run/StaminaBarView/StaminaBar.value = stamina
+	if not running and state == states.MOVING:
+		_change_stamina(stamina_regen_rate * delta)
 	
 	camera_controller.toggle_mouse_control(not (ranged_mode and target and target in ranged_targets))
 	camera_controller.global_position = global_position.lerp(camera_controller.global_position, CAMERA_SMOOTHING)
@@ -146,7 +146,7 @@ func move_state(delta):
 			animation_tree.set("parameters/Run/Run/blend_position", input_dir)
 			animation_state.travel("Run")
 			cur_speed = RUN_SPEED
-			stamina = clamp(stamina - stamina_use_rate * delta, 0, 100)
+			_change_stamina(stamina_use_rate * delta)
 		elif not running:
 			animation_tree.set("parameters/Walk/blend_position", input_dir)
 			animation_state.travel("Walk")
@@ -193,21 +193,24 @@ func death_state():
 	animation_state.travel("Die")
 
 func on_hit(damage):
-	health = clamp(health - damage, 0, max_health)
-	$HealthBarView/HealthLabel.text = str(health)
-	$HealthBarView/HealthBar.value = health
+	damage = -abs(damage) # Make sure damage is negative
+	_change_health(damage)
 	if health > 0:
 		state = states.HIT
-	else:
-		$CollisionShape3D.queue_free()
-		state = states.DYING
-		
+
 func on_block():
 	state = states.BLOCKING
 
 # TODO: react to kicks from different angles
-func on_knockback():
-	state = states.KNOCKBACK
+func on_knockback(stamina_damage):
+	stamina_damage = -abs(stamina_damage) # Make sure stam damage is negative
+	if stamina >= -stamina_damage / 2:
+		_change_stamina(stamina_damage)
+	else:
+		_change_health(-1)
+	
+	if health > 0:
+		state = states.KNOCKBACK
 
 func _on_melee_range_body_entered(body):
 	var enemies = get_tree().get_nodes_in_group("Enemies")
@@ -241,7 +244,7 @@ func attack_check():
 		roll_requested.emit(self)
 		await roll_result_recieved
 		
-		if latest_dice_roll <= 4: #~9% chance to miss
+		if latest_dice_roll <= roll_fail_threshold:
 			attack_hit = false
 			if attack_target:
 				attack_target.on_miss()
@@ -341,3 +344,15 @@ func throw_donut():
 		var projectile = projectile_scene.instantiate()
 		add_sibling(projectile)
 		projectile.fire(1, 10, right_hand_bone_position.origin, target)
+
+func _change_stamina(stamina_change):
+	stamina = clamp(stamina + stamina_change, 0, max_stamina)
+	$Abilities/Run/StaminaBarView/StaminaBar.value = stamina
+
+func _change_health(health_change):
+	health = clamp(health + health_change, 0, max_health)
+	$HealthBarView/HealthLabel.text = str(health)
+	$HealthBarView/HealthBar.value = health
+	if health <= 0:
+		$CollisionShape3D.queue_free()
+		state = states.DYING
