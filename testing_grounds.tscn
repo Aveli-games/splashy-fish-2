@@ -110,6 +110,7 @@ transform = Transform3D(1, 2.84217e-14, -2.84217e-14, 0, 1, 0, 0, 0, 1, 1.25155e
 cull_mask = 1048063
 
 [node name="Objective" parent="." groups=["PlayerTargets"] instance=ExtResource("6_i4xss")]
+transform = Transform3D(2.315, 0, 0, 0, 2.315, 0, 0, 0, 2.315, 0, 0, 0)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.927615, -0.197912, -0.316799, 0.373538, 0.491479, 0.786713, 0, -0.848104, 0.52983, -3.14224, 7.12791, 4.88478)
