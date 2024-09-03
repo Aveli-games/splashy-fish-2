@@ -1,6 +1,7 @@
 extends Node
 
 @export var enemy_scene: PackedScene
+@export var bird_scene: PackedScene
 
 var roll_requester
 # Called when the node enters the scene tree for the first time.
@@ -12,6 +13,7 @@ func _process(delta):
 	if Input.is_action_just_pressed("spawn_enemy"):
 		# Create a new instance of the Enemy scene.
 		var enemy = enemy_scene.instantiate()
+		var bird = bird_scene.instantiate()
 
 		# Choose a random location on the SpawnPath.
 		# We store the reference to the SpawnLocation node.
@@ -22,9 +24,11 @@ func _process(delta):
 		# Assign the objective as the enemy's target 
 		var objective = get_node("Objective")
 		enemy.initialize(enemy_spawn_location.position, objective)
+		bird.initialize(enemy_spawn_location.position, objective)
 
 		# Spawn the enemy by adding it to the Main scene.
 		add_child(enemy)
+		add_child(bird)
 		
 		# We connect the mob's signal to give it a new target when none found.
 		enemy.no_target_found.connect(_on_enemy_no_target_found.bind())
