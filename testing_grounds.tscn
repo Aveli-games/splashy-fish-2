@@ -110,6 +110,7 @@ focus_point = NodePath("..")
 [node name="Camera3D" type="Camera3D" parent="CameraController/SpringArm3D"]
 transform = Transform3D(1, 2.84217e-14, -2.84217e-14, 0, 1, 0, 0, 0, 1, 1.25155e-06, -10.123, 10.123)
 cull_mask = 1048063
+current = true
 
 [node name="Objective" parent="." groups=["PlayerTargets"] instance=ExtResource("6_i4xss")]
 transform = Transform3D(2.315, 0, 0, 0, 2.315, 0, 0, 0, 2.315, 0, 0, 0)
