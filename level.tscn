@@ -1,8 +1,9 @@
-[gd_scene load_steps=21 format=3 uid="uid://b20ptif3dcpca"]
+[gd_scene load_steps=22 format=3 uid="uid://b20ptif3dcpca"]
 
 [ext_resource type="Texture2D" uid="uid://8ogwg62w5cje" path="res://TCom_GrassMedium2_header.jpg" id="1_fdcor"]
 [ext_resource type="Script" path="res://level.gd" id="1_x5dvp"]
 [ext_resource type="PackedScene" uid="uid://qt3pkvldp4ub" path="res://enemy.tscn" id="2_6av1r"]
+[ext_resource type="PackedScene" uid="uid://wss5yuovhjbm" path="res://xxx_bottle.tscn" id="3_4o3sx"]
 [ext_resource type="Script" path="res://camera_controller.gd" id="3_fumwc"]
 [ext_resource type="PackedScene" uid="uid://cc8g11lvq6my3" path="res://tree.tscn" id="4_by425"]
 [ext_resource type="PackedScene" uid="uid://detjvvnieryge" path="res://player.tscn" id="5_jkfui"]
@@ -56,6 +57,7 @@ volumetric_fog_density = 0.15
 process_mode = 3
 script = ExtResource("1_x5dvp")
 enemy_scene = ExtResource("2_6av1r")
+bottle_scene = ExtResource("3_4o3sx")
 
 [node name="Boundaries" type="Node3D" parent="."]
 
