@@ -1,13 +1,15 @@
-[gd_scene load_steps=21 format=3 uid="uid://b20ptif3dcpca"]
+[gd_scene load_steps=23 format=3 uid="uid://b20ptif3dcpca"]
 
 [ext_resource type="Texture2D" uid="uid://8ogwg62w5cje" path="res://TCom_GrassMedium2_header.jpg" id="1_fdcor"]
 [ext_resource type="Script" path="res://level.gd" id="1_x5dvp"]
 [ext_resource type="PackedScene" uid="uid://qt3pkvldp4ub" path="res://enemy.tscn" id="2_6av1r"]
+[ext_resource type="PackedScene" path="res://xxx_bottle.tscn" id="3_4o3sx"]
 [ext_resource type="Script" path="res://camera_controller.gd" id="3_fumwc"]
 [ext_resource type="PackedScene" uid="uid://cc8g11lvq6my3" path="res://tree.tscn" id="4_by425"]
 [ext_resource type="PackedScene" uid="uid://detjvvnieryge" path="res://player.tscn" id="5_jkfui"]
 [ext_resource type="Script" path="res://camera.gd" id="6_d64wc"]
 [ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="6_ue0ya"]
+[ext_resource type="PackedScene" uid="uid://d18skw3klu537" path="res://outhouses.tscn" id="7_smpgf"]
 [ext_resource type="Texture2D" uid="uid://4g6gx3hnwe5r" path="res://dice_roll_view.tres" id="9_60bf3"]
 [ext_resource type="PackedScene" uid="uid://cef320n1hmlrj" path="res://dice_roll_viewport.tscn" id="9_impms"]
 
@@ -56,6 +58,7 @@ volumetric_fog_density = 0.15
 process_mode = 3
 script = ExtResource("1_x5dvp")
 enemy_scene = ExtResource("2_6av1r")
+bottle_scene = ExtResource("3_4o3sx")
 
 [node name="Boundaries" type="Node3D" parent="."]
 
@@ -664,6 +667,9 @@ transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -25, 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8.096)
 camera_controller = NodePath("../CameraController")
 
+[node name="Outhouses" parent="." instance=ExtResource("7_smpgf")]
+transform = Transform3D(0.6426, 0, -0.766201, 0, 1, 0, 0.766201, 0, 0.6426, 0, 0, 0)
+
 [node name="CameraController" type="Marker3D" parent="."]
 process_mode = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.48453, -8.09621)
@@ -671,6 +677,8 @@ script = ExtResource("3_fumwc")
 
 [node name="SpringArm3D" type="SpringArm3D" parent="CameraController" node_paths=PackedStringArray("focus_point")]
 transform = Transform3D(-1, -6.18171e-08, 6.18171e-08, 0, 0.707107, 0.707107, -8.74226e-08, 0.707107, -0.707107, 0, 1.05544, -1.70543)
+collision_mask = 5
+margin = 0.05
 script = ExtResource("6_d64wc")
 focus_point = NodePath("..")
 

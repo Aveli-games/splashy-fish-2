@@ -1,8 +1,9 @@
-[gd_scene load_steps=18 format=3 uid="uid://couqrrov0i003"]
+[gd_scene load_steps=19 format=3 uid="uid://couqrrov0i003"]
 
 [ext_resource type="Script" path="res://testing_grounds.gd" id="1_b75ur"]
 [ext_resource type="PackedScene" uid="uid://qt3pkvldp4ub" path="res://enemy.tscn" id="2_jpsqg"]
 [ext_resource type="Texture2D" uid="uid://8ogwg62w5cje" path="res://TCom_GrassMedium2_header.jpg" id="3_6tqpp"]
+[ext_resource type="PackedScene" uid="uid://cdy533f6s0xa5" path="res://bird_cop.tscn" id="3_byqqa"]
 [ext_resource type="PackedScene" uid="uid://detjvvnieryge" path="res://player.tscn" id="4_qed8c"]
 [ext_resource type="Script" path="res://camera_controller.gd" id="5_3du0x"]
 [ext_resource type="Script" path="res://camera.gd" id="6_evar8"]
@@ -44,6 +45,7 @@ uv1_triplanar = true
 [node name="testing_grounds" type="Node" groups=["RollPause"]]
 script = ExtResource("1_b75ur")
 enemy_scene = ExtResource("2_jpsqg")
+bird_scene = ExtResource("3_byqqa")
 
 [node name="Boundaries" type="Node3D" parent="."]
 
@@ -108,6 +110,7 @@ focus_point = NodePath("..")
 [node name="Camera3D" type="Camera3D" parent="CameraController/SpringArm3D"]
 transform = Transform3D(1, 2.84217e-14, -2.84217e-14, 0, 1, 0, 0, 0, 1, 1.25155e-06, -10.123, 10.123)
 cull_mask = 1048063
+current = true
 
 [node name="Objective" parent="." groups=["PlayerTargets"] instance=ExtResource("6_i4xss")]
 transform = Transform3D(2.315, 0, 0, 0, 2.315, 0, 0, 0, 2.315, 0, 0, 0)

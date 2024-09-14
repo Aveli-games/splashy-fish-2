@@ -1,18 +1,33 @@
 extends Node
 
 @export var enemy_scene: PackedScene
+@export var bottle_scene: PackedScene
 
 var roll_requester
+var objective
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	objective = get_node("Objective")
 	var rng = RandomNumberGenerator.new()
 	rng.seed = hash("Splashy")
+	
+	# Move trees to pseudorandom locations for a more organic forest feel
 	for tree_line in $Boundaries/TreeLines.get_children():
 		for tree in tree_line.get_children():
 			var tree_scale = rng.randf_range(2.4, 5)
 			tree.scale = Vector3(tree_scale, tree_scale, tree_scale)
 			tree.position.x = rng.randi_range(-25, -15)
+	
+	# Spawn in some bottles to make the play area a little more interesting
+	for n in 10:
+		var bottle = bottle_scene.instantiate()
+		
+		# Place the bottle a random distance from and y-axis rotation around the objective
+		bottle.global_position = objective.global_position + Vector3(rng.randi_range(2, 5), 0, 0).rotated(Vector3.UP, deg_to_rad(rng.randi_range(0, 360)))
+		
+		add_child(bottle)
+	
 
 func _on_player_died():
 	if get_tree():
@@ -34,7 +49,6 @@ func _on_enemy_spawn_timer_timeout():
 		enemy_spawn_location.progress_ratio = randf()
 
 		# Assign the objective as the enemy's target 
-		var objective = get_node("Objective")
 		enemy.initialize(enemy_spawn_location.position, objective)
 
 		# Spawn the enemy by adding it to the Main scene.
@@ -44,7 +58,7 @@ func _on_enemy_spawn_timer_timeout():
 		enemy.no_target_found.connect(_on_enemy_no_target_found.bind())
 	
 func _on_enemy_no_target_found(enemy):
-	enemy.set_target(get_node("Objective"))
+	enemy.set_target(objective)
 
 func _on_player_roll_requested(player):
 	# Speed up time while rolling so the simulation goes quick
