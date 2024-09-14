@@ -1,17 +1,16 @@
-[gd_scene load_steps=23 format=3 uid="uid://b20ptif3dcpca"]
+[gd_scene load_steps=22 format=3 uid="uid://b20ptif3dcpca"]
 
 [ext_resource type="Texture2D" uid="uid://8ogwg62w5cje" path="res://TCom_GrassMedium2_header.jpg" id="1_fdcor"]
 [ext_resource type="Script" path="res://level.gd" id="1_x5dvp"]
 [ext_resource type="PackedScene" uid="uid://qt3pkvldp4ub" path="res://enemy.tscn" id="2_6av1r"]
-[ext_resource type="PackedScene" path="res://xxx_bottle.tscn" id="3_4o3sx"]
+[ext_resource type="PackedScene" uid="uid://wss5yuovhjbm" path="res://xxx_bottle.tscn" id="3_4o3sx"]
 [ext_resource type="Script" path="res://camera_controller.gd" id="3_fumwc"]
 [ext_resource type="PackedScene" uid="uid://cc8g11lvq6my3" path="res://tree.tscn" id="4_by425"]
 [ext_resource type="PackedScene" uid="uid://detjvvnieryge" path="res://player.tscn" id="5_jkfui"]
 [ext_resource type="Script" path="res://camera.gd" id="6_d64wc"]
 [ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="6_ue0ya"]
 [ext_resource type="PackedScene" uid="uid://d18skw3klu537" path="res://outhouses.tscn" id="7_smpgf"]
-[ext_resource type="Texture2D" uid="uid://4g6gx3hnwe5r" path="res://dice_roll_view.tres" id="9_60bf3"]
-[ext_resource type="PackedScene" uid="uid://cef320n1hmlrj" path="res://dice_roll_viewport.tscn" id="9_impms"]
+[ext_resource type="PackedScene" uid="uid://bq82meappt10a" path="res://dice_roll_canvas.tscn" id="11_v5ola"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pmljg"]
 size = Vector3(0, 50, 50)
@@ -59,6 +58,7 @@ process_mode = 3
 script = ExtResource("1_x5dvp")
 enemy_scene = ExtResource("2_6av1r")
 bottle_scene = ExtResource("3_4o3sx")
+dice_roller_scene = ExtResource("11_v5ola")
 
 [node name="Boundaries" type="Node3D" parent="."]
 
@@ -698,19 +698,9 @@ omni_attenuation = 0.757858
 wait_time = 2.0
 autostart = true
 
-[node name="DiceRollCanvas" type="CanvasLayer" parent="."]
-process_mode = 1
-visible = false
-
-[node name="DiceRollSprite" type="Sprite2D" parent="DiceRollCanvas"]
-position = Vector2(832, 336)
-scale = Vector2(0.671875, 0.671875)
-texture = ExtResource("9_60bf3")
-
-[node name="DiceRollViewport" parent="DiceRollCanvas" instance=ExtResource("9_impms")]
+[node name="HUD" type="CanvasLayer" parent="."]
 
 [connection signal="died" from="Player" to="." method="_on_player_died"]
 [connection signal="roll_requested" from="Player" to="." method="_on_player_roll_requested"]
 [connection signal="died" from="Objective" to="." method="_on_objective_died"]
 [connection signal="timeout" from="EnemySpawnTimer" to="." method="_on_enemy_spawn_timer_timeout"]
-[connection signal="roll_finished" from="DiceRollCanvas/DiceRollViewport" to="." method="_on_roll_finished"]
