@@ -1,35 +1,31 @@
 extends Node
 
+signal roll_requested
+
 @export var enemy_scene: PackedScene
 @export var bottle_scene: PackedScene
 @export var dice_roller_scene: PackedScene
 
 var roll_requester
 var objective
-var hud
-var dice_roll_canvas
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	hud = $HUD
-	dice_roll_canvas = _spawn_dice_roll_canvas()
 	objective = get_node("Objective")
-	var rng = RandomNumberGenerator.new()
-	rng.seed = hash("Splashy")
 	
 	# Move trees to pseudorandom locations for a more organic forest feel
 	for tree_line in $Boundaries/TreeLines.get_children():
 		for tree in tree_line.get_children():
-			var tree_scale = rng.randf_range(2.4, 5)
+			var tree_scale = Globals.rng.randf_range(2.4, 5)
 			tree.scale = Vector3(tree_scale, tree_scale, tree_scale)
-			tree.position.x = rng.randi_range(-25, -15)
+			tree.position.x = Globals.rng.randi_range(-25, -15)
 	
 	# Spawn in some bottles to make the play area a little more interesting
 	for n in 10:
 		var bottle = bottle_scene.instantiate()
 		
 		# Place the bottle a random distance from and y-axis rotation around the objective
-		bottle.global_position = objective.global_position + Vector3(rng.randi_range(2, 5), 0, 0).rotated(Vector3.UP, deg_to_rad(rng.randi_range(0, 360)))
+		bottle.global_position = objective.global_position + Vector3(Globals.rng.randi_range(2, 5), 0, 0).rotated(Vector3.UP, deg_to_rad(Globals.rng.randi_range(0, 360)))
 		
 		add_child(bottle)
 	
@@ -66,33 +62,4 @@ func _on_enemy_no_target_found(enemy):
 	enemy.set_target(objective)
 
 func _on_player_roll_requested(player):
-	# Speed up time while rolling so the simulation goes quick
-	# TODO: Add "Dice roll speed" setting in future options menu
-	get_tree().set_group_flags(0, "RollPause", "process_mode", PROCESS_MODE_DISABLED)
-	Engine.time_scale = 3
-	dice_roll_canvas.show()
-	roll_requester = player
-	dice_roll_canvas.get_node("DiceRollViewport").roll()
-
-func _on_roll_finished(value):
-	# Return time to normal speed
-	Engine.time_scale = 1
-	await get_tree().create_timer(.75).timeout # Give time for player to understand result
-	get_tree().set_group_flags(0, "RollPause", "process_mode", PROCESS_MODE_ALWAYS)
-	if roll_requester and roll_requester.has_method("set_roll_result"):
-		roll_requester.set_roll_result(value)
-		roll_requester = null
-	dice_roll_canvas.hide()
-
-func _spawn_dice_roll_canvas():
-		var dice_roller = dice_roller_scene.instantiate()
-
-		# Spawn the enemy by adding it to the Main scene.
-		hud.add_child(dice_roller)
-		
-		# We connect the enemy to the no target found signal so the level can assign the default
-		dice_roller.roll_finished.connect(_on_roll_finished.bind())
-		
-		dice_roller.hide()
-		
-		return dice_roller
+	roll_requested.emit(player)

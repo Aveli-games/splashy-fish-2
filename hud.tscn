@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://duvdptx2ya558"]
+
+[ext_resource type="Script" path="res://hud.gd" id="1_w38b1"]
+[ext_resource type="PackedScene" uid="uid://bq82meappt10a" path="res://dice_roll_canvas.tscn" id="2_v2x7h"]
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_w38b1")
+dice_roller_scene = ExtResource("2_v2x7h")

@@ -12,3 +12,6 @@ func _process(delta):
 
 func _on_dice_roll_viewport_roll_finished(value):
 	roll_finished.emit(value)
+
+func roll():
+	$DiceRollViewport.roll()

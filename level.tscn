@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://8ogwg62w5cje" path="res://TCom_GrassMedium2_header.jpg" id="1_fdcor"]
 [ext_resource type="Script" path="res://level.gd" id="1_x5dvp"]
 [ext_resource type="PackedScene" uid="uid://qt3pkvldp4ub" path="res://enemy.tscn" id="2_6av1r"]
-[ext_resource type="PackedScene" uid="uid://wss5yuovhjbm" path="res://xxx_bottle.tscn" id="3_4o3sx"]
+[ext_resource type="PackedScene" path="res://xxx_bottle.tscn" id="3_4o3sx"]
 [ext_resource type="Script" path="res://camera_controller.gd" id="3_fumwc"]
 [ext_resource type="PackedScene" uid="uid://cc8g11lvq6my3" path="res://tree.tscn" id="4_by425"]
 [ext_resource type="PackedScene" uid="uid://detjvvnieryge" path="res://player.tscn" id="5_jkfui"]
@@ -697,8 +697,6 @@ omni_attenuation = 0.757858
 [node name="EnemySpawnTimer" type="Timer" parent="."]
 wait_time = 2.0
 autostart = true
-
-[node name="HUD" type="CanvasLayer" parent="."]
 
 [connection signal="died" from="Player" to="." method="_on_player_died"]
 [connection signal="roll_requested" from="Player" to="." method="_on_player_roll_requested"]

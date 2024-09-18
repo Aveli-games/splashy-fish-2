@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://duf1ldght1qoj"
-path="res://.godot/imported/outhouses.glb-da147f4c25b21fc70fb3df54a047bc74.scn"
+path="res://.godot/imported/OutHouses.glb-c3c5e3a37cfc31cff6fb499aed8817d1.scn"
 
 [deps]
 
-source_file="res://Models/outhouses.glb"
-dest_files=["res://.godot/imported/outhouses.glb-da147f4c25b21fc70fb3df54a047bc74.scn"]
+source_file="res://Models/OutHouses.glb"
+dest_files=["res://.godot/imported/OutHouses.glb-c3c5e3a37cfc31cff6fb499aed8817d1.scn"]
 
 [params]
 

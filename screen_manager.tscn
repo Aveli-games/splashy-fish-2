@@ -1,9 +1,17 @@
-[gd_scene load_steps=2 format=3 uid="uid://bxq56d6rma7gn"]
+[gd_scene load_steps=4 format=3 uid="uid://bxq56d6rma7gn"]
 
+[ext_resource type="Script" path="res://screen_manager.gd" id="1_7yicb"]
 [ext_resource type="PackedScene" uid="uid://b20ptif3dcpca" path="res://level.tscn" id="1_yrxmi"]
+[ext_resource type="PackedScene" uid="uid://duvdptx2ya558" path="res://hud.tscn" id="2_3khgq"]
 
 [node name="ScreenManager" type="Node"]
 process_mode = 3
+script = ExtResource("1_7yicb")
+
+[node name="HUD" parent="." instance=ExtResource("2_3khgq")]
 
 [node name="Level" parent="." instance=ExtResource("1_yrxmi")]
 process_mode = 1
+
+[connection signal="roll_finished" from="HUD" to="." method="_on_roll_finished"]
+[connection signal="roll_requested" from="Level" to="." method="_on_roll_requested"]
