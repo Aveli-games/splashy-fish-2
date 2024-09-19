@@ -5,4 +5,9 @@
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_w38b1")
-dice_roller_scene = ExtResource("2_v2x7h")
+
+[node name="DiceRollCanvas" parent="." instance=ExtResource("2_v2x7h")]
+visible = false
+position = Vector2(841, 382)
+
+[connection signal="roll_finished" from="DiceRollCanvas" to="." method="_on_roll_finished"]

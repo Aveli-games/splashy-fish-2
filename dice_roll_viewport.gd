@@ -9,3 +9,6 @@ func _on_dice_roll_finished(value):
 func roll():
 	$RollTextOverlay/RollResult.text = ""
 	$DiceRoll.roll()
+
+func reset():
+	$RollTextOverlay/RollResult.text = ""
