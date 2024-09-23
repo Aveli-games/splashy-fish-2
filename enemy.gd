@@ -114,7 +114,7 @@ func kick(atk_target):
 	atk_target.on_knockback(kick_stamina_damage)
 
 # TODO: Redo the logic in this script to simply inform the target it is taking an attack
-#          The target should be what determines its reaction to the attack and report to this entity how ti reacted, if necessary
+#          The target should be what determines its reaction to the attack and report to this entity how it reacted, if necessary
 func attack_check():
 	attack_hit = false
 	if target.has_method("is_blocking") and target.is_blocking():

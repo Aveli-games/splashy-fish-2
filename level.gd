@@ -4,13 +4,14 @@ signal roll_requested
 
 @export var enemy_scene: PackedScene
 @export var bottle_scene: PackedScene
-@export var dice_roller_scene: PackedScene
 
+var camera_controller
 var roll_requester
 var objective
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	camera_controller = get_node("CameraController")
 	objective = get_node("Objective")
 	
 	# Move trees to pseudorandom locations for a more organic forest feel
@@ -63,3 +64,9 @@ func _on_enemy_no_target_found(enemy):
 
 func _on_player_roll_requested(player):
 	roll_requested.emit(player)
+
+func freeze_camera():
+	camera_controller.toggle_mouse_control(false)
+
+func unfreeze_camera():
+	camera_controller.toggle_mouse_control(true)

@@ -1,13 +1,21 @@
-[gd_scene load_steps=3 format=3 uid="uid://duvdptx2ya558"]
+[gd_scene load_steps=4 format=3 uid="uid://duvdptx2ya558"]
 
 [ext_resource type="Script" path="res://hud.gd" id="1_w38b1"]
 [ext_resource type="PackedScene" uid="uid://bq82meappt10a" path="res://dice_roll_canvas.tscn" id="2_v2x7h"]
+[ext_resource type="PackedScene" uid="uid://cpar6wi3hsdld" path="res://action_options.tscn" id="3_h0htw"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_w38b1")
 
 [node name="DiceRollCanvas" parent="." instance=ExtResource("2_v2x7h")]
+position = Vector2(622, 202)
+
+[node name="ActionOptions" parent="." instance=ExtResource("3_h0htw")]
 visible = false
-position = Vector2(841, 382)
+offset_left = 922.0
+offset_top = 259.0
+offset_right = 962.0
+offset_bottom = 299.0
 
 [connection signal="roll_finished" from="DiceRollCanvas" to="." method="_on_roll_finished"]
+[connection signal="option_chosen" from="ActionOptions" to="." method="_on_action_options_option_chosen"]

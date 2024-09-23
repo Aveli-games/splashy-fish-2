@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://dice_roll_canvas.gd" id="1_3bpgo"]
 [ext_resource type="PackedScene" uid="uid://cef320n1hmlrj" path="res://dice_roll_viewport.tscn" id="1_xf4lg"]
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_hrv0n"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_vhvhn"]
 viewport_path = NodePath("DiceRollViewport")
 
 [node name="DiceRollCanvas" type="Node2D"]
@@ -12,7 +12,8 @@ script = ExtResource("1_3bpgo")
 
 [node name="DiceRollSprite" type="Sprite2D" parent="."]
 scale = Vector2(0.671875, 0.671875)
-texture = SubResource("ViewportTexture_hrv0n")
+texture = SubResource("ViewportTexture_vhvhn")
+offset = Vector2(257.488, 257.488)
 
 [node name="DiceRollViewport" parent="." instance=ExtResource("1_xf4lg")]
 
