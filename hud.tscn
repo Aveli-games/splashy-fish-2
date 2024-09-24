@@ -8,6 +8,7 @@
 script = ExtResource("1_w38b1")
 
 [node name="DiceRollCanvas" parent="." instance=ExtResource("2_v2x7h")]
+visible = false
 position = Vector2(622, 202)
 
 [node name="ActionOptions" parent="." instance=ExtResource("3_h0htw")]

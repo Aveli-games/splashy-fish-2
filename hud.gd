@@ -27,10 +27,10 @@ func hide_dice_roll():
 func roll():
 	dice_roll_canvas.roll()
 
-func _on_action_options_option_chosen(number: int, label: String):
-	action_chosen.emit(number, label)
+func _on_action_options_option_chosen(number: int, id: int, data):
+	action_chosen.emit(id, data)
 	$ActionOptions.hide()
 	
-func show_action_options(options: Dictionary):
+func show_action_options(options: Array):
 	$ActionOptions.set_options(options)
 	$ActionOptions.show()

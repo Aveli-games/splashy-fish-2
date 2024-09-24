@@ -13,10 +13,10 @@ func _ready():
 func _process(delta):
 	pass
 
-func set_options(options: Dictionary):
+func set_options(options: Array):
 	options_list.clear()
-	for i in options.values().size():
-		options_list.add_option(options.values()[i])
+	for option in options:
+		options_list.add_option(option)
 
-func _on_option_chosen(number: int, label: String):
-	option_chosen.emit(number, label)
+func _on_option_chosen(number: int, id: int, data):
+	option_chosen.emit(number, id, data)

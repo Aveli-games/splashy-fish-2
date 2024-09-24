@@ -36,14 +36,14 @@ func _on_roll_finished(value):
 			level.freeze_camera()
 		if roll_requester.has_method("get_action_options"):
 			var action_options = roll_requester.get_action_options()
-			if action_options != {}:
+			if not action_options.is_empty():
 				hud.show_action_options(action_options)
 				return
 	_resume_play()
 
-func _on_hud_action_chosen(number: int, label: String):
+func _on_hud_action_chosen(id: int):
 	if roll_requester.has_method("set_action_choice"):
-		roll_requester.set_action_choice(number, label)
+		roll_requester.set_action_choice(id, null)
 	_resume_play()
 	
 func _resume_play():

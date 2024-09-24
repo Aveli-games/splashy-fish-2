@@ -82,15 +82,22 @@ var animation_tree
 var animation_state
 
 var latest_dice_roll = 0
-var cur_action_options = {}
-var cur_chosen_action = {"number": null, "name": ""}
-var melee_options = {
-	melee_attack_options.BLOCK: "Block +1",
-	melee_attack_options.RECOVER: "Recover stamina",
-	melee_attack_options.DAMAGE: "Damage +1",
-	melee_attack_options.COMBO: "Combo +1",
-	melee_attack_options.DODGE: "Dodge"
-}
+var cur_action_options = []
+var cur_chosen_action = {"id": null, "name": ""}
+var melee_options = [
+	{"id": melee_attack_options.BLOCK, "name": "Block +1", "data": null},
+	{"id": melee_attack_options.RECOVER, "name": "Recover stamina", "data": null},
+	{"id": melee_attack_options.DAMAGE, "name": "Damage +1", "data": null},
+	{"id": melee_attack_options.COMBO, "name": "Combo +1", "data": null},
+	{
+		"id": melee_attack_options.DODGE,
+		"name": "Dodge", 
+		"data": {
+			"title": "Choose direction",
+			"method": "select_dodge_direction"
+		}
+	}
+]
 
 var combo = 0
 
@@ -276,7 +283,7 @@ func attack_check():
 			else:
 				attack_hit = true
 				await action_option_chosen
-				match melee_options.find_key(cur_chosen_action["name"]):
+				match cur_chosen_action["id"]:
 					melee_attack_options.BLOCK:
 						_toggle_blocking(true)
 						$Abilities/Block/BlockTimer.start()
@@ -285,7 +292,7 @@ func attack_check():
 					melee_attack_options.DAMAGE:
 						melee_damage + 1
 					melee_attack_options.COMBO:
-						combo = 2
+						combo = 1
 					melee_attack_options.DODGE:
 						action_queue.append(states.DODGING)
 	
@@ -414,9 +421,9 @@ func _change_health(health_change):
 func get_action_options():
 	return cur_action_options
 
-func set_action_choice(number: int, label: String):
-	cur_chosen_action["number"] = number
-	cur_chosen_action["name"] = label
+func set_action_choice(id: int, data):
+	cur_chosen_action["id"] = id
+	cur_chosen_action["data"] = data
 	action_option_chosen.emit()
 
 func _toggle_blocking(is_blocking: bool):
