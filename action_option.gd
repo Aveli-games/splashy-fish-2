@@ -3,18 +3,14 @@ extends HBoxContainer
 signal chosen
 
 var number: int
-var label: String
-var id: int
-var data
+var option: Dictionary
 
-func initialize(init_number: int, init_label: String, init_id: int, init_data):
+func initialize(init_number: int, init_option):
 	number = init_number
-	label = init_label
-	id = init_id
-	data = init_data
+	option = init_option
 	
 	$Button.text = str(number)
-	$OptionLabel.text = label
+	$OptionLabel.text = option["name"]
 
 func _on_button_pressed():
-	chosen.emit(number, id)
+	chosen.emit(number, option)

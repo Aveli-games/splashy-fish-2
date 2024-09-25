@@ -39,6 +39,7 @@ const CAMERA_SMOOTHING = .85
 const ACTIVE_COLOR = Color("#2bff0071")
 const INACTIVE_COLOR = Color("#ffffff71")
 const MELEE_DAMAGE_BASE = 1
+const DODGE_DIRECTION_DEFAULT = Vector3.BACK
 
 var target_change_threshold = 100 * Globals.mouse_sensitivity
 
@@ -83,7 +84,7 @@ var animation_state
 
 var latest_dice_roll = 0
 var cur_action_options = []
-var cur_chosen_action = {"id": null, "name": ""}
+var cur_chosen_action = {"id": null, "name": "", "data": null}
 var melee_options = [
 	{"id": melee_attack_options.BLOCK, "name": "Block +1", "data": null},
 	{"id": melee_attack_options.RECOVER, "name": "Recover stamina", "data": null},
@@ -94,7 +95,8 @@ var melee_options = [
 		"name": "Dodge", 
 		"data": {
 			"title": "Choose direction",
-			"method": "select_dodge_direction"
+			"type": Globals.interface_types.DIRECTION,
+			"direction": DODGE_DIRECTION_DEFAULT
 		}
 	}
 ]
@@ -102,6 +104,8 @@ var melee_options = [
 var combo = 0
 
 var action_queue = []
+
+var dodge_direction = DODGE_DIRECTION_DEFAULT
 
 func _ready():
 	camera_y = camera_controller.global_position.y
@@ -294,6 +298,7 @@ func attack_check():
 					melee_attack_options.COMBO:
 						combo = 1
 					melee_attack_options.DODGE:
+						dodge_direction = cur_chosen_action["data"]["direction"]
 						action_queue.append(states.DODGING)
 	
 func _on_action_animation_finished(call_state):
@@ -301,6 +306,8 @@ func _on_action_animation_finished(call_state):
 		if state == states.ATTACKING and target and combo > 0:
 			animation_state.start(animation_state.get_current_node(), true)
 			return
+		elif state == states.DODGING:
+			dodge_direction = DODGE_DIRECTION_DEFAULT
 		
 		attack_hit = true
 		
@@ -333,6 +340,13 @@ func knockback_state():
 
 func dodge_state():
 	running = false
+	if dodge_direction:
+		# Rotate so we dodge in the desired direction
+		# In this case, rotate character in opposite direction
+		transform = transform.rotated_local(Vector3.UP, Vector2(dodge_direction.z, dodge_direction.x).angle())
+		print("Dodge direction = ", dodge_direction)
+		dodge_direction = null
+	
 	animation_state.travel("Dodge")
 	
 func is_invulnerable():
@@ -421,9 +435,8 @@ func _change_health(health_change):
 func get_action_options():
 	return cur_action_options
 
-func set_action_choice(id: int, data):
-	cur_chosen_action["id"] = id
-	cur_chosen_action["data"] = data
+func set_action_choice(option: Dictionary):
+	cur_chosen_action = option
 	action_option_chosen.emit()
 
 func _toggle_blocking(is_blocking: bool):

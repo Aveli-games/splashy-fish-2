@@ -14,6 +14,10 @@ enum movement_states {
 	DODGING
 }
 
+enum interface_types {
+	DIRECTION
+}
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	rng.seed = hash("Splashy")

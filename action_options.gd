@@ -18,5 +18,5 @@ func set_options(options: Array):
 	for option in options:
 		options_list.add_option(option)
 
-func _on_option_chosen(number: int, id: int, data):
-	option_chosen.emit(number, id, data)
+func _on_option_chosen(number: int, option: Dictionary):
+	option_chosen.emit(number, option)
