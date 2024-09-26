@@ -126,7 +126,8 @@ func _on_melee_range_body_entered(body):
 	var player_targets = get_tree().get_nodes_in_group("PlayerTargets")
 	if body not in melee_targets && body in player_targets:
 		melee_targets.append(body)
-		set_target(body)
+		if body is Player:
+			set_target(body)
 		if body == target && body.has_method("targeted"):
 			body.targeted()
 
