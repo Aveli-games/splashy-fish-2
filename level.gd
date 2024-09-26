@@ -1,30 +1,32 @@
 extends Node
 
+signal roll_requested
+
 @export var enemy_scene: PackedScene
 @export var bottle_scene: PackedScene
 
+var camera_controller
 var roll_requester
 var objective
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	camera_controller = get_node("CameraController")
 	objective = get_node("Objective")
-	var rng = RandomNumberGenerator.new()
-	rng.seed = hash("Splashy")
 	
 	# Move trees to pseudorandom locations for a more organic forest feel
 	for tree_line in $Boundaries/TreeLines.get_children():
 		for tree in tree_line.get_children():
-			var tree_scale = rng.randf_range(2.4, 5)
+			var tree_scale = Globals.rng.randf_range(2.4, 5)
 			tree.scale = Vector3(tree_scale, tree_scale, tree_scale)
-			tree.position.x = rng.randi_range(-25, -15)
+			tree.position.x = Globals.rng.randi_range(-25, -15)
 	
 	# Spawn in some bottles to make the play area a little more interesting
 	for n in 10:
 		var bottle = bottle_scene.instantiate()
 		
 		# Place the bottle a random distance from and y-axis rotation around the objective
-		bottle.global_position = objective.global_position + Vector3(rng.randi_range(2, 5), 0, 0).rotated(Vector3.UP, deg_to_rad(rng.randi_range(0, 360)))
+		bottle.global_position = objective.global_position + Vector3(Globals.rng.randi_range(2, 5), 0, 0).rotated(Vector3.UP, deg_to_rad(Globals.rng.randi_range(0, 360)))
 		
 		add_child(bottle)
 	
@@ -61,20 +63,10 @@ func _on_enemy_no_target_found(enemy):
 	enemy.set_target(objective)
 
 func _on_player_roll_requested(player):
-	# Speed up time while rolling so the simulation goes quick
-	# TODO: Add "Dice roll speed" setting in future options menu
-	get_tree().set_group_flags(0, "RollPause", "process_mode", PROCESS_MODE_DISABLED)
-	Engine.time_scale = 3
-	$DiceRollCanvas.show()
-	roll_requester = player
-	$DiceRollCanvas/DiceRollViewport.roll()
+	roll_requested.emit(player)
 
-func _on_roll_finished(value):
-	# Return time to normal speed
-	Engine.time_scale = 1
-	await get_tree().create_timer(.75).timeout # Give time for player to understand result
-	get_tree().set_group_flags(0, "RollPause", "process_mode", PROCESS_MODE_ALWAYS)
-	if roll_requester and roll_requester.has_method("set_roll_result"):
-		roll_requester.set_roll_result(value)
-		roll_requester = null
-	$DiceRollCanvas.hide()
+func freeze_camera():
+	camera_controller.toggle_mouse_control(false)
+
+func unfreeze_camera():
+	camera_controller.toggle_mouse_control(true)
