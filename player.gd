@@ -306,8 +306,15 @@ func _on_action_animation_finished(call_state):
 						return
 				melee_attack_options.DODGE:
 					dodge_direction = cur_action["data"]["direction"]
+					if dodge_direction:
+						# Rotate so we dodge in the desired direction
+						# In this case, rotate character in opposite direction
+						transform = transform.rotated_local(Vector3.UP, Vector2(dodge_direction.z, dodge_direction.x).angle())
+						print("Dodge direction = ", dodge_direction)
+						dodge_direction = null
 					state = states.DODGING
-					_toggle_blocking(true)
+					dodge_state()
+					animation_state.start(animation_state.get_current_node(), true)
 					return
 					
 		state = states.MOVING
@@ -338,13 +345,7 @@ func knockback_state():
 
 func dodge_state():
 	running = false
-	if dodge_direction:
-		# Rotate so we dodge in the desired direction
-		# In this case, rotate character in opposite direction
-		transform = transform.rotated_local(Vector3.UP, Vector2(dodge_direction.z, dodge_direction.x).angle())
-		print("Dodge direction = ", dodge_direction)
-		dodge_direction = null
-	
+	_toggle_blocking(true)
 	animation_state.travel("Dodge")
 	
 func is_invulnerable():

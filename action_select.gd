@@ -26,12 +26,14 @@ func _on_action_options_option_chosen(number: int, option: Dictionary):
 		show_direction_interface()
 		await direction_chosen
 		option["data"]["direction"] = chosen_direction
-		$ActionOptions.show()
 	action_queue.append(option)
 	actions_left -= 1
-	if actions_left <= 0:
+	if actions_left > 0:
+		$ActionOptions.show()
+	else:
 		$ActionOptions.hide()
 		actions_chosen.emit(action_queue)
+	
 
 func show_direction_interface():
 	prev_mouse_mode = Input.mouse_mode
