@@ -5,6 +5,7 @@ class_name Player
 signal died
 signal roll_requested(player: Player)
 signal roll_result_recieved
+signal action_queue_set
 
 @export var camera_controller : Marker3D
 @export var projectile_scene : PackedScene
@@ -20,6 +21,14 @@ enum states {
 	DODGING = Globals.movement_states.DODGING
 }
 
+enum melee_attack_options {
+	BLOCK,
+	RECOVER,
+	DAMAGE,
+	COMBO,
+	DODGE
+}
+
 const WALK_SPEED = 1.6
 const RUN_SPEED = WALK_SPEED * 2
 const JUMP_VELOCITY = 4.5
@@ -29,6 +38,8 @@ const ATTACK_ANIMATION_ROTATION = deg_to_rad(18.8)
 const CAMERA_SMOOTHING = .85
 const ACTIVE_COLOR = Color("#2bff0071")
 const INACTIVE_COLOR = Color("#ffffff71")
+const MELEE_DAMAGE_BASE = 1
+const DODGE_DIRECTION_DEFAULT = Vector3.BACK
 
 var target_change_threshold = 100 * Globals.mouse_sensitivity
 
@@ -38,12 +49,15 @@ var state = states.MOVING
 
 var max_health = 5
 var health = max_health
-var melee_damage = 1
+var melee_damage = MELEE_DAMAGE_BASE
 
 var max_stamina = 100
-var stamina_use_rate = 10 # Amount per second
+var stamina_use_rate = -10 # Amount per second
 var stamina_regen_rate = 10 # Amount per second
 var stamina = max_stamina
+
+var roll_fail_upper_threshold = 3 # 2-3, ~8.33% chance to fail
+var roll_pass_upper_threshold = 9 # 4-9, ~75% chance to pass; 10-12, ~16.67 chance to critical success
 
 var targeted_times = 0
 var health_bar_modulate
@@ -70,12 +84,34 @@ var animation_tree
 var animation_state
 
 var latest_dice_roll = 0
+var cur_action_options = []
+var cur_action = {"id": null, "name": "", "data": null}
+var melee_options = [
+	{"id": melee_attack_options.BLOCK, "name": "Block +1", "data": null},
+	{"id": melee_attack_options.RECOVER, "name": "Recover stamina", "data": null},
+	{"id": melee_attack_options.DAMAGE, "name": "Damage +1", "data": null},
+	{"id": melee_attack_options.COMBO, "name": "Combo +1", "data": null},
+	{
+		"id": melee_attack_options.DODGE,
+		"name": "Dodge", 
+		"data": {
+			"title": "Choose direction",
+			"type": Globals.interface_types.DIRECTION,
+			"direction": DODGE_DIRECTION_DEFAULT
+		}
+	}
+]
+
+var combo = 0
+
+var action_queue = []
+
+var dodge_direction = DODGE_DIRECTION_DEFAULT
 
 func _ready():
 	camera_y = camera_controller.global_position.y
 	animation_tree = $AnimationTree
 	animation_state = animation_tree.get("parameters/playback")
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	health_bar_modulate = $HealthBarView/HealthBar.modulate
 	
 	$HealthBarView/HealthLabel.text = str(health)
@@ -84,16 +120,9 @@ func _ready():
 
 func _physics_process(delta):
 	if state != states.ATTACKING:
-		toggle_ranged(Input.is_action_pressed("aim_ranged"))
+		_toggle_ranged(Input.is_action_pressed("aim_ranged"))
 	
-	if Input.is_action_pressed("block") and state != states.KNOCKBACK:
-		if not blocking:
-			blocking = true
-			$Abilities/Block/BlockView/BlockBackground.color = ACTIVE_COLOR
-	else:
-		if blocking:
-			blocking = false
-			$Abilities/Block/BlockView/BlockBackground.color = INACTIVE_COLOR
+	_toggle_blocking(Input.is_action_pressed("block") and state != states.KNOCKBACK)
 	
 	match state:
 		states.MOVING:
@@ -106,6 +135,8 @@ func _physics_process(delta):
 			knockback_state()
 		states.HIT:
 			hit_state()
+		states.DODGING:
+			dodge_state()
 		states.DYING:
 			death_state()
 	
@@ -120,10 +151,8 @@ func _physics_process(delta):
 		velocity.y -= gravity * delta
 	
 	move_and_slide()
-	if not running:
-		stamina = clamp(stamina + stamina_regen_rate * delta, 0, 100)
-	
-	$Abilities/Run/StaminaBarView/StaminaBar.value = stamina
+	if not running and state == states.MOVING:
+		_change_stamina(stamina_regen_rate * delta)
 	
 	camera_controller.toggle_mouse_control(not (ranged_mode and target and target in ranged_targets))
 	camera_controller.global_position = global_position.lerp(camera_controller.global_position, CAMERA_SMOOTHING)
@@ -146,7 +175,7 @@ func move_state(delta):
 			animation_tree.set("parameters/Run/Run/blend_position", input_dir)
 			animation_state.travel("Run")
 			cur_speed = RUN_SPEED
-			stamina = clamp(stamina - stamina_use_rate * delta, 0, 100)
+			_change_stamina(stamina_use_rate * delta)
 		elif not running:
 			animation_tree.set("parameters/Walk/blend_position", input_dir)
 			animation_state.travel("Walk")
@@ -161,8 +190,10 @@ func move_state(delta):
 		velocity.x = move_toward(velocity.x, 0, cur_speed)
 		velocity.z = move_toward(velocity.z, 0, cur_speed)
 	
-	if Input.is_action_just_pressed("attack") && target:
+	if (Input.is_action_just_pressed("attack") or combo > 0) and target:
 		state = states.ATTACKING
+	else:
+		combo = 0
 
 func attack_state(delta):
 	if $Abilities/Attack/AttackCooldownTimer.is_stopped():
@@ -193,21 +224,25 @@ func death_state():
 	animation_state.travel("Die")
 
 func on_hit(damage):
-	health = clamp(health - damage, 0, max_health)
-	$HealthBarView/HealthLabel.text = str(health)
-	$HealthBarView/HealthBar.value = health
-	if health > 0:
+	damage = -abs(damage) # Make sure damage is negative
+	_change_health(damage)
+	if health > 0 and state != states.ATTACKING:
 		state = states.HIT
-	else:
-		$CollisionShape3D.queue_free()
-		state = states.DYING
-		
+
 func on_block():
-	state = states.BLOCKING
+	if $Abilities/Block/BlockTimer.time_left == 0:
+		state = states.BLOCKING
 
 # TODO: react to kicks from different angles
-func on_knockback():
-	state = states.KNOCKBACK
+func on_knockback(stamina_damage):
+	stamina_damage = -abs(stamina_damage) # Make sure stam damage is negative
+	if stamina >= -stamina_damage / 2:
+		_change_stamina(stamina_damage)
+	else:
+		_change_health(-1)
+	
+	if health > 0:
+		state = states.KNOCKBACK
 
 func _on_melee_range_body_entered(body):
 	var enemies = get_tree().get_nodes_in_group("Enemies")
@@ -233,24 +268,55 @@ func untargeted():
 	
 func attack_connects():
 	if target in melee_targets && attack_hit:
-			target.on_hit(melee_damage)
+		target.on_hit(melee_damage)
+		melee_damage = MELEE_DAMAGE_BASE
 
 func attack_check():
 	if target in melee_targets:
-		var attack_target = target
-		roll_requested.emit(self)
-		await roll_result_recieved
-		
-		if latest_dice_roll <= 4: #~9% chance to miss
-			attack_hit = false
-			if attack_target:
-				attack_target.on_miss()
-		else:
+		if combo > 0:
+			combo -= 1
 			attack_hit = true
+		else:
+			cur_action_options = melee_options
+			var attack_target = target
+			roll_requested.emit(self)
+			await roll_result_recieved
+			
+			if latest_dice_roll <= roll_fail_upper_threshold:
+				attack_hit = false
+				if attack_target:
+					attack_target.on_miss()
+			else:
+				attack_hit = true
+				await action_queue_set
 	
 func _on_action_animation_finished(call_state):
 	if call_state == states.keys()[state]:
 		attack_hit = true
+		# Process the options the cause an additional action to happen
+		if not action_queue.is_empty():
+			cur_action = action_queue.pop_front()
+			match cur_action["id"]:
+				melee_attack_options.COMBO:
+					if target:
+						combo += 1
+						state = states.ATTACKING
+						animation_state.travel("Punch")
+						animation_state.start(animation_state.get_current_node(), true)
+						return
+				melee_attack_options.DODGE:
+					dodge_direction = cur_action["data"]["direction"]
+					if dodge_direction:
+						# Rotate so we dodge in the desired direction
+						# In this case, rotate character in opposite direction
+						transform = transform.rotated_local(Vector3.UP, Vector2(dodge_direction.z, dodge_direction.x).angle())
+						print("Dodge direction = ", dodge_direction)
+						dodge_direction = null
+					state = states.DODGING
+					dodge_state()
+					animation_state.start(animation_state.get_current_node(), true)
+					return
+					
 		state = states.MOVING
 	
 func _on_death_animation_finished():
@@ -259,6 +325,12 @@ func _on_death_animation_finished():
 func set_roll_result(value: int):
 	latest_dice_roll = value
 	roll_result_recieved.emit()
+	if latest_dice_roll <= roll_fail_upper_threshold: # Fail - no actions
+		return Globals.roll_result_types.FAIL
+	elif latest_dice_roll <= roll_pass_upper_threshold: # Success - choose 1 action
+		return Globals.roll_result_types.SUCCESS
+	else: # Critical success - choose 2 actions
+		return Globals.roll_result_types.CRITICAL
 	
 func block_state():
 	running = false
@@ -270,6 +342,11 @@ func is_blocking():
 func knockback_state():
 	running = false
 	animation_state.travel("Knockback")
+
+func dodge_state():
+	running = false
+	_toggle_blocking(true)
+	animation_state.travel("Dodge")
 	
 func is_invulnerable():
 	if state == states.KNOCKBACK:
@@ -290,7 +367,7 @@ func _on_far_range_body_exited(body):
 		_get_new_target()
 
 # Toggle ranged mode or not and take the first target that had entered the respective range
-func toggle_ranged(is_ranged):
+func _toggle_ranged(is_ranged):
 	if ranged_mode != is_ranged:
 		ranged_mode = not ranged_mode
 		_get_new_target()
@@ -341,3 +418,50 @@ func throw_donut():
 		var projectile = projectile_scene.instantiate()
 		add_sibling(projectile)
 		projectile.fire(1, 10, right_hand_bone_position.origin, target)
+
+func _change_stamina(stamina_change):
+	stamina = clamp(stamina + stamina_change, 0, max_stamina)
+	$Abilities/Run/StaminaBarView/StaminaBar.value = stamina
+
+func _change_health(health_change):
+	health = clamp(health + health_change, 0, max_health)
+	$HealthBarView/HealthLabel.text = str(health)
+	$HealthBarView/HealthBar.value = health
+	if health <= 0:
+		$CollisionShape3D.queue_free()
+		state = states.DYING
+
+func get_action_options():
+	return cur_action_options
+
+func set_action_queue(new_action_queue: Array):
+	action_queue = new_action_queue
+	for i in action_queue.size():
+		var action = action_queue[i-1]
+		match action["id"]:
+			melee_attack_options.BLOCK:
+				_toggle_blocking(true)
+				$Abilities/Block/BlockTimer.start()
+				new_action_queue.erase(action)
+			melee_attack_options.RECOVER:
+				_change_stamina(40)
+				new_action_queue.erase(action)
+			melee_attack_options.DAMAGE:
+				if target:
+					melee_damage += 1
+				new_action_queue.erase(action)
+	action_queue = new_action_queue
+	action_queue_set.emit()
+
+func _toggle_blocking(is_blocking: bool):
+	if is_blocking:
+		if not blocking:
+			blocking = true
+			$Abilities/Block/BlockView/BlockBackground.color = ACTIVE_COLOR
+	else:
+		if blocking and $Abilities/Block/BlockTimer.time_left == 0 and state != states.DODGING:
+			blocking = false
+			$Abilities/Block/BlockView/BlockBackground.color = INACTIVE_COLOR
+
+func _on_block_timer_timeout():
+	_toggle_blocking(false)

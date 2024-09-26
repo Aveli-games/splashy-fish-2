@@ -25,6 +25,7 @@ var max_health = 1
 
 var health = max_health
 var melee_damage = 1
+var kick_stamina_damage = 40
 
 var close_targets: Array
 var melee_targets: Array
@@ -110,10 +111,10 @@ func attack(atk_target):
 
 func kick(atk_target):
 	velocity = Vector3.ZERO
-	atk_target.on_knockback()
+	atk_target.on_knockback(kick_stamina_damage)
 
 # TODO: Redo the logic in this script to simply inform the target it is taking an attack
-#          The target should be what determines its reaction to the attack and report to this entity how ti reacted, if necessary
+#          The target should be what determines its reaction to the attack and report to this entity how it reacted, if necessary
 func attack_check():
 	attack_hit = false
 	if target.has_method("is_blocking") and target.is_blocking():
@@ -165,10 +166,7 @@ func on_hit(damage):
 		state = states.DYING
 
 func on_miss():
-	if randi() % 2 == 0:
-		state = states.BLOCKING
-	else:
-		state = states.KICKING
+	state = states.KICKING
 
 func set_target(new_target):
 	target = new_target
