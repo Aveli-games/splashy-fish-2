@@ -1,6 +1,7 @@
 extends Control
 
 signal option_chosen
+signal direction_chosen
 
 var options_list
 

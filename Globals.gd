@@ -18,6 +18,12 @@ enum interface_types {
 	DIRECTION
 }
 
+enum roll_result_types {
+	FAIL,
+	SUCCESS,
+	CRITICAL
+}
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	rng.seed = hash("Splashy")

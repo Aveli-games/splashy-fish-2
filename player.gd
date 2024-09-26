@@ -5,7 +5,7 @@ class_name Player
 signal died
 signal roll_requested(player: Player)
 signal roll_result_recieved
-signal action_option_chosen
+signal action_queue_set
 
 @export var camera_controller : Marker3D
 @export var projectile_scene : PackedScene
@@ -56,7 +56,8 @@ var stamina_use_rate = -10 # Amount per second
 var stamina_regen_rate = 10 # Amount per second
 var stamina = max_stamina
 
-var roll_fail_threshold = 4 #~9% chance to fail
+var roll_fail_upper_threshold = 3 # 2-3, ~8.33% chance to fail
+var roll_pass_upper_threshold = 9 # 4-9, ~75% chance to pass; 10-12, ~16.67 chance to critical success
 
 var targeted_times = 0
 var health_bar_modulate
@@ -84,7 +85,7 @@ var animation_state
 
 var latest_dice_roll = 0
 var cur_action_options = []
-var cur_chosen_action = {"id": null, "name": "", "data": null}
+var cur_action = {"id": null, "name": "", "data": null}
 var melee_options = [
 	{"id": melee_attack_options.BLOCK, "name": "Block +1", "data": null},
 	{"id": melee_attack_options.RECOVER, "name": "Recover stamina", "data": null},
@@ -229,7 +230,8 @@ func on_hit(damage):
 		state = states.HIT
 
 func on_block():
-	state = states.BLOCKING
+	if $Abilities/Block/BlockTimer.time_left == 0:
+		state = states.BLOCKING
 
 # TODO: react to kicks from different angles
 func on_knockback(stamina_damage):
@@ -280,41 +282,35 @@ func attack_check():
 			roll_requested.emit(self)
 			await roll_result_recieved
 			
-			if latest_dice_roll <= roll_fail_threshold:
+			if latest_dice_roll <= roll_fail_upper_threshold:
 				attack_hit = false
 				if attack_target:
 					attack_target.on_miss()
 			else:
 				attack_hit = true
-				await action_option_chosen
-				match cur_chosen_action["id"]:
-					melee_attack_options.BLOCK:
-						_toggle_blocking(true)
-						$Abilities/Block/BlockTimer.start()
-					melee_attack_options.RECOVER:
-						_change_stamina(40)
-					melee_attack_options.DAMAGE:
-						melee_damage + 1
-					melee_attack_options.COMBO:
-						combo = 1
-					melee_attack_options.DODGE:
-						dodge_direction = cur_chosen_action["data"]["direction"]
-						action_queue.append(states.DODGING)
+				await action_queue_set
 	
 func _on_action_animation_finished(call_state):
 	if call_state == states.keys()[state]:
-		if state == states.ATTACKING and target and combo > 0:
-			animation_state.start(animation_state.get_current_node(), true)
-			return
-		elif state == states.DODGING:
-			dodge_direction = DODGE_DIRECTION_DEFAULT
-		
 		attack_hit = true
-		
+		# Process the options the cause an additional action to happen
 		if not action_queue.is_empty():
-			state = action_queue.pop_front()
-		else:
-			state = states.MOVING
+			cur_action = action_queue.pop_front()
+			match cur_action["id"]:
+				melee_attack_options.COMBO:
+					if target:
+						combo += 1
+						state = states.ATTACKING
+						animation_state.travel("Punch")
+						animation_state.start(animation_state.get_current_node(), true)
+						return
+				melee_attack_options.DODGE:
+					dodge_direction = cur_action["data"]["direction"]
+					state = states.DODGING
+					_toggle_blocking(true)
+					return
+					
+		state = states.MOVING
 	
 func _on_death_animation_finished():
 	died.emit()
@@ -322,10 +318,12 @@ func _on_death_animation_finished():
 func set_roll_result(value: int):
 	latest_dice_roll = value
 	roll_result_recieved.emit()
-	if latest_dice_roll <= roll_fail_threshold:
-		return false
-	else:
-		return true
+	if latest_dice_roll <= roll_fail_upper_threshold: # Fail - no actions
+		return Globals.roll_result_types.FAIL
+	elif latest_dice_roll <= roll_pass_upper_threshold: # Success - choose 1 action
+		return Globals.roll_result_types.SUCCESS
+	else: # Critical success - choose 2 actions
+		return Globals.roll_result_types.CRITICAL
 	
 func block_state():
 	running = false
@@ -435,9 +433,24 @@ func _change_health(health_change):
 func get_action_options():
 	return cur_action_options
 
-func set_action_choice(option: Dictionary):
-	cur_chosen_action = option
-	action_option_chosen.emit()
+func set_action_queue(new_action_queue: Array):
+	action_queue = new_action_queue
+	for i in action_queue.size():
+		var action = action_queue[i-1]
+		match action["id"]:
+			melee_attack_options.BLOCK:
+				_toggle_blocking(true)
+				$Abilities/Block/BlockTimer.start()
+				new_action_queue.erase(action)
+			melee_attack_options.RECOVER:
+				_change_stamina(40)
+				new_action_queue.erase(action)
+			melee_attack_options.DAMAGE:
+				if target:
+					melee_damage += 1
+				new_action_queue.erase(action)
+	action_queue = new_action_queue
+	action_queue_set.emit()
 
 func _toggle_blocking(is_blocking: bool):
 	if is_blocking:
@@ -445,7 +458,7 @@ func _toggle_blocking(is_blocking: bool):
 			blocking = true
 			$Abilities/Block/BlockView/BlockBackground.color = ACTIVE_COLOR
 	else:
-		if blocking and $Abilities/Block/BlockTimer.time_left == 0:
+		if blocking and $Abilities/Block/BlockTimer.time_left == 0 and state != states.DODGING:
 			blocking = false
 			$Abilities/Block/BlockView/BlockBackground.color = INACTIVE_COLOR
 

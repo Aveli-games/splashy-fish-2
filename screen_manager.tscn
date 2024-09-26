@@ -13,6 +13,6 @@ script = ExtResource("1_7yicb")
 [node name="Level" parent="." instance=ExtResource("1_yrxmi")]
 process_mode = 1
 
-[connection signal="action_chosen" from="HUD" to="." method="_on_hud_action_chosen"]
+[connection signal="actions_chosen" from="HUD" to="." method="_on_hud_actions_chosen"]
 [connection signal="roll_finished" from="HUD" to="." method="_on_roll_finished"]
 [connection signal="roll_requested" from="Level" to="." method="_on_roll_requested"]

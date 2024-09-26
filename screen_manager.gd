@@ -27,23 +27,27 @@ func _on_roll_requested(requester):
 	hud.roll()
 
 func _on_roll_finished(value):
-	var is_success = null
+	var num_actions = 0
 	if roll_requester and roll_requester.has_method("set_roll_result"):
-		is_success = roll_requester.set_roll_result(value)
-	if is_success:
+		match roll_requester.set_roll_result(value):
+			Globals.roll_result_types.SUCCESS:
+				num_actions = 1
+			Globals.roll_result_types.CRITICAL:
+				num_actions = 2
+	if num_actions > 0:
 		Input.mouse_mode = Input.MOUSE_MODE_CONFINED
 		if level.has_method("freeze_camera"):
 			level.freeze_camera()
 		if roll_requester.has_method("get_action_options"):
 			var action_options = roll_requester.get_action_options()
 			if not action_options.is_empty():
-				hud.show_action_options(roll_requester ,action_options)
+				hud.show_action_options(roll_requester, action_options, num_actions)
 				return
 	_resume_play()
 
-func _on_hud_action_chosen(option: Dictionary):
-	if roll_requester.has_method("set_action_choice"):
-		roll_requester.set_action_choice(option)
+func _on_hud_actions_chosen(action_queue: Array):
+	if roll_requester.has_method("set_action_queue"):
+		roll_requester.set_action_queue(action_queue)
 	_resume_play()
 	
 func _resume_play():
