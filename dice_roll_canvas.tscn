@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://bq82meappt10a"]
+[gd_scene load_steps=4 format=3 uid="uid://l05ikx7q6r3l"]
 
 [ext_resource type="Script" path="res://dice_roll_canvas.gd" id="1_3bpgo"]
 [ext_resource type="PackedScene" uid="uid://cef320n1hmlrj" path="res://dice_roll_viewport.tscn" id="1_xf4lg"]
@@ -11,9 +11,8 @@ process_mode = 1
 script = ExtResource("1_3bpgo")
 
 [node name="DiceRollSprite" type="Sprite2D" parent="."]
-scale = Vector2(0.671875, 0.671875)
 texture = SubResource("ViewportTexture_vhvhn")
-offset = Vector2(257.488, 257.488)
+offset = Vector2(180, 180)
 
 [node name="DiceRollViewport" parent="." instance=ExtResource("1_xf4lg")]
 
