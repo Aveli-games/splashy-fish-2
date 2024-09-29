@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://do7dpbgd6ku6n"]
+[gd_scene load_steps=5 format=3 uid="uid://do7dpbgd6ku6n"]
 
 [ext_resource type="Script" path="res://hud.gd" id="1_w38b1"]
 [ext_resource type="PackedScene" uid="uid://l05ikx7q6r3l" path="res://dice_roll_canvas.tscn" id="2_v2x7h"]
 [ext_resource type="PackedScene" uid="uid://s3872lf8ot4q" path="res://action_select.tscn" id="3_ybqnv"]
+[ext_resource type="PackedScene" uid="uid://c6tdu4r5v8bbs" path="res://controls_screen.tscn" id="4_sgjn6"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_w38b1")
@@ -17,12 +18,8 @@ offset_top = 377.0
 offset_right = 528.0
 offset_bottom = -71.0
 
-[node name="ControlsScreen" type="Control" parent="."]
-visible = false
-layout_mode = 3
-anchors_preset = 0
-offset_right = 1920.0
-offset_bottom = 1080.0
+[node name="ControlsScreen" parent="." instance=ExtResource("4_sgjn6")]
 
 [connection signal="roll_finished" from="DiceRollCanvas" to="." method="_on_roll_finished"]
 [connection signal="actions_chosen" from="ActionSelect" to="." method="_on_action_select_actions_chosen"]
+[connection signal="exited" from="ControlsScreen" to="." method="_on_controls_screen_exited"]

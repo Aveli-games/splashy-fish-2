@@ -33,3 +33,6 @@ func show_action_options(option_requester, options: Array, num_actions: int):
 	
 func _on_action_select_actions_chosen(action_queue: Array):
 	actions_chosen.emit(action_queue)
+
+func _on_controls_screen_exited():
+	$ControlsScreen.hide()
