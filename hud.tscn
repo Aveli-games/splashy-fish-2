@@ -19,6 +19,7 @@ offset_right = 528.0
 offset_bottom = -71.0
 
 [node name="ControlsScreen" parent="." instance=ExtResource("4_sgjn6")]
+visible = false
 
 [connection signal="roll_finished" from="DiceRollCanvas" to="." method="_on_roll_finished"]
 [connection signal="actions_chosen" from="ActionSelect" to="." method="_on_action_select_actions_chosen"]

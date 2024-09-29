@@ -3,12 +3,12 @@
 [ext_resource type="Texture2D" uid="uid://8ogwg62w5cje" path="res://TCom_GrassMedium2_header.jpg" id="1_fdcor"]
 [ext_resource type="Script" path="res://level.gd" id="1_x5dvp"]
 [ext_resource type="PackedScene" uid="uid://qt3pkvldp4ub" path="res://enemy.tscn" id="2_6av1r"]
-[ext_resource type="PackedScene" path="res://xxx_bottle.tscn" id="3_4o3sx"]
+[ext_resource type="PackedScene" uid="uid://wss5yuovhjbm" path="res://xxx_bottle.tscn" id="3_4o3sx"]
 [ext_resource type="PackedScene" uid="uid://cc8g11lvq6my3" path="res://tree.tscn" id="4_by425"]
 [ext_resource type="PackedScene" uid="uid://detjvvnieryge" path="res://player.tscn" id="5_jkfui"]
 [ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="6_ue0ya"]
 [ext_resource type="PackedScene" uid="uid://d18skw3klu537" path="res://outhouses.tscn" id="7_smpgf"]
-[ext_resource type="PackedScene" uid="uid://cfr5lrwpfhmgr" path="res://camera_controller.tscn" id="9_jetw5"]
+[ext_resource type="PackedScene" path="res://camera_controller.tscn" id="9_jetw5"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pmljg"]
 size = Vector3(0, 50, 50)

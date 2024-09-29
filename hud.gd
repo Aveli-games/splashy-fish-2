@@ -10,6 +10,7 @@ var dice_roll_canvas
 func _ready():
 	dice_roll_canvas = $DiceRollCanvas
 	dice_roll_canvas.hide()
+	$ControlsScreen.show()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
