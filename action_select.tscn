@@ -1,16 +1,16 @@
-[gd_scene load_steps=4 format=3 uid="uid://bb56ba6u202yp"]
+[gd_scene load_steps=4 format=3 uid="uid://s3872lf8ot4q"]
 
 [ext_resource type="Script" path="res://action_select.gd" id="1_5lulk"]
-[ext_resource type="PackedScene" uid="uid://cpar6wi3hsdld" path="res://action_options.tscn" id="2_v7832"]
-[ext_resource type="PackedScene" uid="uid://cpewl5xflk5gl" path="res://direction_interface.tscn" id="3_7apvt"]
+[ext_resource type="PackedScene" uid="uid://gcix14imojms" path="res://action_options.tscn" id="2_v7832"]
+[ext_resource type="PackedScene" uid="uid://bj4uln3vo6n1x" path="res://direction_interface.tscn" id="3_7apvt"]
 
 [node name="ActionSelect" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -952.0
-offset_bottom = -448.0
+offset_right = -1560.0
+offset_bottom = -720.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_5lulk")
