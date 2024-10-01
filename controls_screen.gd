@@ -11,5 +11,5 @@ func _process(delta):
 	pass
 
 func _input(event):
-	if event is InputEventKey:
+	if visible and event is InputEventKey:
 		exited.emit()

@@ -70,3 +70,11 @@ func freeze_camera():
 
 func unfreeze_camera():
 	camera_controller.toggle_mouse_control(true)
+	
+func pause_play():
+	freeze_camera()
+	get_tree().set_group_flags(0, "Level", "process_mode", PROCESS_MODE_DISABLED)
+
+func resume_play():
+	unfreeze_camera()
+	get_tree().set_group_flags(0, "Level", "process_mode", PROCESS_MODE_ALWAYS)

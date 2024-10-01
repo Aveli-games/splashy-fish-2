@@ -1,9 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c6tdu4r5v8bbs"]
 
 [ext_resource type="Script" path="res://controls_screen.gd" id="1_tvbxo"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qyr8j"]
-bg_color = Color(0.780392, 0.780392, 0.780392, 0.113725)
+[ext_resource type="StyleBox" uid="uid://1mss4twkxib3" path="res://button_box.tres" id="2_tn6xa"]
 
 [node name="HowToPlayScreen" type="Control"]
 layout_mode = 3
@@ -11,12 +9,6 @@ anchors_preset = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
 script = ExtResource("1_tvbxo")
-
-[node name="TextureRect" type="ColorRect" parent="."]
-layout_mode = 0
-offset_right = 1920.0
-offset_bottom = 1080.0
-color = Color(0, 0, 0, 0.662745)
 
 [node name="ScreenRows" type="VBoxContainer" parent="."]
 layout_mode = 0
@@ -107,7 +99,7 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_qyr8j")
+theme_override_styles/normal = ExtResource("2_tn6xa")
 text = "W"
 horizontal_alignment = 1
 
@@ -125,7 +117,7 @@ alignment = 1
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_qyr8j")
+theme_override_styles/normal = ExtResource("2_tn6xa")
 text = "A"
 horizontal_alignment = 1
 
@@ -133,7 +125,7 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_qyr8j")
+theme_override_styles/normal = ExtResource("2_tn6xa")
 text = "S"
 horizontal_alignment = 1
 
@@ -141,7 +133,7 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_qyr8j")
+theme_override_styles/normal = ExtResource("2_tn6xa")
 text = "D"
 horizontal_alignment = 1
 
@@ -162,7 +154,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(175, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_qyr8j")
+theme_override_styles/normal = ExtResource("2_tn6xa")
 text = "Left Click"
 horizontal_alignment = 1
 
@@ -183,7 +175,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(275, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_qyr8j")
+theme_override_styles/normal = ExtResource("2_tn6xa")
 text = "Right Click (Hold)"
 horizontal_alignment = 1
 
@@ -204,7 +196,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(275, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_qyr8j")
+theme_override_styles/normal = ExtResource("2_tn6xa")
 text = "Mouse left/right"
 horizontal_alignment = 1
 
@@ -225,7 +217,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(175, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_qyr8j")
+theme_override_styles/normal = ExtResource("2_tn6xa")
 text = "Right Click"
 horizontal_alignment = 1
 
@@ -233,7 +225,7 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_qyr8j")
+theme_override_styles/normal = ExtResource("2_tn6xa")
 text = "+"
 horizontal_alignment = 1
 
@@ -241,7 +233,7 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(175, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_qyr8j")
+theme_override_styles/normal = ExtResource("2_tn6xa")
 text = "Left Click"
 horizontal_alignment = 1
 
@@ -262,7 +254,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_qyr8j")
+theme_override_styles/normal = ExtResource("2_tn6xa")
 text = "Shift (Hold)"
 horizontal_alignment = 1
 
@@ -283,7 +275,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(175, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_qyr8j")
+theme_override_styles/normal = ExtResource("2_tn6xa")
 text = "Crtl (Hold)"
 horizontal_alignment = 1
 
