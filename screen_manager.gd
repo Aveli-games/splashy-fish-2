@@ -1,5 +1,7 @@
 extends Node
 
+@export var level_scene: PackedScene
+
 var roll_requester
 var hud
 var level
@@ -7,9 +9,9 @@ var dice_roll_canvas
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	hud = $HUD
 	level = $Level
+	_pause_play()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -18,7 +20,7 @@ func _process(delta):
 func _on_roll_requested(requester):
 	# Speed up time while rolling so the simulation goes quick
 	# TODO: Add "Dice roll speed" setting in future options menu
-	get_tree().set_group_flags(0, "RollPause", "process_mode", PROCESS_MODE_DISABLED)
+	_pause_play()
 	Engine.time_scale = 3
 	hud.show_dice_roll()
 	roll_requester = requester
@@ -50,10 +52,35 @@ func _on_hud_actions_chosen(action_queue: Array):
 	
 func _resume_play():
 	roll_requester = null
-	hud.hide_dice_roll()
+	hud.hide_menus()
 	# Return time to normal speed
 	Engine.time_scale = 1
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	if level.has_method("unfreeze_camera"):
-		level.unfreeze_camera()
-	get_tree().set_group_flags(0, "RollPause", "process_mode", PROCESS_MODE_ALWAYS)
+	if level.has_method("resume_play"):
+		level.resume_play()
+	
+func _pause_play():
+	level.pause_play()
+
+func _on_quit_pressed():
+	get_tree().quit()
+
+func _on_play_pressed():
+	_resume_play()
+
+func _input(event):
+	if event.is_action_pressed("menu"):
+		_pause_play()
+		hud.show_main_menu()
+
+func _restart_level():
+	if level:
+		level.free()
+		var new_level = level_scene.instantiate()
+		add_child(new_level)
+		new_level.roll_requested.connect(_on_roll_requested)
+		level = new_level
+
+func _on_restart_pressed():
+	_restart_level()
+	_resume_play()

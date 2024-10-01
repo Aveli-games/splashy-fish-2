@@ -46,7 +46,7 @@ _data = {
 }
 point_count = 5
 
-[node name="Level" type="Node" groups=["RollPause"]]
+[node name="Level" type="Node" groups=["Level"]]
 process_mode = 3
 script = ExtResource("1_x5dvp")
 enemy_scene = ExtResource("2_6av1r")
