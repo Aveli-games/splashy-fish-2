@@ -84,3 +84,9 @@ func _restart_level():
 func _on_restart_pressed():
 	_restart_level()
 	_resume_play()
+
+func _on_level_lost():
+	hud.show_loss_screen()
+
+func _on_level_won():
+	hud.show_win_screen()

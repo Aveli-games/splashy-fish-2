@@ -390,8 +390,8 @@ func _get_new_target():
 	
 	_set_target(new_target)
 
-func _input(event):
-	if event is InputEventMouseMotion:
+func _unhandled_input(event):
+	if health > 0 and event is InputEventMouseMotion:
 		# TODO: Update this to cycle through possible targets from left to right,
 			#       rather than in the order that they entered the ranged_targets array
 		if ranged_mode and animation_state.get_current_node() != "Throw" and target and target in ranged_targets:

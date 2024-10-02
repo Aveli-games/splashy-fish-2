@@ -25,7 +25,6 @@ func on_hit(damage):
 
 func die():
 	died.emit()
-	queue_free()
 
 func targeted():
 	targeted_times += 1

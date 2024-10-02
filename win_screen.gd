@@ -1,6 +1,6 @@
 extends Control
 
-signal exited
+signal button_pressed
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -10,6 +10,11 @@ func _ready():
 func _process(delta):
 	pass
 
-func _gui_input(event):
-	if visible and event is InputEventKey:
-		exited.emit()
+func _on_main_menu_button_pressed():
+	button_pressed.emit("Main menu")
+
+func _on_restart_button_pressed():
+	button_pressed.emit("Restart")
+
+func _on_quit_button_pressed():
+	button_pressed.emit("Quit")
