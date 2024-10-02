@@ -11,7 +11,7 @@ signal won
 var camera_controller
 var roll_requester
 var objective
-var game_lost = false
+var game_ended = false
 
 var num_enemies = 10
 
@@ -35,17 +35,21 @@ func _ready():
 		bottle.global_position = objective.global_position + Vector3(Globals.rng.randi_range(2, 5), 0, 0).rotated(Vector3.UP, deg_to_rad(Globals.rng.randi_range(0, 360)))
 		
 		add_child(bottle)
-	
+
+func _process(delta):
+	if num_enemies <= 0 and get_tree().get_nodes_in_group("Enemies").size() == 0 and not game_ended:
+		game_ended = true
+		won.emit()
 
 func _on_player_died():
-	if not game_lost:
-		game_lost = true
+	if not game_ended:
+		game_ended = true
 		freeze_camera()
 		lost.emit()
 
 func _on_objective_died():
-	if not game_lost:
-		game_lost = true
+	if not game_ended:
+		game_ended = true
 		freeze_camera()
 		lost.emit()
 
@@ -71,7 +75,7 @@ func spawn_enemy(number: int):
 		enemy.initialize(enemy_spawn_location.position, objective)
 
 		# Spawn the enemy by adding it to the Main scene.
-		add_child(enemy)
+		$Enemies.add_child(enemy)
 		
 		# We connect the enemy to the no target found signal so the level can assign the default
 		enemy.no_target_found.connect(_on_enemy_no_target_found.bind())

@@ -11,6 +11,7 @@ offset_bottom = 1080.0
 script = ExtResource("1_ig5wj")
 
 [node name="MenuContent" type="VBoxContainer" parent="."]
+layout_mode = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
 theme_override_constants/separation = 20

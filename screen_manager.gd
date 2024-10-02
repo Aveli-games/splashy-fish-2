@@ -85,6 +85,7 @@ func _restart_level():
 		add_child(new_level)
 		new_level.roll_requested.connect(_on_roll_requested)
 		new_level.lost.connect(_on_level_lost)
+		new_level.won.connect(_on_level_won)
 		level = new_level
 
 func _on_restart_pressed():
