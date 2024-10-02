@@ -6,6 +6,7 @@ var roll_requester
 var hud
 var level
 var dice_roll_canvas
+var game_ended = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -66,7 +67,10 @@ func _on_quit_pressed():
 	get_tree().quit()
 
 func _on_play_pressed():
-	_resume_play()
+	if game_ended:
+		_on_restart_pressed()
+	else:
+		_resume_play()
 
 func _input(event):
 	if event.is_action_pressed("menu"):
@@ -74,11 +78,13 @@ func _input(event):
 		hud.show_main_menu()
 
 func _restart_level():
+	game_ended = false
 	if level:
 		level.free()
 		var new_level = level_scene.instantiate()
 		add_child(new_level)
 		new_level.roll_requested.connect(_on_roll_requested)
+		new_level.lost.connect(_on_level_lost)
 		level = new_level
 
 func _on_restart_pressed():
@@ -86,7 +92,9 @@ func _on_restart_pressed():
 	_resume_play()
 
 func _on_level_lost():
+	game_ended = true
 	hud.show_loss_screen()
 
 func _on_level_won():
+	game_ended = true
 	hud.show_win_screen()

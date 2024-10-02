@@ -94,7 +94,7 @@ func _on_game_menu_button_pressed(type: String):
 			restart_pressed.emit()
 		"Controls":
 			_show_controls()
-		"Main Menu":
+		"Main menu":
 			show_main_menu()
 		"Quit":
 			quit_pressed.emit()

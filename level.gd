@@ -11,6 +11,7 @@ signal won
 var camera_controller
 var roll_requester
 var objective
+var game_lost = false
 
 var num_enemies = 10
 
@@ -37,12 +38,16 @@ func _ready():
 	
 
 func _on_player_died():
-	freeze_camera()
-	lost.emit()
+	if not game_lost:
+		game_lost = true
+		freeze_camera()
+		lost.emit()
 
 func _on_objective_died():
-	freeze_camera()
-	lost.emit()
+	if not game_lost:
+		game_lost = true
+		freeze_camera()
+		lost.emit()
 
 func spawn_enemy(number: int):
 	if number > num_enemies:
