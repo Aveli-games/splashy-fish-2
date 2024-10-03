@@ -10,6 +10,6 @@ func _ready():
 func _process(delta):
 	pass
 
-func _input(event):
+func _gui_input(event):
 	if visible and event is InputEventKey:
 		exited.emit()

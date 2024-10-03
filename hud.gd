@@ -60,6 +60,7 @@ func show_menu_screens():
 	$MenuScreens.show()
 
 func hide_menu_screens():
+	_clear_menu()
 	$MenuScreens.hide()
 
 func _on_controls_screen_exited():
@@ -70,18 +71,20 @@ func _show_controls():
 	show_menu_screens()
 	$MenuScreens/ControlsScreen.show()
 	
-func _hide_controls():
-	$MenuScreens/ControlsScreen.hide()
-	hide_menu_screens()
-	
 func show_main_menu():
 	_clear_menu()
 	show_menu_screens()
 	$MenuScreens/MainMenu.show()
-
-func hide_main_menu():
-	$MenuScreens/MainMenu.hide()
-	hide_menu_screens()
+	
+func show_win_screen():
+	_clear_menu()
+	show_menu_screens()
+	$MenuScreens/WinScreen.show()
+	
+func show_loss_screen():
+	_clear_menu()
+	show_menu_screens()
+	$MenuScreens/LossScreen.show()
 
 func _on_game_menu_button_pressed(type: String):
 	match type:
@@ -91,5 +94,7 @@ func _on_game_menu_button_pressed(type: String):
 			restart_pressed.emit()
 		"Controls":
 			_show_controls()
+		"Main menu":
+			show_main_menu()
 		"Quit":
 			quit_pressed.emit()
