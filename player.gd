@@ -121,6 +121,9 @@ func _ready():
 func _physics_process(delta):
 	if state != states.ATTACKING:
 		_toggle_ranged(Input.is_action_pressed("aim_ranged"))
+		
+	if ranged_mode and target and target in ranged_targets:
+		camera_controller.transform.basis = camera_controller.transform.basis.slerp(transform.looking_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true).basis, delta * TURN_SPEED) 
 	
 	_toggle_blocking(Input.is_action_pressed("block") and state != states.KNOCKBACK)
 	
@@ -166,9 +169,6 @@ func move_state(delta):
 		running = false
 	
 	var input_dir = Input.get_vector("move_right", "move_left", "move_back", "move_forward")
-	
-	if ranged_mode and target and target in ranged_targets:
-		camera_controller.transform.basis = camera_controller.transform.basis.slerp(transform.looking_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true).basis, delta * TURN_SPEED) 
 	
 	if input_dir != Vector2.ZERO:
 		if running:
