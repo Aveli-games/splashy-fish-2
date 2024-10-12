@@ -309,8 +309,8 @@ func _on_action_animation_finished(call_state):
 					dodge_direction = cur_action["data"]["direction"]
 					if dodge_direction:
 						# Rotate so we dodge in the desired direction
-						# In this case, rotate character in opposite direction
-						transform = transform.rotated_local(Vector3.UP, Vector2(dodge_direction.z, dodge_direction.x).angle())
+						# In this case, we need to invert the direction in the data due to 2d and 3d differences
+						transform = transform.rotated_local(Vector3.UP, Vector2(-dodge_direction.z, -dodge_direction.x).angle())
 						print("Dodge direction = ", dodge_direction)
 						dodge_direction = null
 					state = states.DODGING
