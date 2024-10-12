@@ -183,7 +183,8 @@ func move_state(delta):
 		
 		# Have player move smoothly to line up with camera
 		var camera_basis_filtered = Basis(camera_controller.transform.basis.x * Vector3(1,0,1), Vector3(0,1,0), camera_controller.transform.basis.z * Vector3(1,0,1))
-		transform.basis = transform.basis.slerp(camera_basis_filtered.orthonormalized(), delta * TURN_SPEED/3)
+		var new_basis = camera_basis_filtered.rotated(Vector3.UP, Vector2(input_dir.y, input_dir.x).angle()).orthonormalized()
+		transform.basis = transform.basis.slerp(new_basis, delta * TURN_SPEED)
 	else:
 		running = false
 		animation_state.travel("idle")
