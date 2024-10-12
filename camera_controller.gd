@@ -9,7 +9,7 @@ var mouse_control = true
 func _process(delta):
 	transform.basis = transform.basis.orthonormalized()
 
-func _input(event):
+func _unhandled_input(event):
 	if mouse_control and event is InputEventMouseMotion:
 		mouse_position = event.relative * sensitivity
 		var yaw = mouse_position.x

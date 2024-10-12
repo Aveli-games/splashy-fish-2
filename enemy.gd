@@ -186,7 +186,7 @@ func _on_action_animation_finished(call_state):
 		state = states.MOVING
 
 func _on_death_animation_finished():
-	queue_free()
+	remove_from_group("Enemies")
 
 func get_targeting_position():
 	return transform.origin + $TargetingPostion.transform.origin

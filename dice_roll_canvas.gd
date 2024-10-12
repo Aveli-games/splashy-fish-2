@@ -13,7 +13,8 @@ func _process(delta):
 	pass
 
 func _on_dice_roll_viewport_roll_finished(value):
-	roll_finished.emit(value)
+	if visible:
+		roll_finished.emit(value)
 
 func roll():
 	dice_roller.roll()

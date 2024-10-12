@@ -1,7 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://cpar6wi3hsdld"]
+[gd_scene load_steps=4 format=3 uid="uid://gcix14imojms"]
 
 [ext_resource type="Script" path="res://action_options.gd" id="1_7ftbq"]
-[ext_resource type="PackedScene" uid="uid://bu08mtrrarnva" path="res://action_option.tscn" id="1_utq0p"]
+[ext_resource type="PackedScene" uid="uid://2faj2wghpqml" path="res://action_option.tscn" id="1_utq0p"]
 [ext_resource type="Script" path="res://action_options_list.gd" id="2_jg7gw"]
 
 [node name="ActionOptions" type="Control"]
@@ -13,8 +13,9 @@ script = ExtResource("1_7ftbq")
 
 [node name="ActionOptionsList" type="VBoxContainer" parent="."]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 360.0
+offset_bottom = 360.0
+alignment = 1
 script = ExtResource("2_jg7gw")
 
 [node name="ActionOption" parent="ActionOptionsList" instance=ExtResource("1_utq0p")]

@@ -1,13 +1,19 @@
 extends Node
 
 signal roll_requested
+signal lost
+signal won
 
 @export var enemy_scene: PackedScene
 @export var bottle_scene: PackedScene
 
+
 var camera_controller
 var roll_requester
 var objective
+var game_ended = false
+
+var num_enemies = 10
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -29,35 +35,54 @@ func _ready():
 		bottle.global_position = objective.global_position + Vector3(Globals.rng.randi_range(2, 5), 0, 0).rotated(Vector3.UP, deg_to_rad(Globals.rng.randi_range(0, 360)))
 		
 		add_child(bottle)
-	
+
+func _process(delta):
+	if num_enemies <= 0 and get_tree().get_nodes_in_group("Enemies").size() == 0 and not game_ended:
+		game_ended = true
+		won.emit()
 
 func _on_player_died():
-	if get_tree():
-		get_tree().reload_current_scene()
+	if not game_ended:
+		game_ended = true
+		freeze_camera()
+		lost.emit()
 
 func _on_objective_died():
-	if get_tree():
-		get_tree().reload_current_scene()
+	if not game_ended:
+		game_ended = true
+		freeze_camera()
+		lost.emit()
 
-func _on_enemy_spawn_timer_timeout():
-	if $Player && $Player.process_mode != PROCESS_MODE_DISABLED:
+func spawn_enemy(number: int):
+	if number > num_enemies:
+		number = num_enemies
+	else:
+		num_enemies -= number
+	
+	# Choose a random location on the SpawnPath.
+	# We store the reference to the SpawnLocation node.
+	var enemy_spawn_location = get_node("SpawnPath/SpawnLocation")
+	# And give it a random offset.
+	enemy_spawn_location.progress_ratio = randf()
+
+	while number > 0:
+		number -= 1
+		enemy_spawn_location.progress_ratio += .015
 		# Create a new instance of the Enemy scene.
 		var enemy = enemy_scene.instantiate()
-
-		# Choose a random location on the SpawnPath.
-		# We store the reference to the SpawnLocation node.
-		var enemy_spawn_location = get_node("SpawnPath/SpawnLocation")
-		# And give it a random offset.
-		enemy_spawn_location.progress_ratio = randf()
 
 		# Assign the objective as the enemy's target 
 		enemy.initialize(enemy_spawn_location.position, objective)
 
 		# Spawn the enemy by adding it to the Main scene.
-		add_child(enemy)
+		$Enemies.add_child(enemy)
 		
 		# We connect the enemy to the no target found signal so the level can assign the default
 		enemy.no_target_found.connect(_on_enemy_no_target_found.bind())
+
+func _on_enemy_spawn_timer_timeout():
+	if $Player && $Player.process_mode != PROCESS_MODE_DISABLED and num_enemies > 0:
+		spawn_enemy(randi_range(0,3))
 	
 func _on_enemy_no_target_found(enemy):
 	enemy.set_target(objective)
@@ -70,3 +95,11 @@ func freeze_camera():
 
 func unfreeze_camera():
 	camera_controller.toggle_mouse_control(true)
+	
+func pause_play():
+	freeze_camera()
+	get_tree().set_group_flags(0, "Level", "process_mode", PROCESS_MODE_DISABLED)
+
+func resume_play():
+	unfreeze_camera()
+	get_tree().set_group_flags(0, "Level", "process_mode", PROCESS_MODE_ALWAYS)
