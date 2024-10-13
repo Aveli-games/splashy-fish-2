@@ -1,12 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://cpewl5xflk5gl"]
+[gd_scene load_steps=2 format=3 uid="uid://bj4uln3vo6n1x"]
 
 [ext_resource type="Script" path="res://direction_interface.gd" id="1_4xeme"]
 
 [node name="DirectionInterface" type="Control"]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 200.0
-offset_bottom = 200.0
+offset_right = 360.0
+offset_bottom = 360.0
 script = ExtResource("1_4xeme")
 bg_color = Color(1, 0.454902, 0, 0.156863)
 
@@ -26,13 +26,14 @@ offset_bottom = 30.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(40, 30)
+theme_override_font_sizes/font_size = 36
 text = "Choose 
 Direction"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="DirectionSelector" type="Marker2D" parent="."]
-position = Vector2(32, 96)
+position = Vector2(44, 178)
 
 [node name="DirectionLabel" type="Label" parent="DirectionSelector"]
 anchors_preset = -1
@@ -45,6 +46,7 @@ offset_top = -16.0
 offset_right = 14.0
 offset_bottom = 15.0
 rotation = 3.14159
+scale = Vector2(1.48396, 1.57609)
 pivot_offset = Vector2(15, 15)
 text = ">"
 horizontal_alignment = 1

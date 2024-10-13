@@ -121,6 +121,9 @@ func _ready():
 func _physics_process(delta):
 	if state != states.ATTACKING:
 		_toggle_ranged(Input.is_action_pressed("aim_ranged"))
+		
+	if ranged_mode and target and target in ranged_targets:
+		camera_controller.transform.basis = camera_controller.transform.basis.slerp(transform.looking_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true).basis, delta * TURN_SPEED) 
 	
 	_toggle_blocking(Input.is_action_pressed("block") and state != states.KNOCKBACK)
 	
@@ -167,9 +170,6 @@ func move_state(delta):
 	
 	var input_dir = Input.get_vector("move_right", "move_left", "move_back", "move_forward")
 	
-	if ranged_mode and target and target in ranged_targets:
-		camera_controller.transform.basis = camera_controller.transform.basis.slerp(transform.looking_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true).basis, delta * TURN_SPEED) 
-	
 	if input_dir != Vector2.ZERO:
 		if running:
 			animation_tree.set("parameters/Run/Run/blend_position", input_dir)
@@ -183,7 +183,8 @@ func move_state(delta):
 		
 		# Have player move smoothly to line up with camera
 		var camera_basis_filtered = Basis(camera_controller.transform.basis.x * Vector3(1,0,1), Vector3(0,1,0), camera_controller.transform.basis.z * Vector3(1,0,1))
-		transform.basis = transform.basis.slerp(camera_basis_filtered.orthonormalized(), delta * TURN_SPEED/3)
+		var new_basis = camera_basis_filtered.rotated(Vector3.UP, Vector2(input_dir.y, input_dir.x).angle()).orthonormalized()
+		transform.basis = transform.basis.slerp(new_basis, delta * TURN_SPEED)
 	else:
 		running = false
 		animation_state.travel("idle")
@@ -308,8 +309,8 @@ func _on_action_animation_finished(call_state):
 					dodge_direction = cur_action["data"]["direction"]
 					if dodge_direction:
 						# Rotate so we dodge in the desired direction
-						# In this case, rotate character in opposite direction
-						transform = transform.rotated_local(Vector3.UP, Vector2(dodge_direction.z, dodge_direction.x).angle())
+						# In this case, we need to invert the direction in the data due to 2d and 3d differences
+						transform = transform.rotated_local(Vector3.UP, Vector2(-dodge_direction.z, -dodge_direction.x).angle())
 						print("Dodge direction = ", dodge_direction)
 						dodge_direction = null
 					state = states.DODGING
@@ -390,8 +391,8 @@ func _get_new_target():
 	
 	_set_target(new_target)
 
-func _input(event):
-	if event is InputEventMouseMotion:
+func _unhandled_input(event):
+	if health > 0 and event is InputEventMouseMotion:
 		# TODO: Update this to cycle through possible targets from left to right,
 			#       rather than in the order that they entered the ranged_targets array
 		if ranged_mode and animation_state.get_current_node() != "Throw" and target and target in ranged_targets:

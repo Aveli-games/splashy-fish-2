@@ -13,19 +13,16 @@ func _ready():
 	health_bar_modulate = $HealthBarView/HealthBar.modulate
 	$HealthBarView/HealthLabel.text = str(health)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	if health <= 0:
-		die()
-
 func on_hit(damage):
-	health = clamp(health - damage, 0, max_health)
-	$HealthBarView/HealthLabel.text = str(health)
-	$HealthBarView/HealthBar.value = health
+	if health > 0:
+		health = clamp(health - damage, 0, max_health)
+		$HealthBarView/HealthLabel.text = str(health)
+		$HealthBarView/HealthBar.value = health
+		if health <= 0:
+			die()
 
 func die():
 	died.emit()
-	queue_free()
 
 func targeted():
 	targeted_times += 1
