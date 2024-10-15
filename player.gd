@@ -39,7 +39,7 @@ const CAMERA_SMOOTHING = .85
 const ACTIVE_COLOR = Color("#2bff0071")
 const INACTIVE_COLOR = Color("#ffffff71")
 const MELEE_DAMAGE_BASE = 1
-const DODGE_DIRECTION_DEFAULT = Vector3.BACK
+const DODGE_DIRECTION_DEFAULT = Vector2.DOWN
 
 var target_change_threshold = 100 * Globals.mouse_sensitivity
 
@@ -107,6 +107,7 @@ var combo = 0
 var action_queue = []
 
 var dodge_direction = DODGE_DIRECTION_DEFAULT
+var action_basis: Basis
 
 func _ready():
 	camera_y = camera_controller.global_position.y
@@ -126,7 +127,6 @@ func _physics_process(delta):
 		camera_controller.transform.basis = camera_controller.transform.basis.slerp(transform.looking_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true).basis, delta * TURN_SPEED) 
 	
 	_toggle_blocking(Input.is_action_pressed("block") and state != states.KNOCKBACK)
-	
 	match state:
 		states.MOVING:
 			move_state(delta)
@@ -275,6 +275,7 @@ func attack_connects():
 	if target in melee_targets && attack_hit:
 		target.on_hit(melee_damage)
 		melee_damage = MELEE_DAMAGE_BASE
+		action_basis = camera_controller.transform.basis
 
 func attack_check():
 	if target in melee_targets:
@@ -314,8 +315,10 @@ func _on_action_animation_finished(call_state):
 					if dodge_direction:
 						# Rotate so we dodge in the desired direction
 						# In this case, we need to invert the direction in the data due to 2d and 3d differences
-						transform = transform.rotated_local(Vector3.UP, Vector2(-dodge_direction.z, -dodge_direction.x).angle())
-						print("Dodge direction = ", dodge_direction)
+						var dodge_rotation = action_basis.rotated(Vector3.UP, Vector2(-dodge_direction.y, -dodge_direction.x).angle())
+						
+						# Filter the dodge rotation so the player model only rotates around the y axis
+						transform.basis = Basis(dodge_rotation.x * Vector3(1,0,1), Vector3.UP, dodge_rotation.z * Vector3(1,0,1)).orthonormalized()
 						dodge_direction = null
 					state = states.DODGING
 					dodge_state()
