@@ -161,6 +161,8 @@ func _physics_process(delta):
 	
 	camera_controller.global_position = global_position.lerp(camera_controller.global_position, CAMERA_SMOOTHING)
 	camera_controller.global_position.y = camera_y
+	
+	# When in ranged mode, raycast from the center of the screen/camera to target enemies
 	if ranged_mode:
 		var camera = camera_controller.get_camera()
 		var space_state = camera_controller.get_world_3d().direct_space_state
