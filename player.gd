@@ -32,7 +32,6 @@ enum melee_attack_options {
 const WALK_SPEED = 1.6
 const RUN_SPEED = WALK_SPEED * 2
 const JUMP_VELOCITY = 4.5
-const TURN_SPEED = 10
 const ATTACK_ANIMATION_DISTANCE = 1.001
 const ATTACK_ANIMATION_ROTATION = deg_to_rad(18.8)
 const CAMERA_SMOOTHING = .85
@@ -77,6 +76,8 @@ var close_targets: Array
 var melee_targets: Array
 var ranged_targets: Array
 
+var throw_target = CharacterBody3D
+
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
@@ -109,7 +110,11 @@ var action_queue = []
 var dodge_direction = DODGE_DIRECTION_DEFAULT
 var action_basis: Basis
 
+var ranged_camera_offset = Vector3(.5, 0, .5)
+var screen_center
+
 func _ready():
+	screen_center = get_viewport().size / 2
 	camera_y = camera_controller.global_position.y
 	animation_tree = $AnimationTree
 	animation_state = animation_tree.get("parameters/playback")
@@ -122,9 +127,6 @@ func _ready():
 func _physics_process(delta):
 	if state != states.ATTACKING:
 		_toggle_ranged(Input.is_action_pressed("aim_ranged"))
-		
-	if ranged_mode and target and target in ranged_targets:
-		camera_controller.transform.basis = camera_controller.transform.basis.slerp(transform.looking_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true).basis, delta * TURN_SPEED) 
 	
 	_toggle_blocking(Input.is_action_pressed("block") and state != states.KNOCKBACK)
 	match state:
@@ -157,9 +159,23 @@ func _physics_process(delta):
 	if not running and state == states.MOVING:
 		_change_stamina(stamina_regen_rate * delta)
 	
-	camera_controller.toggle_mouse_control(not (ranged_mode and target and target in ranged_targets))
 	camera_controller.global_position = global_position.lerp(camera_controller.global_position, CAMERA_SMOOTHING)
 	camera_controller.global_position.y = camera_y
+	
+	# When in ranged mode, raycast from the center of the screen/camera to target enemies
+	if ranged_mode:
+		var camera = camera_controller.get_camera()
+		var space_state = camera_controller.get_world_3d().direct_space_state
+		var origin = camera.project_ray_origin(screen_center)
+		var end = origin + camera.project_ray_normal(screen_center) * 1000
+		var query = PhysicsRayQueryParameters3D.create(origin, end)
+		query.collide_with_bodies = true
+		query.collision_mask = collision_mask
+		var result = space_state.intersect_ray(query)
+		if not result.is_empty() and result.collider in ranged_targets:
+			_set_target(result.collider)
+		else:
+			_get_new_target()
 
 func move_state(delta):
 	if Input.is_action_pressed("run"):
@@ -184,7 +200,7 @@ func move_state(delta):
 		# Have player move smoothly to line up with camera
 		var camera_basis_filtered = Basis(camera_controller.transform.basis.x * Vector3(1,0,1), Vector3(0,1,0), camera_controller.transform.basis.z * Vector3(1,0,1))
 		var new_basis = camera_basis_filtered.rotated(Vector3.UP, Vector2(input_dir.y, input_dir.x).angle()).orthonormalized()
-		transform.basis = transform.basis.slerp(new_basis, delta * TURN_SPEED)
+		transform.basis = transform.basis.slerp(new_basis, delta * Globals.TURN_SPEED)
 	else:
 		running = false
 		animation_state.travel("idle")
@@ -204,16 +220,17 @@ func attack_state(delta):
 			if target in melee_targets and animation_state.get_current_node() != "Throw":
 				# Move toward the enemy if too far, move away if too close
 				if attack_position.origin.distance_to(target.transform.origin) > ATTACK_ANIMATION_DISTANCE:
-					attack_position.origin = attack_position.origin.move_toward(target.transform.origin * Vector3(1, 0, 1), delta * TURN_SPEED)
+					attack_position.origin = attack_position.origin.move_toward(target.transform.origin * Vector3(1, 0, 1), delta * Globals.TURN_SPEED)
 				if attack_position.origin.distance_to(target.transform.origin) < ATTACK_ANIMATION_DISTANCE:
-					attack_position.origin = attack_position.origin.move_toward(target.transform.origin * Vector3(-1, 0, -1), delta * TURN_SPEED)
+					attack_position.origin = attack_position.origin.move_toward(target.transform.origin * Vector3(-1, 0, -1), delta * Globals.TURN_SPEED)
 				
 				animation_state.travel("Punch")
-			elif target in ranged_targets and animation_state.get_current_node() != "Punch":
+			elif target in ranged_targets and animation_state.get_current_node() != "Punch" and animation_state.get_current_node() != "Throw":
+				throw_target = target
 				animation_state.travel("Throw")
 			
 			# Apply everything
-			transform = transform.interpolate_with(attack_position, delta * TURN_SPEED)
+			transform = transform.interpolate_with(attack_position, delta * Globals.TURN_SPEED)
 			running = false
 
 func hit_state():
@@ -379,6 +396,12 @@ func _toggle_ranged(is_ranged):
 	if ranged_mode != is_ranged:
 		ranged_mode = not ranged_mode
 		_get_new_target()
+		if is_ranged:
+			$Reticle.show()
+			camera_controller.offset_camera(ranged_camera_offset)
+		else:
+			$Reticle.hide()
+			camera_controller.offset_camera(-ranged_camera_offset)
 
 func _set_target(new_target):
 	if target:
@@ -391,41 +414,19 @@ func _get_new_target():
 	var new_target
 	if not ranged_mode and not melee_targets.is_empty():
 		new_target = melee_targets[0]
-	elif ranged_mode and not ranged_targets.is_empty():
-		new_target = ranged_targets[0]
 	else:
 		new_target = null
 	
 	_set_target(new_target)
 
-func _unhandled_input(event):
-	if health > 0 and event is InputEventMouseMotion:
-		# TODO: Update this to cycle through possible targets from left to right,
-			#       rather than in the order that they entered the ranged_targets array
-		if ranged_mode and animation_state.get_current_node() != "Throw" and target and target in ranged_targets:
-			ranged_target_change += event.relative.x
-			if ranged_target_change >= target_change_threshold:
-				ranged_target_change = 0
-				if target == ranged_targets.back():
-					_set_target(ranged_targets.front())
-				else:
-					_set_target(ranged_targets[ranged_targets.find(target) + 1])
-			elif -ranged_target_change >= target_change_threshold:
-				ranged_target_change = 0
-				if target == ranged_targets.front():
-					_set_target(ranged_targets.back())
-				else:
-					_set_target(ranged_targets[ranged_targets.find(target) - 1])
-		else:
-			ranged_target_change = 0
-
 func throw_donut():
-	if target and target in ranged_targets:
+	if throw_target:
 		var right_hand_bone = $Armature/Skeleton3D.find_bone("mixamorig1_RightHand")
 		var right_hand_bone_position = $Armature/Skeleton3D.global_transform * $Armature/Skeleton3D.get_bone_global_pose(right_hand_bone)
 		var projectile = projectile_scene.instantiate()
 		add_sibling(projectile)
-		projectile.fire(1, 10, right_hand_bone_position.origin, target)
+		projectile.fire(1, 10, right_hand_bone_position.origin, throw_target)
+	throw_target = null
 
 func _change_stamina(stamina_change):
 	stamina = clamp(stamina + stamina_change, 0, max_stamina)
