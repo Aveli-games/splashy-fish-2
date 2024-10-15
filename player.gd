@@ -225,13 +225,17 @@ func death_state():
 	animation_state.travel("Die")
 
 func on_hit(damage):
-	damage = -abs(damage) # Make sure damage is negative
-	_change_health(damage)
-	if health > 0 and state != states.ATTACKING:
-		state = states.HIT
+	if blocking:
+		on_block()
+	else:
+		damage = -abs(damage) # Make sure damage is negative
+		_change_health(damage)
+		if health > 0 and state != states.ATTACKING:
+			state = states.HIT
 
 func on_block():
-	if $Abilities/Block/BlockTimer.time_left == 0:
+	# Only do the blocking animation if in the moving state
+	if $Abilities/Block/BlockTimer.time_left == 0 and state == states.MOVING:
 		state = states.BLOCKING
 
 # TODO: react to kicks from different angles
