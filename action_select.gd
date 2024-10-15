@@ -6,7 +6,7 @@ signal direction_chosen
 var actions_left = 1
 var action_queue = []
 var prev_mouse_mode
-var chosen_direction: Vector3
+var chosen_direction: Vector2
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -45,6 +45,6 @@ func show_direction_interface():
 func _on_direction_interface_direction_chosen(direction: Vector2):
 	Input.mouse_mode = prev_mouse_mode
 	# Adjust the resultant direction to account for the difference between 2D and 3D axes
-	chosen_direction = Vector3(direction.x, 0, direction.y)
+	chosen_direction = direction
 	$DirectionInterface.hide()
 	direction_chosen.emit()
