@@ -2,6 +2,7 @@ extends Node
 
 var mouse_sensitivity = 2
 var rng = RandomNumberGenerator.new()
+const TURN_SPEED = 10
 
 enum movement_states {
 	MOVING,
