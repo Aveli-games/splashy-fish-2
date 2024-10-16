@@ -113,7 +113,10 @@ var action_basis: Basis
 var ranged_camera_offset = Vector3(.5, 0, .5)
 var screen_center
 
+var ammo_holster: Node3D
+
 func _ready():
+	ammo_holster = $Armature/Skeleton3D/BoneAttachment3D/AmmunitionMount
 	screen_center = get_viewport().size / 2
 	camera_y = camera_controller.global_position.y
 	animation_tree = $AnimationTree
@@ -393,10 +396,12 @@ func _on_far_range_body_exited(body):
 
 # Toggle ranged mode or not and take the first target that had entered the respective range
 func _toggle_ranged(is_ranged):
+	if ammo_holster.get_children().is_empty():
+		is_ranged = false
 	if ranged_mode != is_ranged:
 		ranged_mode = not ranged_mode
 		_get_new_target()
-		if is_ranged:
+		if ranged_mode:
 			$Reticle.show()
 			camera_controller.offset_camera(ranged_camera_offset)
 		else:
@@ -421,11 +426,14 @@ func _get_new_target():
 
 func throw_donut():
 	if throw_target:
-		var right_hand_bone = $Armature/Skeleton3D.find_bone("mixamorig1_RightHand")
-		var right_hand_bone_position = $Armature/Skeleton3D.global_transform * $Armature/Skeleton3D.get_bone_global_pose(right_hand_bone)
-		var projectile = projectile_scene.instantiate()
-		add_sibling(projectile)
-		projectile.fire(1, 10, right_hand_bone_position.origin, throw_target)
+		var available_ammo = ammo_holster.get_children()
+		if not available_ammo.is_empty():
+			available_ammo.pop_back().queue_free()
+			var right_hand_bone = $Armature/Skeleton3D.find_bone("mixamorig1_RightHand")
+			var right_hand_bone_position = $Armature/Skeleton3D.global_transform * $Armature/Skeleton3D.get_bone_global_pose(right_hand_bone)
+			var projectile = projectile_scene.instantiate()
+			add_sibling(projectile)
+			projectile.fire(1, 10, right_hand_bone_position.origin, throw_target)
 	throw_target = null
 
 func _change_stamina(stamina_change):
