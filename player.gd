@@ -152,18 +152,15 @@ func _physics_process(delta):
 	velocity = (current_rotation.normalized() * $AnimationTree.get_root_motion_position()) / delta
 	
 	# Add gravity if necessary
-	# TODO: Figure out how to apply gravity if ABOVE floor
-	if is_on_floor() or state == states.DYING:
-		velocity.y = 0
-	else:
-		velocity.y -= gravity * delta
+	if not is_on_floor():
+		velocity.y -= gravity
 	
 	move_and_slide()
 	if not running and state == states.MOVING:
 		_change_stamina(stamina_regen_rate * delta)
 	
 	camera_controller.global_position = global_position.lerp(camera_controller.global_position, CAMERA_SMOOTHING)
-	camera_controller.global_position.y = camera_y
+	camera_controller.global_position.y = global_position.y + camera_y
 	
 	# When in ranged mode, raycast from the center of the screen/camera to target enemies
 	if ranged_mode:

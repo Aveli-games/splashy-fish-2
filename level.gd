@@ -1,11 +1,14 @@
 extends Node
 
+class_name Level
+
 signal roll_requested
 signal lost
 signal won
 
 @export var enemy_scene: PackedScene
 @export var bottle_scene: PackedScene
+@export var num_enemies = 10
 
 
 var camera_controller
@@ -13,7 +16,6 @@ var roll_requester
 var objective
 var game_ended = false
 
-var num_enemies = 10
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -21,11 +23,12 @@ func _ready():
 	objective = get_node("Objective")
 	
 	# Move trees to pseudorandom locations for a more organic forest feel
-	for tree_line in $Boundaries/TreeLines.get_children():
-		for tree in tree_line.get_children():
-			var tree_scale = Globals.rng.randf_range(2.4, 5)
-			tree.scale = Vector3(tree_scale, tree_scale, tree_scale)
-			tree.position.x = Globals.rng.randi_range(-25, -15)
+	if $Boundaries/TreeLines:
+		for tree_line in $Boundaries/TreeLines.get_children():
+			for tree in tree_line.get_children():
+				var tree_scale = Globals.rng.randf_range(2.4, 5)
+				tree.scale = Vector3(tree_scale, tree_scale, tree_scale)
+				tree.position.x = Globals.rng.randi_range(-25, -15)
 	
 	# Spawn in some bottles to make the play area a little more interesting
 	for n in 10:
@@ -72,7 +75,7 @@ func spawn_enemy(number: int):
 		var enemy = enemy_scene.instantiate()
 
 		# Assign the objective as the enemy's target 
-		enemy.initialize(enemy_spawn_location.position, objective)
+		enemy.initialize(enemy_spawn_location.global_position, objective)
 
 		# Spawn the enemy by adding it to the Main scene.
 		$Enemies.add_child(enemy)

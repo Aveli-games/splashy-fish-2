@@ -46,30 +46,31 @@ func _ready():
 	$HealthBarView/HealthBar.value = health
 
 func _physics_process(delta):
-	# Add the gravity.
-	if not is_on_floor():
-		velocity.y -= gravity * delta
+	if $RayCast3D.is_colliding():
+		global_transform.origin = $RayCast3D.get_collision_point()
+		$RayCast3D.enabled = false
+	else:
+		match state:
+			states.MOVING:
+				move_state()
+			states.ATTACKING:
+				attack_state(delta)
+			states.HIT:
+				hit_state()
+			states.DYING:
+				death_state()
+			states.BLOCKING:
+				block_state()
+			states.KICKING:
+				kick_state()
 
-	match state:
-		states.MOVING:
-			move_state()
-		states.ATTACKING:
-			attack_state(delta)
-		states.HIT:
-			hit_state()
-		states.DYING:
-			death_state()
-		states.BLOCKING:
-			block_state()
-		states.KICKING:
-			kick_state()
-
-	# Add the gravity.
-	if not is_on_floor():
-		velocity.y -= gravity * delta
-	var current_rotation = transform.basis.get_rotation_quaternion()
-	velocity = (current_rotation.normalized() * $AnimationTree.get_root_motion_position()) / delta
-	move_and_slide()
+		var current_rotation = transform.basis.get_rotation_quaternion()
+		velocity = (current_rotation.normalized() * $AnimationTree.get_root_motion_position()) / delta
+		
+		# Add the gravity.
+		if not is_on_floor():
+			velocity.y -= gravity
+		move_and_slide()
 
 # This function will be called from the Main scene.
 func initialize(start_position, start_target):
@@ -79,7 +80,7 @@ func initialize(start_position, start_target):
 	set_target(start_target)
 	
 func move_state():
-	look_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true)
+	look_at(Vector3(target.global_position.x, global_position.y, target.global_position.z), Vector3.UP, true)
 	if target not in close_targets:
 		animation_state.travel("Walk")
 	else:
@@ -90,7 +91,7 @@ func move_state():
 			state = states.ATTACKING
 
 func attack_state(delta):
-	transform = transform.interpolate_with(transform.looking_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true), delta * TURN_SPEED)
+	transform = transform.interpolate_with(transform.looking_at(Vector3(target.global_position.x, global_position.y, target.global_position.z), Vector3.UP, true), delta * TURN_SPEED)
 	animation_state.travel("Attack")
 
 func hit_state():
@@ -196,3 +197,4 @@ func targeted():
 
 func untargeted():
 	$Armature/Skeleton3D/HighlightMesh.hide()
+	

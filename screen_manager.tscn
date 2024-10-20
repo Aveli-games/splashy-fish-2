@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://screen_manager.gd" id="1_7yicb"]
 [ext_resource type="PackedScene" uid="uid://b20ptif3dcpca" path="res://level.tscn" id="1_yrxmi"]
-[ext_resource type="PackedScene" uid="uid://do7dpbgd6ku6n" path="res://hud.tscn" id="2_3khgq"]
+[ext_resource type="PackedScene" path="res://hud.tscn" id="2_3khgq"]
 
 [node name="ScreenManager" type="Node"]
 process_mode = 3
