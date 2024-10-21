@@ -7,7 +7,6 @@ signal level_selected
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	print(levels)
 	for level in levels:
 		_add_level_button(level)
 

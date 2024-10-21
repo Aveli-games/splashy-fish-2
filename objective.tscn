@@ -8,7 +8,7 @@ viewport_path = NodePath("HealthBarView")
 
 [node name="Objective" instance=ExtResource("1_caq6c")]
 transform = Transform3D(2.985, 0, 0, 0, 2.985, 0, 0, 0, 2.985, 0, 0, 0)
-collision_layer = 4
+collision_layer = 8
 script = ExtResource("2_dh0ir")
 
 [node name="HealthBarSprite" type="Sprite3D" parent="." index="12"]

@@ -9,6 +9,8 @@ signal action_queue_set
 
 @export var camera_controller : Marker3D
 @export var projectile_scene : PackedScene
+@export var reticle_highlight_color: Color
+@export var reticle_base_color: Color
 
 enum states {
 	MOVING = Globals.movement_states.MOVING,
@@ -76,7 +78,7 @@ var close_targets: Array
 var melee_targets: Array
 var ranged_targets: Array
 
-var throw_target = CharacterBody3D
+var attack_target: CharacterBody3D
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -162,20 +164,19 @@ func _physics_process(delta):
 	camera_controller.global_position = global_position.lerp(camera_controller.global_position, CAMERA_SMOOTHING)
 	camera_controller.global_position.y = global_position.y + camera_y
 	
-	# When in ranged mode, raycast from the center of the screen/camera to target enemies
-	if ranged_mode:
-		var camera = camera_controller.get_camera()
-		var space_state = camera_controller.get_world_3d().direct_space_state
-		var origin = camera.project_ray_origin(screen_center)
-		var end = origin + camera.project_ray_normal(screen_center) * 1000
-		var query = PhysicsRayQueryParameters3D.create(origin, end)
-		query.collide_with_bodies = true
-		query.collision_mask = collision_mask
-		var result = space_state.intersect_ray(query)
-		if not result.is_empty() and result.collider in ranged_targets:
-			_set_target(result.collider)
-		else:
-			_get_new_target()
+	# Raycast from the center of the screen/camera to target enemies
+	var camera = camera_controller.get_camera()
+	var space_state = camera_controller.get_world_3d().direct_space_state
+	var origin = camera.project_ray_origin(screen_center)
+	var end = origin + camera.project_ray_normal(screen_center) * 1000
+	var query = PhysicsRayQueryParameters3D.create(origin, end)
+	query.collide_with_bodies = true
+	query.collision_mask = collision_mask
+	var result = space_state.intersect_ray(query)
+	if not result.is_empty() and ((not ranged_mode and result.collider in melee_targets) or (ranged_mode and result.collider in ranged_targets)):
+		_set_target(result.collider)
+	else: # Get default melee target if available
+		_get_new_target()
 
 func move_state(delta):
 	if Input.is_action_pressed("run"):
@@ -208,25 +209,25 @@ func move_state(delta):
 		velocity.z = move_toward(velocity.z, 0, cur_speed)
 	
 	if (Input.is_action_just_pressed("attack") or combo > 0) and target:
+		attack_target = target
 		state = states.ATTACKING
 	else:
 		combo = 0
 
 func attack_state(delta):
 	if $Abilities/Attack/AttackCooldownTimer.is_stopped():
-		if target:
+		if attack_target:
 			# Get the correct rotation for the attack
-			var attack_position = transform.looking_at(Vector3(target.global_position.x, transform.origin.y, target.global_position.z), Vector3.UP, true).rotated_local(Vector3.UP, ATTACK_ANIMATION_ROTATION)
-			if target in melee_targets and animation_state.get_current_node() != "Throw":
+			var attack_position = transform.looking_at(Vector3(attack_target.global_position.x, transform.origin.y, attack_target.global_position.z), Vector3.UP, true).rotated_local(Vector3.UP, ATTACK_ANIMATION_ROTATION)
+			if attack_target in melee_targets and animation_state.get_current_node() != "Throw":
 				# Move toward the enemy if too far, move away if too close
-				if attack_position.origin.distance_to(target.transform.origin) > ATTACK_ANIMATION_DISTANCE:
-					attack_position.origin = attack_position.origin.move_toward(target.transform.origin * Vector3(1, 0, 1), delta * Globals.TURN_SPEED)
-				if attack_position.origin.distance_to(target.transform.origin) < ATTACK_ANIMATION_DISTANCE:
-					attack_position.origin = attack_position.origin.move_toward(target.transform.origin * Vector3(-1, 0, -1), delta * Globals.TURN_SPEED)
+				if attack_position.origin.distance_to(attack_target.transform.origin) > ATTACK_ANIMATION_DISTANCE:
+					attack_position.origin = attack_position.origin.move_toward(attack_target.transform.origin * Vector3(1, 0, 1), delta * Globals.TURN_SPEED)
+				if attack_position.origin.distance_to(attack_target.transform.origin) < ATTACK_ANIMATION_DISTANCE:
+					attack_position.origin = attack_position.origin.move_toward(attack_target.transform.origin * Vector3(-1, 0, -1), delta * Globals.TURN_SPEED)
 				
 				animation_state.travel("Punch")
-			elif target in ranged_targets and animation_state.get_current_node() != "Punch" and animation_state.get_current_node() != "Throw":
-				throw_target = target
+			elif attack_target in ranged_targets and animation_state.get_current_node() != "Punch" and animation_state.get_current_node() != "Throw":
 				animation_state.travel("Throw")
 			
 			# Apply everything
@@ -289,26 +290,24 @@ func untargeted():
 		$HealthBarView/HealthBar.set_modulate(health_bar_modulate)
 	
 func attack_connects():
-	if target in melee_targets && attack_hit:
-		target.on_hit(melee_damage)
+	if attack_target and attack_hit:
+		attack_target.on_hit(melee_damage)
 		melee_damage = MELEE_DAMAGE_BASE
 		action_basis = camera_controller.transform.basis
 
 func attack_check():
-	if target in melee_targets:
+	if attack_target:
 		if combo > 0:
 			combo -= 1
 			attack_hit = true
 		else:
 			cur_action_options = melee_options
-			var attack_target = target
 			roll_requested.emit(self)
 			await roll_result_recieved
 			
 			if latest_dice_roll <= roll_fail_upper_threshold:
 				attack_hit = false
-				if attack_target:
-					attack_target.on_miss()
+				attack_target.on_miss()
 			else:
 				attack_hit = true
 				await action_queue_set
@@ -321,9 +320,10 @@ func _on_action_animation_finished(call_state):
 			cur_action = action_queue.pop_front()
 			match cur_action["id"]:
 				melee_attack_options.COMBO:
-					if target:
+					if target and target in melee_targets:
 						combo += 1
 						state = states.ATTACKING
+						attack_target = target
 						animation_state.travel("Punch")
 						animation_state.start(animation_state.get_current_node(), true)
 						return
@@ -382,14 +382,10 @@ func _on_far_range_body_entered(body):
 	var enemies = get_tree().get_nodes_in_group("Enemies")
 	if body not in ranged_targets && body in enemies:
 		ranged_targets.append(body)
-		if not target and ranged_mode:
-			_set_target(body)
 
 func _on_far_range_body_exited(body):
 	if body in ranged_targets:
 		ranged_targets.erase(body)
-	if body == target:
-		_get_new_target()
 
 # Toggle ranged mode or not and take the first target that had entered the respective range
 func _toggle_ranged(is_ranged):
@@ -408,21 +404,23 @@ func _toggle_ranged(is_ranged):
 func _set_target(new_target):
 	if target:
 		target.untargeted()
+		$Reticle/Label.add_theme_color_override("font_color", reticle_base_color)
 	target = new_target
 	if target:
 		target.targeted()
+		$Reticle/Label.add_theme_color_override("font_color", reticle_highlight_color)
 
 func _get_new_target():
 	var new_target
 	if not ranged_mode and not melee_targets.is_empty():
-		new_target = melee_targets[0]
+		new_target = melee_targets.back()
 	else:
 		new_target = null
 	
 	_set_target(new_target)
 
 func throw_donut():
-	if throw_target:
+	if attack_target:
 		var available_ammo = ammo_holster.get_children()
 		if not available_ammo.is_empty():
 			available_ammo.pop_back().queue_free()
@@ -430,8 +428,8 @@ func throw_donut():
 			var right_hand_bone_position = $Armature/Skeleton3D.global_transform * $Armature/Skeleton3D.get_bone_global_pose(right_hand_bone)
 			var projectile = projectile_scene.instantiate()
 			add_sibling(projectile)
-			projectile.fire(1, 10, right_hand_bone_position.origin, throw_target)
-	throw_target = null
+			projectile.fire(1, 10, right_hand_bone_position.origin, attack_target)
+	attack_target = null
 
 func _change_stamina(stamina_change):
 	stamina = clamp(stamina + stamina_change, 0, max_stamina)
