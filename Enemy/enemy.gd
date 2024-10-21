@@ -163,8 +163,9 @@ func on_hit(damage):
 		state = states.HIT
 	else:
 		# Remove collision and info so it's just untargetable animation left
-		$CollisionShape3D.queue_free()
-		$HealthBarSprite.queue_free()
+		collision_layer = 0
+		collision_mask = 1
+		$HealthBarSprite.hide()
 		state = states.DYING
 
 func on_miss():

@@ -442,7 +442,8 @@ func _change_health(health_change):
 	$HealthBarView/HealthLabel.text = str(health)
 	$HealthBarView/HealthBar.value = health
 	if health <= 0:
-		$CollisionShape3D.queue_free()
+		collision_layer = 0
+		collision_mask = 1
 		state = states.DYING
 
 func get_action_options():
