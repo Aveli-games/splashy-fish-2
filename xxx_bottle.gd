@@ -8,7 +8,6 @@ func _ready():
 	spawn_raycast.force_raycast_update()
 	if spawn_raycast.is_colliding():
 		global_transform.origin.y += spawn_raycast.get_collision_point().y
-		print(spawn_raycast.get_collision_point())
 	spawn_raycast.enabled = false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

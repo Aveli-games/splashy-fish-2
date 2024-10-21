@@ -216,7 +216,7 @@ func attack_state(delta):
 	if $Abilities/Attack/AttackCooldownTimer.is_stopped():
 		if target:
 			# Get the correct rotation for the attack
-			var attack_position = transform.looking_at(Vector3(target.global_position.x, 0, target.global_position.z), Vector3.UP, true).rotated_local(Vector3.UP, ATTACK_ANIMATION_ROTATION)
+			var attack_position = transform.looking_at(Vector3(target.global_position.x, transform.origin.y, target.global_position.z), Vector3.UP, true).rotated_local(Vector3.UP, ATTACK_ANIMATION_ROTATION)
 			if target in melee_targets and animation_state.get_current_node() != "Throw":
 				# Move toward the enemy if too far, move away if too close
 				if attack_position.origin.distance_to(target.transform.origin) > ATTACK_ANIMATION_DISTANCE:
