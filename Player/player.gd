@@ -119,7 +119,7 @@ var ammo_holster: Node3D
 @export var starting_ammo = 4
 
 func _ready():
-	# Make sure the palyer has the assigned number of donuts
+	# Make sure the player has the assigned number of donuts
 	ammo_holster = $Armature/Skeleton3D/BoneAttachment3D/AmmunitionMount
 	var available_ammo = ammo_holster.get_children()
 	while available_ammo.size() > starting_ammo:
