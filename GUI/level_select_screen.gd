@@ -30,6 +30,8 @@ func _add_level_button(level: PackedScene):
 		$MenuContent/MenuButtons.add_child(level_button)
 
 		level_button.selected.connect(_on_level_button_selected.bind())
+	else:
+		print("Unable to create level: ", level)
 
 func _on_level_button_selected(level_scene: PackedScene):
 	level_selected.emit(level_scene)

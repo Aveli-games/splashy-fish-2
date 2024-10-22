@@ -46,6 +46,7 @@ func _ready():
 	$HealthBarView/HealthBar.value = health
 
 func _physics_process(delta):
+	# Use raycast to cehck if below the ground after spawning, then disable it
 	if $RayCast3D.is_colliding():
 		global_transform.origin = $RayCast3D.get_collision_point()
 		$RayCast3D.enabled = false
