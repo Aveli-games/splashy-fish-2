@@ -48,7 +48,7 @@ var camera_y: float
 
 var state = states.MOVING
 
-var max_health = 5
+@export var max_health = 5
 var health = max_health
 var melee_damage = MELEE_DAMAGE_BASE
 
@@ -116,9 +116,14 @@ var ranged_camera_offset = Vector3(.5, 0, .5)
 var screen_center
 
 var ammo_holster: Node3D
+@export var starting_ammo = 4
 
 func _ready():
 	ammo_holster = $Armature/Skeleton3D/BoneAttachment3D/AmmunitionMount
+	var available_ammo = ammo_holster.get_children()
+	while available_ammo.size() > starting_ammo:
+		available_ammo.pop_back().free()
+	
 	screen_center = get_viewport().size / 2
 	camera_y = camera_controller.global_position.y
 	animation_tree = $AnimationTree

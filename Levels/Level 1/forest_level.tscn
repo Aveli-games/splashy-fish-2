@@ -171,16 +171,17 @@ shadow_mesh = SubResource("ArrayMesh_yampw")
 
 [sub_resource type="Curve3D" id="Curve3D_d7kku"]
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -24, 0, -24, 0, 0, 0, 0, 0, 0, 24, 0, -24, 0, 0, 0, 0, 0, 0, 24, 0, 24, 0, 0, 0, 0, 0, 0, -24, 0, 24, 0, 0, 0, 0, 0, 0, -24, 0, -24),
-"tilts": PackedFloat32Array(0, 0, 0, 0, 0)
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 24, 0, 24, 0, 0, 0, 0, 0, 0, -24, 0, 24),
+"tilts": PackedFloat32Array(0, 0)
 }
-point_count = 5
+point_count = 2
 
 [node name="ForestLevel" type="Node" groups=["Level"]]
 script = ExtResource("1_3lvhi")
 level_name = "Level 1"
 enemy_scene = ExtResource("2_wmgau")
 bottle_scene = ExtResource("3_bthar")
+max_enemy_group = 1
 
 [node name="Boundaries" type="Node3D" parent="."]
 
@@ -1421,11 +1422,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13.5101, 0)
 curve = SubResource("Curve3D_d7kku")
 
 [node name="SpawnLocation" type="PathFollow3D" parent="SpawnPath"]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -24, 0, -24)
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 24, 0, 24)
 
 [node name="Player" parent="." node_paths=PackedStringArray("camera_controller") groups=["PlayerTargets"] instance=ExtResource("3_nfjxn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.883856, -8.096)
 camera_controller = NodePath("../CameraController")
+starting_ammo = 1
 
 [node name="Enemies" type="Node" parent="."]
 
@@ -1435,6 +1437,7 @@ transform = Transform3D(0.6426, 0, -0.766201, 0, 1, 0, 0.766201, 0, 0.6426, 0, 0
 [node name="CameraController" parent="." instance=ExtResource("5_iv0di")]
 
 [node name="Objective" parent="." groups=["PlayerTargets"] instance=ExtResource("6_l8t2e")]
+max_health = 5
 
 [node name="OmniLight3D" type="OmniLight3D" parent="Objective"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.40025, 0)

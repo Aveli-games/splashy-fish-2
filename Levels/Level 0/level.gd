@@ -10,11 +10,13 @@ signal won
 @export var enemy_scene: PackedScene
 @export var bottle_scene: PackedScene
 @export var num_enemies = 10
+@export var max_enemy_group = 3
 
 var camera_controller
 var roll_requester
 var objective
 var game_ended = false
+
 
 
 # Called when the node enters the scene tree for the first time.
@@ -85,7 +87,7 @@ func spawn_enemy(number: int):
 
 func _on_enemy_spawn_timer_timeout():
 	if $Player && $Player.process_mode != PROCESS_MODE_DISABLED and num_enemies > 0:
-		spawn_enemy(randi_range(0,3))
+		spawn_enemy(randi_range(1,max_enemy_group))
 	
 func _on_enemy_no_target_found(enemy):
 	enemy.set_target(objective)
