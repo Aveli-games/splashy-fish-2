@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://s3872lf8ot4q"]
+
+[ext_resource type="Script" path="res://GUI/action_select.gd" id="1_5lulk"]
+[ext_resource type="PackedScene" uid="uid://gcix14imojms" path="res://GUI/action_options.tscn" id="2_v7832"]
+[ext_resource type="PackedScene" uid="uid://bj4uln3vo6n1x" path="res://GUI/direction_interface.tscn" id="3_7apvt"]
+
+[node name="ActionSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1560.0
+offset_bottom = -720.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_5lulk")
+
+[node name="ActionOptions" parent="." instance=ExtResource("2_v7832")]
+visible = false
+
+[node name="DirectionInterface" parent="." instance=ExtResource("3_7apvt")]
+visible = false
+
+[connection signal="option_chosen" from="ActionOptions" to="." method="_on_action_options_option_chosen"]
+[connection signal="direction_chosen" from="DirectionInterface" to="." method="_on_direction_interface_direction_chosen"]

@@ -11,8 +11,8 @@ var game_ended = false
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	hud = $HUD
-	level = $Level
-	_pause_play()
+	_set_level(level_scene)
+	show_main_menu()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -62,6 +62,10 @@ func _resume_play():
 	
 func _pause_play():
 	level.pause_play()
+	
+func show_main_menu():
+	_pause_play()
+	hud.show_main_menu()
 
 func _on_quit_pressed():
 	get_tree().quit()
@@ -74,19 +78,19 @@ func _on_play_pressed():
 
 func _input(event):
 	if event.is_action_pressed("menu"):
-		_pause_play()
-		hud.show_main_menu()
+		show_main_menu()
 
 func _restart_level():
 	game_ended = false
 	if level:
 		level.free()
-		var new_level = level_scene.instantiate()
-		add_child(new_level)
-		new_level.roll_requested.connect(_on_roll_requested)
-		new_level.lost.connect(_on_level_lost)
-		new_level.won.connect(_on_level_won)
-		level = new_level
+	
+	var new_level = level_scene.instantiate()
+	add_child(new_level)
+	new_level.roll_requested.connect(_on_roll_requested)
+	new_level.lost.connect(_on_level_lost)
+	new_level.won.connect(_on_level_won)
+	level = new_level
 
 func _on_restart_pressed():
 	_restart_level()
@@ -99,3 +103,11 @@ func _on_level_lost():
 func _on_level_won():
 	game_ended = true
 	hud.show_win_screen()
+
+func _on_level_selected(new_level_scene: PackedScene):
+	_set_level(new_level_scene)
+
+func _set_level(new_level_scene: PackedScene):
+	level_scene = new_level_scene
+	_restart_level()
+	_resume_play()
