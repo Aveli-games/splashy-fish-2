@@ -5,11 +5,18 @@ extends Marker3D
 var mouse_position = Vector2.ZERO
 var total_pitch = 0.0
 var mouse_control = true
+var focus_transform: Transform3D
+
+func _ready():
+	focus_transform = $FocusPoint.transform
 
 func _process(delta):
 	transform.basis = transform.basis.orthonormalized()
+	
+func _physics_process(delta):
+	$FocusPoint.transform = $FocusPoint.transform.interpolate_with(focus_transform, delta * Globals.TURN_SPEED)
 
-func _input(event):
+func _unhandled_input(event):
 	if mouse_control and event is InputEventMouseMotion:
 		mouse_position = event.relative * sensitivity
 		var yaw = mouse_position.x
@@ -26,3 +33,9 @@ func _input(event):
 func toggle_mouse_control(is_mouse_controlled):
 	if mouse_control != is_mouse_controlled:
 		mouse_control = not mouse_control
+
+func get_camera():
+	return $SpringArm3D/Camera3D
+	
+func offset_camera(offset):
+	focus_transform = focus_transform.translated_local(offset)
