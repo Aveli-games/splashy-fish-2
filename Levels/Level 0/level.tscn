@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Levels/Level 0/level.gd" id="1_x5dvp"]
 [ext_resource type="PackedScene" uid="uid://qt3pkvldp4ub" path="res://Enemy/enemy.tscn" id="2_cyjr4"]
 [ext_resource type="PackedScene" uid="uid://pbib5hidrktf" path="res://xxx_bottle.tscn" id="3_4o3sx"]
-[ext_resource type="Material" path="res://grass.tres" id="4_2yla3"]
+[ext_resource type="Material" uid="uid://c38h7tiy1wqbw" path="res://grass.tres" id="4_2yla3"]
 [ext_resource type="PackedScene" uid="uid://cc8g11lvq6my3" path="res://tree.tscn" id="4_by425"]
 [ext_resource type="PackedScene" uid="uid://detjvvnieryge" path="res://Player/player.tscn" id="6_n6n8n"]
 [ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="6_ue0ya"]

@@ -1,7 +1,7 @@
 [gd_scene load_steps=26 format=3 uid="uid://1qwfswv0i3wj"]
 
 [ext_resource type="Script" path="res://Levels/Level 1/forest_level.gd" id="1_3lvhi"]
-[ext_resource type="Material" path="res://grass.tres" id="2_fdp81"]
+[ext_resource type="Material" uid="uid://c38h7tiy1wqbw" path="res://grass.tres" id="2_fdp81"]
 [ext_resource type="PackedScene" uid="uid://qt3pkvldp4ub" path="res://Enemy/enemy.tscn" id="2_wmgau"]
 [ext_resource type="Texture2D" uid="uid://crj8tpy5rremw" path="res://gravelly_sand_diff_4k.jpg" id="3_3xw10"]
 [ext_resource type="PackedScene" uid="uid://pbib5hidrktf" path="res://xxx_bottle.tscn" id="3_bthar"]
