@@ -2,14 +2,17 @@ extends StaticBody3D
 
 signal died
 
-var max_health = 3
+@export var max_health = 3
 
-var health = max_health
+var health
 var health_bar_modulate
 var targeted_times = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	health = max_health
+	$HealthBarView/HealthBar.max_value = max_health
+	$HealthBarView/HealthBar.value = max_health
 	health_bar_modulate = $HealthBarView/HealthBar.modulate
 	$HealthBarView/HealthLabel.text = str(health)
 

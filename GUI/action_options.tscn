@@ -1,0 +1,36 @@
+[gd_scene load_steps=4 format=3 uid="uid://gcix14imojms"]
+
+[ext_resource type="Script" path="res://GUI/action_options.gd" id="1_7ftbq"]
+[ext_resource type="PackedScene" uid="uid://2faj2wghpqml" path="res://GUI/action_option.tscn" id="1_utq0p"]
+[ext_resource type="Script" path="res://GUI/action_options_list.gd" id="2_jg7gw"]
+
+[node name="ActionOptions" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_7ftbq")
+
+[node name="ActionOptionsList" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 360.0
+offset_bottom = 360.0
+alignment = 1
+script = ExtResource("2_jg7gw")
+
+[node name="ActionOption" parent="ActionOptionsList" instance=ExtResource("1_utq0p")]
+layout_mode = 2
+
+[node name="ActionOption2" parent="ActionOptionsList" instance=ExtResource("1_utq0p")]
+layout_mode = 2
+
+[node name="ActionOption3" parent="ActionOptionsList" instance=ExtResource("1_utq0p")]
+layout_mode = 2
+
+[node name="ActionOption4" parent="ActionOptionsList" instance=ExtResource("1_utq0p")]
+layout_mode = 2
+
+[node name="ActionOption5" parent="ActionOptionsList" instance=ExtResource("1_utq0p")]
+layout_mode = 2
+
+[connection signal="option_chosen" from="ActionOptionsList" to="." method="_on_option_chosen"]
