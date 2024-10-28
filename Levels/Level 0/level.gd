@@ -17,6 +17,7 @@ var roll_requester
 var objective
 var game_ended = false
 
+var last_spawn_group_size = 1
 
 
 # Called when the node enters the scene tree for the first time.
@@ -31,6 +32,8 @@ func _ready():
 				var tree_scale = Globals.rng.randf_range(2.4, 5)
 				tree.scale = Vector3(tree_scale, tree_scale, tree_scale)
 				tree.position.x = Globals.rng.randi_range(-25, -15)
+				if tree.has_method("snap_to_ground"):
+					tree.snap_to_ground()
 	
 	# Spawn in some bottles to make the play area a little more interesting
 	for n in 10:
@@ -87,7 +90,13 @@ func spawn_enemy(number: int):
 
 func _on_enemy_spawn_timer_timeout():
 	if $Player && $Player.process_mode != PROCESS_MODE_DISABLED and num_enemies > 0:
-		spawn_enemy(randi_range(1,max_enemy_group))
+		# Space out spawning groups so the player doesn't get overwhelmed by accident
+		if last_spawn_group_size == 1:
+			last_spawn_group_size = randi_range(1,max_enemy_group)
+			spawn_enemy(last_spawn_group_size)
+		else:
+			last_spawn_group_size = 1
+			spawn_enemy(1)
 	
 func _on_enemy_no_target_found(enemy):
 	enemy.set_target(objective)
