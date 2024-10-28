@@ -5,5 +5,5 @@
 [resource]
 albedo_texture = ExtResource("1_twaxv")
 normal_scale = 5.67
-uv1_scale = Vector3(0.23, 0.23, 0.23)
+uv1_scale = Vector3(0.26, 0.26, 0.26)
 uv1_triplanar = true
