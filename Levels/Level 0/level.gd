@@ -31,6 +31,8 @@ func _ready():
 				var tree_scale = Globals.rng.randf_range(2.4, 5)
 				tree.scale = Vector3(tree_scale, tree_scale, tree_scale)
 				tree.position.x = Globals.rng.randi_range(-25, -15)
+				if tree.has_method("snap_to_ground"):
+					tree.snap_to_ground()
 	
 	# Spawn in some bottles to make the play area a little more interesting
 	for n in 10:
