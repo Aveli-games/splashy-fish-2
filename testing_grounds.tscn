@@ -1,15 +1,15 @@
 [gd_scene load_steps=19 format=3 uid="uid://couqrrov0i003"]
 
 [ext_resource type="Script" path="res://testing_grounds.gd" id="1_b75ur"]
-[ext_resource type="PackedScene" uid="uid://qt3pkvldp4ub" path="res://enemy.tscn" id="2_jpsqg"]
+[ext_resource type="PackedScene" uid="uid://qt3pkvldp4ub" path="res://Enemy/enemy.tscn" id="2_jpsqg"]
 [ext_resource type="Texture2D" uid="uid://8ogwg62w5cje" path="res://TCom_GrassMedium2_header.jpg" id="3_6tqpp"]
 [ext_resource type="PackedScene" uid="uid://cdy533f6s0xa5" path="res://bird_cop.tscn" id="3_byqqa"]
-[ext_resource type="PackedScene" uid="uid://detjvvnieryge" path="res://player.tscn" id="4_qed8c"]
+[ext_resource type="PackedScene" uid="uid://detjvvnieryge" path="res://Player/player.tscn" id="4_qed8c"]
 [ext_resource type="Script" path="res://camera_controller.gd" id="5_3du0x"]
 [ext_resource type="Script" path="res://camera.gd" id="6_evar8"]
 [ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="6_i4xss"]
-[ext_resource type="Texture2D" uid="uid://4g6gx3hnwe5r" path="res://dice_roll_view.tres" id="8_b4dp5"]
-[ext_resource type="PackedScene" uid="uid://cef320n1hmlrj" path="res://dice_roll_viewport.tscn" id="8_r8ovj"]
+[ext_resource type="Texture2D" uid="uid://4g6gx3hnwe5r" path="res://GUI/Dice Roller/dice_roll_view.tres" id="8_b4dp5"]
+[ext_resource type="PackedScene" uid="uid://cef320n1hmlrj" path="res://GUI/Dice Roller/dice_roll_viewport.tscn" id="8_r8ovj"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pmljg"]
 size = Vector3(0, 50, 50)

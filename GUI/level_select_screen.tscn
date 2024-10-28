@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3 uid="uid://xssfsut5eoxl"]
+
+[ext_resource type="Script" path="res://GUI/level_select_screen.gd" id="1_7rac7"]
+[ext_resource type="PackedScene" uid="uid://thhpo8y13m2s" path="res://GUI/level_button.tscn" id="1_p4agt"]
+[ext_resource type="PackedScene" uid="uid://b20ptif3dcpca" path="res://Levels/Level 0/level.tscn" id="2_3l25r"]
+[ext_resource type="PackedScene" uid="uid://1qwfswv0i3wj" path="res://Levels/Level 1/forest_level.tscn" id="3_ss2ui"]
+
+[node name="LevelSelectScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+script = ExtResource("1_7rac7")
+levels = Array[PackedScene]([ExtResource("2_3l25r"), ExtResource("3_ss2ui")])
+level_button_scene = ExtResource("1_p4agt")
+
+[node name="MenuContent" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Title" type="Label" parent="MenuContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 72
+text = "Choose level"
+horizontal_alignment = 1
+
+[node name="MenuButtons" type="VBoxContainer" parent="MenuContent"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 20
