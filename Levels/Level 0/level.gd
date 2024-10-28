@@ -17,6 +17,7 @@ var roll_requester
 var objective
 var game_ended = false
 
+var last_spawn_group_size = 1
 
 
 # Called when the node enters the scene tree for the first time.
@@ -89,7 +90,13 @@ func spawn_enemy(number: int):
 
 func _on_enemy_spawn_timer_timeout():
 	if $Player && $Player.process_mode != PROCESS_MODE_DISABLED and num_enemies > 0:
-		spawn_enemy(randi_range(1,max_enemy_group))
+		# Space out spawning groups so the player doesn't get overwhelmed by accident
+		if last_spawn_group_size == 1:
+			last_spawn_group_size = randi_range(1,max_enemy_group)
+			spawn_enemy(last_spawn_group_size)
+		else:
+			last_spawn_group_size = 1
+			spawn_enemy(1)
 	
 func _on_enemy_no_target_found(enemy):
 	enemy.set_target(objective)
