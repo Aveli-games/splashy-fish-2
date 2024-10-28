@@ -1,12 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://cfr5lrwpfhmgr"]
+[gd_scene load_steps=3 format=3 uid="uid://cfr5lrwpfhmgr"]
 
 [ext_resource type="Script" path="res://camera_controller.gd" id="1_75u6r"]
 [ext_resource type="Script" path="res://camera.gd" id="2_df6gc"]
-
-[sub_resource type="Environment" id="Environment_i227p"]
-fog_density = 0.1
-volumetric_fog_enabled = true
-volumetric_fog_density = 0.15
 
 [node name="CameraController" type="Marker3D"]
 process_mode = 1
@@ -24,4 +19,3 @@ focus_point = NodePath("../FocusPoint")
 
 [node name="Camera3D" type="Camera3D" parent="SpringArm3D"]
 cull_mask = 1048063
-environment = SubResource("Environment_i227p")

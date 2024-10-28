@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://1qwfswv0i3wj"]
+[gd_scene load_steps=27 format=3 uid="uid://1qwfswv0i3wj"]
 
 [ext_resource type="Script" path="res://Levels/Level 1/forest_level.gd" id="1_3lvhi"]
 [ext_resource type="Material" uid="uid://c38h7tiy1wqbw" path="res://grass.tres" id="2_fdp81"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://pbib5hidrktf" path="res://xxx_bottle.tscn" id="3_bthar"]
 [ext_resource type="PackedScene" uid="uid://detjvvnieryge" path="res://Player/player.tscn" id="3_nfjxn"]
 [ext_resource type="PackedScene" uid="uid://d18skw3klu537" path="res://outhouses.tscn" id="4_a7wwd"]
+[ext_resource type="Environment" uid="uid://bueoqa7bvewfo" path="res://level_1_environment.tres" id="4_o1cvi"]
 [ext_resource type="PackedScene" uid="uid://cfr5lrwpfhmgr" path="res://camera_controller.tscn" id="5_iv0di"]
 [ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="6_l8t2e"]
 
@@ -182,6 +183,9 @@ level_name = "Level 1"
 enemy_scene = ExtResource("2_wmgau")
 bottle_scene = ExtResource("3_bthar")
 max_enemy_group = 1
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("4_o1cvi")
 
 [node name="Boundaries" type="Node3D" parent="."]
 
