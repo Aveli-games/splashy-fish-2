@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://bqqqnkkpqd0ry"
-path="res://.godot/imported/Crate.glb-f2a481010be39256ed4fad8bca78d279.scn"
+path="res://.godot/imported/crate.glb-faaeb45c8b75443918b1cb16ff3b871c.scn"
 
 [deps]
 
-source_file="res://Models/Dungeon Assets/Crate.glb"
-dest_files=["res://.godot/imported/Crate.glb-f2a481010be39256ed4fad8bca78d279.scn"]
+source_file="res://Models/Dungeon Assets/crate.glb"
+dest_files=["res://.godot/imported/crate.glb-faaeb45c8b75443918b1cb16ff3b871c.scn"]
 
 [params]
 

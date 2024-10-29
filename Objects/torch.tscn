@@ -16,6 +16,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.505111, 0)
 shape = SubResource("ConcavePolygonShape3D_cqaty")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.08884, 0)
-light_color = Color(0.882353, 0.905882, 0.529412, 1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.07743, 0)
+light_color = Color(0.8, 0.592157, 0, 1)
+light_energy = 3.0
+shadow_enabled = true
+shadow_opacity = 0.85
 omni_range = 10.0
