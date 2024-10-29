@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://d6mfryjj5suq"]
+
+[ext_resource type="ArrayMesh" uid="uid://pyb7pnj68sfu" path="res://Models/Dungeon Assets/crate_mesh.tres" id="1_nsh30"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cwmni"]
+size = Vector3(1.207, 1.207, 1.207)
+
+[node name="Crate" type="RigidBody3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.604, 0)
+shape = SubResource("BoxShape3D_cwmni")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.604, 0)
+mesh = ExtResource("1_nsh30")

@@ -13,6 +13,8 @@ config_version=5
 config/name="Splashy Fish 2"
 run/main_scene="res://screen_manager.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
+boot_splash/image="res://SplashySplashScreen.png"
+boot_splash/fullsize=false
 config/icon="res://icon.svg"
 
 [autoload]

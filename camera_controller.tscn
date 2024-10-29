@@ -12,7 +12,7 @@ script = ExtResource("1_75u6r")
 
 [node name="SpringArm3D" type="SpringArm3D" parent="." node_paths=PackedStringArray("focus_point")]
 transform = Transform3D(-1, -6.18171e-08, 6.18171e-08, 0, 0.707107, 0.707107, -8.74226e-08, 0.707107, -0.707107, 0, 1.05544, -1.70543)
-collision_mask = 5
+collision_mask = 13
 margin = 0.05
 script = ExtResource("2_df6gc")
 focus_point = NodePath("../FocusPoint")
