@@ -6,6 +6,9 @@
 size = Vector3(1.207, 1.207, 1.207)
 
 [node name="Crate" type="RigidBody3D"]
+collision_layer = 16
+collision_mask = 31
+mass = 10.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.604, 0)
