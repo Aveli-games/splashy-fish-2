@@ -322,7 +322,8 @@ func _on_action_animation_finished(call_state):
 	if call_state == states.keys()[state]:
 		attack_hit = true
 		# Process the options the cause an additional action to happen
-		if not action_queue.is_empty():
+		var action_processed = false
+		while not action_queue.is_empty() and not action_processed:
 			cur_action = action_queue.pop_front()
 			match cur_action["id"]:
 				melee_attack_options.COMBO:
@@ -332,6 +333,7 @@ func _on_action_animation_finished(call_state):
 						attack_target = target
 						animation_state.travel("Punch")
 						animation_state.start(animation_state.get_current_node(), true)
+						action_processed = true
 						return
 				melee_attack_options.DODGE:
 					dodge_direction = cur_action["data"]["direction"]
@@ -346,8 +348,8 @@ func _on_action_animation_finished(call_state):
 					state = states.DODGING
 					dodge_state()
 					animation_state.start(animation_state.get_current_node(), true)
+					action_processed = true
 					return
-					
 		state = states.MOVING
 	
 func _on_death_animation_finished():
