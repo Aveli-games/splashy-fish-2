@@ -21,7 +21,7 @@ const TURN_SPEED = 6
 
 var state = states.MOVING
 
-var max_health = 1
+@export var max_health = 1
 
 var health = max_health
 var melee_damage = 1
@@ -39,6 +39,8 @@ var animation_state
 var attack_hit = false
 
 func _ready():
+	health = max_health
+	
 	animation_tree = $AnimationTree
 	animation_state = animation_tree.get("parameters/playback")
 	$HealthBarView/HealthLabel.text = str(health)
@@ -81,15 +83,18 @@ func initialize(start_position, start_target):
 	set_target(start_target)
 	
 func move_state():
-	look_at(Vector3(target.global_position.x, global_position.y, target.global_position.z), Vector3.UP, true)
-	if target not in close_targets:
-		animation_state.travel("Walk")
+	if target:
+		look_at(Vector3(target.global_position.x, global_position.y, target.global_position.z), Vector3.UP, true)
+		if target not in close_targets:
+			animation_state.travel("Walk")
+		else:
+			animation_state.travel("idle")
+		
+		if target in melee_targets:
+			if not target.has_method("is_invulnerable") or not target.is_invulnerable():
+				state = states.ATTACKING
 	else:
 		animation_state.travel("idle")
-	
-	if target in melee_targets:
-		if not target.has_method("is_invulnerable") or not target.is_invulnerable():
-			state = states.ATTACKING
 
 func attack_state(delta):
 	transform = transform.interpolate_with(transform.looking_at(Vector3(target.global_position.x, global_position.y, target.global_position.z), Vector3.UP, true), delta * TURN_SPEED)
@@ -161,6 +166,8 @@ func on_hit(damage):
 	$HealthBarView/HealthLabel.text = str(health)
 	$HealthBarView/HealthBar.value = health
 	if health > 0:
+		if state == states.HIT:
+			animation_state.start(animation_state.get_current_node(), true)
 		state = states.HIT
 	else:
 		# Remove collision and info so it's just untargetable animation left

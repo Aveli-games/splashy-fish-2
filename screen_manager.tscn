@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://bxq56d6rma7gn"]
 
 [ext_resource type="Script" path="res://screen_manager.gd" id="1_7yicb"]
-[ext_resource type="PackedScene" uid="uid://b20ptif3dcpca" path="res://Levels/Level 0/level.tscn" id="1_yrxmi"]
+[ext_resource type="PackedScene" uid="uid://b20ptif3dcpca" path="res://Levels/Level 0/tutorial.tscn" id="1_yrxmi"]
 [ext_resource type="PackedScene" uid="uid://do7dpbgd6ku6n" path="res://GUI/hud.tscn" id="2_3khgq"]
 
 [node name="ScreenManager" type="Node"]
