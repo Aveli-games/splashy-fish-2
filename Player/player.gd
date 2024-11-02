@@ -92,7 +92,7 @@ var cur_action = {"id": null, "name": "", "data": null}
 var melee_options = [
 	{"id": melee_attack_options.BLOCK, "name": "Block +1", "data": null},
 	{"id": melee_attack_options.RECOVER, "name": "Recover stamina", "data": null},
-	{"id": melee_attack_options.DAMAGE, "name": "Damage +1", "data": null},
+	#{"id": melee_attack_options.DAMAGE, "name": "Damage +1", "data": null},
 	{"id": melee_attack_options.COMBO, "name": "Combo +1", "data": null},
 	{
 		"id": melee_attack_options.DODGE,
