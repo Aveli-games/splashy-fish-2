@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://64pdfp2nfs3d"]
+[gd_scene load_steps=13 format=3 uid="uid://64pdfp2nfs3d"]
 
 [ext_resource type="Script" path="res://GUI/Dice Roller/dice_roll.gd" id="1_id7uq"]
 [ext_resource type="PackedScene" uid="uid://b3ploc3pqlub" path="res://GUI/Dice Roller/die.tscn" id="1_v0rtp"]
@@ -30,6 +30,8 @@ size = Vector3(10, 1, 20)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_j8bp6"]
 size = Vector3(10, 1, 20)
+
+[sub_resource type="Environment" id="Environment_wambu"]
 
 [node name="DiceRoll" type="Node3D"]
 process_mode = 1
@@ -96,6 +98,7 @@ shape = SubResource("BoxShape3D_j8bp6")
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 10, 0)
 cull_mask = 1048064
+environment = SubResource("Environment_wambu")
 projection = 1
 fov = 60.0
 size = 20.0
