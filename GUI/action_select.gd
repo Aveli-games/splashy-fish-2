@@ -21,7 +21,8 @@ func set_options(options: Array, num_actions: int):
 	$ActionOptions.set_options(options)
 	$ActionOptions.show()
 
-func _on_action_options_option_chosen(number: int, option: Dictionary):
+func _on_action_options_option_chosen(number: int, selected_option: Dictionary):
+	var option = selected_option.duplicate(true)
 	if option["data"] and option["data"]["type"] == Globals.interface_types.DIRECTION:
 		show_direction_interface()
 		await direction_chosen
