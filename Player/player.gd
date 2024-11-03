@@ -138,8 +138,7 @@ func _ready():
 func _physics_process(delta):
 	if state != states.ATTACKING:
 		_toggle_ranged(Input.is_action_pressed("aim_ranged"))
-	
-	_toggle_blocking(Input.is_action_pressed("block") and state != states.KNOCKBACK)
+		
 	match state:
 		states.MOVING:
 			move_state(delta)
@@ -320,6 +319,8 @@ func attack_check():
 	
 func _on_action_animation_finished(call_state):
 	if call_state == states.keys()[state]:
+		if call_state == states.keys()[states.DODGING]:
+			_toggle_blocking(false)
 		attack_hit = true
 		# Process the options the cause an additional action to happen
 		var action_processed = false
@@ -480,7 +481,7 @@ func _toggle_blocking(is_blocking: bool):
 			blocking = true
 			$Abilities/Block/BlockView/BlockBackground.color = ACTIVE_COLOR
 	else:
-		if blocking and $Abilities/Block/BlockTimer.time_left == 0 and state != states.DODGING:
+		if blocking and $Abilities/Block/BlockTimer.time_left == 0:
 			blocking = false
 			$Abilities/Block/BlockView/BlockBackground.color = INACTIVE_COLOR
 
