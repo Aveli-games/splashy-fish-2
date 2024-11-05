@@ -1,6 +1,7 @@
 extends CharacterBody3D
 
 signal no_target_found
+signal died
 
 enum states {
 	MOVING = Globals.movement_states.MOVING,
@@ -193,6 +194,8 @@ func kick_connects():
 
 func _on_action_animation_finished(call_state):
 	if call_state == states.keys()[state]:
+		if state == states.DYING:
+			died.emit()
 		state = states.MOVING
 
 func _on_death_animation_finished():

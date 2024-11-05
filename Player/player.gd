@@ -489,3 +489,6 @@ func _toggle_blocking(is_blocking: bool):
 
 func _on_block_timer_timeout():
 	_toggle_blocking(false)
+	
+func set_ammo(number: int):
+	print("Set ammo to ", number)

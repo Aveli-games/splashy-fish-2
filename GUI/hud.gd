@@ -102,6 +102,10 @@ func _on_game_menu_button_pressed(type: String):
 			_show_controls()
 		"Main menu":
 			show_main_menu()
+		"Next Level":
+			pass
+		"100 Enemies":
+			pass
 		"Quit":
 			quit_pressed.emit()
 		"Level":

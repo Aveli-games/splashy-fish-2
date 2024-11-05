@@ -90,6 +90,12 @@ func _restart_level():
 	new_level.roll_requested.connect(_on_roll_requested)
 	new_level.lost.connect(_on_level_lost)
 	new_level.won.connect(_on_level_won)
+	
+	for sig in new_level.get_signal_list():
+		if sig["name"] == "tutorial_completed":
+			new_level.tutorial_completed.connect(_on_tutorial_won)
+			break
+	
 	level = new_level
 
 func _on_restart_pressed():
@@ -103,6 +109,10 @@ func _on_level_lost():
 func _on_level_won():
 	game_ended = true
 	hud.show_win_screen()
+	
+func _on_tutorial_won():
+	game_ended = true
+	hud.show_tutorial_win_screen()
 
 func _on_level_selected(new_level_scene: PackedScene):
 	_set_level(new_level_scene)
