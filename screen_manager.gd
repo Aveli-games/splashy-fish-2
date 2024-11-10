@@ -121,6 +121,7 @@ func _on_level_selected(new_level_scene: PackedScene):
 
 func _set_level(new_level_scene: PackedScene):
 	level_scene = new_level_scene
+	Globals.cur_level = level_scene
 	_restart_level()
 	_resume_play()
 

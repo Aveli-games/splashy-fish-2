@@ -6,7 +6,6 @@ signal play_pressed
 signal restart_pressed
 signal quit_pressed
 signal level_selected
-signal next_level_pressed
 signal tutorial_100_enemies_pressed
 
 var requester
@@ -110,7 +109,10 @@ func _on_game_menu_button_pressed(type: String):
 		"Main menu":
 			show_main_menu()
 		"Next Level":
-			next_level_pressed.emit()
+			if Globals.cur_level in $MenuScreens/LevelSelectScreen.levels:
+				var next_level_index = $MenuScreens/LevelSelectScreen.levels.find(Globals.cur_level) + 1
+				if not next_level_index > $MenuScreens/LevelSelectScreen.levels.size():
+					level_selected.emit($MenuScreens/LevelSelectScreen.levels[next_level_index])
 		"100 Enemies":
 			tutorial_100_enemies_pressed.emit()
 		"Quit":

@@ -4,6 +4,8 @@ var mouse_sensitivity = 2
 var rng = RandomNumberGenerator.new()
 const TURN_SPEED = 10
 
+var cur_level: PackedScene
+
 enum movement_states {
 	MOVING,
 	ATTACKING,
