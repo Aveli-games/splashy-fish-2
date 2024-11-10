@@ -112,6 +112,7 @@ func _on_level_won():
 	_pause_play()
 	
 func _on_tutorial_won():
+	game_ended = true
 	hud.show_tutorial_win_screen()
 	_pause_play()
 
@@ -125,5 +126,6 @@ func _set_level(new_level_scene: PackedScene):
 
 func _on_hud_tutorial_100_enemies_pressed():
 	if level.has_method("fight_one_hundred_enemies"):
+		game_ended = false
 		level.fight_one_hundred_enemies()
 		_resume_play()
