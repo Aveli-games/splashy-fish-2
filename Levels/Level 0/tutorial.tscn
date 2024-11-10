@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://b20ptif3dcpca"]
+[gd_scene load_steps=20 format=3 uid="uid://b20ptif3dcpca"]
 
 [ext_resource type="Script" path="res://Levels/Level 0/tutorial.gd" id="1_rxfwi"]
 [ext_resource type="PackedScene" uid="uid://qt3pkvldp4ub" path="res://Enemy/enemy.tscn" id="2_xsjle"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://d18skw3klu537" path="res://outhouses.tscn" id="8_qg7gg"]
 [ext_resource type="PackedScene" uid="uid://cfr5lrwpfhmgr" path="res://camera_controller.tscn" id="9_qu8gw"]
 [ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="10_2yrds"]
+[ext_resource type="PackedScene" uid="uid://cnpkw0qfs844s" path="res://counting_bar.tscn" id="11_x4ych"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pmljg"]
 size = Vector3(0, 50, 50)
@@ -685,8 +686,26 @@ omni_attenuation = 0.757858
 [node name="EnemySpawnTimer" type="Timer" parent="."]
 wait_time = 2.0
 
+[node name="RemainingEnemiesUI" type="HBoxContainer" parent="."]
+visible = false
+offset_right = 735.0
+offset_bottom = 66.0
+
+[node name="Label" type="Label" parent="RemainingEnemiesUI"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 42
+text = "Remaining enemies: "
+
+[node name="RemainingEnemiesBar" parent="RemainingEnemiesUI" instance=ExtResource("11_x4ych")]
+layout_mode = 2
+
+[node name="Label" parent="RemainingEnemiesUI/RemainingEnemiesBar" index="0"]
+theme_override_font_sizes/font_size = 42
+
 [connection signal="died" from="Player" to="." method="_on_player_died"]
 [connection signal="roll_requested" from="Player" to="." method="_on_player_roll_requested"]
 [connection signal="died" from="Enemies/Enemy" to="." method="_on_dummy_enemy_died"]
 [connection signal="died" from="Objective" to="." method="_on_objective_died"]
 [connection signal="timeout" from="EnemySpawnTimer" to="." method="_on_enemy_spawn_timer_timeout"]
+
+[editable path="RemainingEnemiesUI/RemainingEnemiesBar"]
