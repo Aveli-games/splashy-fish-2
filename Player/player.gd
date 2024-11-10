@@ -117,15 +117,15 @@ var screen_center
 
 var ammo_holster: Node3D
 @export var starting_ammo = 4
+var has_ammo = false
 
 func _ready():
 	health = max_health
 	
 	# Make sure the player has the assigned number of donuts
 	ammo_holster = $Armature/Skeleton3D/BoneAttachment3D/AmmunitionMount
-	var available_ammo = ammo_holster.get_children()
-	while available_ammo.size() > starting_ammo:
-		available_ammo.pop_back().free()
+	has_ammo = starting_ammo > 0
+	set_ammo(starting_ammo)
 	
 	screen_center = get_viewport().size / 2
 	camera_y = camera_controller.global_position.y
@@ -400,7 +400,7 @@ func _on_far_range_body_exited(body):
 
 # Toggle ranged mode or not and take the first target that had entered the respective range
 func _toggle_ranged(is_ranged):
-	if ammo_holster.get_children().is_empty():
+	if not has_ammo:
 		is_ranged = false
 	if ranged_mode != is_ranged:
 		ranged_mode = not ranged_mode
@@ -432,9 +432,9 @@ func _get_new_target():
 
 func throw_donut():
 	if attack_target:
-		var available_ammo = ammo_holster.get_children()
-		if not available_ammo.is_empty():
-			available_ammo.pop_back().queue_free()
+		if has_ammo:
+			if ammo_holster.has_method("use_ammo"):
+				ammo_holster.use_ammo()
 			var right_hand_bone = $Armature/Skeleton3D.find_bone("mixamorig1_RightHand")
 			var right_hand_bone_position = $Armature/Skeleton3D.global_transform * $Armature/Skeleton3D.get_bone_global_pose(right_hand_bone)
 			var projectile = projectile_scene.instantiate()
@@ -491,4 +491,9 @@ func _on_block_timer_timeout():
 	_toggle_blocking(false)
 	
 func set_ammo(number: int):
-	print("Set ammo to ", number)
+	if ammo_holster.has_method("set_ammo"):
+		ammo_holster.set_ammo(number)
+
+
+func _on_ammo_depleted():
+	has_ammo = false
