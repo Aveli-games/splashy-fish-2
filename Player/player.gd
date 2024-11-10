@@ -61,7 +61,7 @@ var roll_fail_upper_threshold = 3 # 2-3, ~8.33% chance to fail
 var roll_pass_upper_threshold = 9 # 4-9, ~75% chance to pass; 10-12, ~16.67 chance to critical success
 
 var targeted_times = 0
-var health_bar_modulate
+@export var health_bar_modulate: Color
 
 var running = false
 var cur_speed = WALK_SPEED
@@ -131,11 +131,9 @@ func _ready():
 	camera_y = camera_controller.global_position.y
 	animation_tree = $AnimationTree
 	animation_state = animation_tree.get("parameters/playback")
-	health_bar_modulate = $HealthBarView/HealthBar.modulate
 	
-	$HealthBarView/HealthLabel.text = str(health)
-	$HealthBarView/HealthBar.max_value = max_health
-	$HealthBarView/HealthBar.value = health
+	$HealthBarView/CountingBar.initialize(health)
+	$Abilities/Run/StaminaBarView/CountingBar.initialize_with_text(max_stamina, "Stamina")
 
 func _physics_process(delta):
 	if state != states.ATTACKING:
@@ -289,12 +287,12 @@ func _on_melee_range_body_exited(body):
 
 func targeted():
 	targeted_times += 1
-	$HealthBarView/HealthBar.set_modulate(Color.CRIMSON)
+	$HealthBarView/CountingBar.set_bar_modulate(Color.CRIMSON)
 
 func untargeted():
 	targeted_times -= 1
 	if targeted_times <= 0:
-		$HealthBarView/HealthBar.set_modulate(health_bar_modulate)
+		$HealthBarView/CountingBar.set_bar_modulate(health_bar_modulate)
 	
 func attack_connects():
 	if attack_target and attack_hit:
@@ -444,12 +442,11 @@ func throw_donut():
 
 func _change_stamina(stamina_change):
 	stamina = clamp(stamina + stamina_change, 0, max_stamina)
-	$Abilities/Run/StaminaBarView/StaminaBar.value = stamina
+	$Abilities/Run/StaminaBarView/CountingBar.set_value(stamina)
 
 func _change_health(health_change):
 	health = clamp(health + health_change, 0, max_health)
-	$HealthBarView/HealthLabel.text = str(health)
-	$HealthBarView/HealthBar.value = health
+	$HealthBarView/CountingBar.set_value(health)
 	if health <= 0:
 		collision_layer = 0
 		collision_mask = 1
