@@ -17,3 +17,4 @@ level_scene = ExtResource("1_yrxmi")
 [connection signal="quit_pressed" from="HUD" to="." method="_on_quit_pressed"]
 [connection signal="restart_pressed" from="HUD" to="." method="_on_restart_pressed"]
 [connection signal="roll_finished" from="HUD" to="." method="_on_roll_finished"]
+[connection signal="tutorial_100_enemies_pressed" from="HUD" to="." method="_on_hud_tutorial_100_enemies_pressed"]

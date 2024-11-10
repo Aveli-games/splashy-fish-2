@@ -40,7 +40,6 @@ func set_ammo(number: int):
 		else:
 			if slot.get_children().size() <= 0:
 				var new_ammo = ammo_scene.instantiate()
-				new_ammo.global_position = slot.global_position
 				slot.add_child(new_ammo)
 				
 			number -= 1

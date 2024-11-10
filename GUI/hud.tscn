@@ -48,10 +48,6 @@ visible = false
 
 [node name="TutorialWinScreen" parent="MenuScreens" instance=ExtResource("7_tasgw")]
 visible = false
-offset_left = 547.421
-offset_top = 252.681
-offset_right = 2467.42
-offset_bottom = 1332.68
 
 [node name="LossScreen" parent="MenuScreens" instance=ExtResource("7_8h0it")]
 visible = false

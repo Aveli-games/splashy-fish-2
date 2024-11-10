@@ -18,7 +18,7 @@ func fight_one_hundred_enemies():
 	spawn_enemy(1)
 	$EnemySpawnTimer.start()
 	
-	tutorial_complete = true	
+	tutorial_complete = true
 
 func _on_dummy_enemy_died():
 	tutorial_completed.emit()

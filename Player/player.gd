@@ -493,7 +493,7 @@ func _on_block_timer_timeout():
 func set_ammo(number: int):
 	if ammo_holster.has_method("set_ammo"):
 		ammo_holster.set_ammo(number)
-
+	has_ammo = number > 0
 
 func _on_ammo_depleted():
 	has_ammo = false

@@ -194,12 +194,11 @@ func kick_connects():
 
 func _on_action_animation_finished(call_state):
 	if call_state == states.keys()[state]:
-		if state == states.DYING:
-			died.emit()
 		state = states.MOVING
 
 func _on_death_animation_finished():
 	remove_from_group("Enemies")
+	died.emit()
 
 func get_targeting_position():
 	return transform.origin + $TargetingPostion.transform.origin
