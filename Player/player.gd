@@ -119,6 +119,10 @@ var ammo_holster: Node3D
 @export var starting_ammo = 4
 var has_ammo = false
 
+var can_move = true
+var can_melee = true
+var can_throw = true
+
 func _ready():
 	health = max_health
 	
@@ -136,7 +140,7 @@ func _ready():
 	$Abilities/Run/StaminaBarView/CountingBar.initialize_with_text(max_stamina, "Stamina")
 
 func _physics_process(delta):
-	if state != states.ATTACKING:
+	if state != states.ATTACKING and can_throw:
 		_toggle_ranged(Input.is_action_pressed("aim_ranged"))
 		
 	match state:
@@ -190,7 +194,9 @@ func move_state(delta):
 	if not Input.is_action_pressed("run") || stamina <= 0:
 		running = false
 	
-	var input_dir = Input.get_vector("move_right", "move_left", "move_back", "move_forward")
+	var input_dir = Vector2.ZERO
+	if can_move:
+		input_dir = Input.get_vector("move_right", "move_left", "move_back", "move_forward")
 	
 	if input_dir != Vector2.ZERO:
 		if running:
@@ -213,7 +219,7 @@ func move_state(delta):
 		velocity.x = move_toward(velocity.x, 0, cur_speed)
 		velocity.z = move_toward(velocity.z, 0, cur_speed)
 	
-	if (Input.is_action_just_pressed("attack") or combo > 0) and target:
+	if ((can_melee and not ranged_mode) or (can_throw and ranged_mode)) and (Input.is_action_just_pressed("attack") or combo > 0) and target:
 		attack_target = target
 		state = states.ATTACKING
 	else:
@@ -494,3 +500,21 @@ func set_ammo(number: int):
 
 func _on_ammo_depleted():
 	has_ammo = false
+
+func enable_movement():
+	can_move = true
+
+func disable_movement():
+	can_move = false
+
+func enable_melee():
+	can_melee = true
+
+func disable_melee():
+	can_melee = false
+
+func enable_ranged():
+	can_throw = true
+
+func disable_ranged():
+	can_throw = false
