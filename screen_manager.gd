@@ -56,7 +56,6 @@ func _resume_play():
 	hud.hide_menus()
 	# Return time to normal speed
 	Engine.time_scale = 1
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	if level.has_method("resume_play"):
 		level.resume_play()
 	
@@ -108,13 +107,13 @@ func _on_level_lost():
 
 func _on_level_won():
 	game_ended = true
-	hud.show_win_screen()
 	_pause_play()
+	hud.show_win_screen()
 	
 func _on_tutorial_won():
 	game_ended = true
-	hud.show_tutorial_win_screen()
 	_pause_play()
+	hud.show_tutorial_win_screen()
 
 func _on_level_selected(new_level_scene: PackedScene):
 	_set_level(new_level_scene)

@@ -6,10 +6,26 @@ var remaining_enemies = 0
 
 var tutorial_complete = false
 
+var tutorial_stage = "Introduction"
+
+@export var player: Player
+@export var instructions_screen: Control
+
+func _ready():
+	initialize_self()
+	player.disable_movement()
+	player.disable_melee()
+	player.disable_ranged()
+	player.roll_fail_upper_threshold = 1
+
 func _process(delta):
 	if tutorial_complete and num_enemies <= 0 and get_tree().get_nodes_in_group("Enemies").size() == 0:
 		game_ended = true
 		won.emit()
+
+func _input(event):
+	if tutorial_stage == "Movement" and event.is_action("move_forward"):
+		$TutorialTimer.start()
 
 func spawn_enemy(number: int):
 	if number > num_enemies:
@@ -45,6 +61,10 @@ func fight_one_hundred_enemies():
 	$Player.add_to_group("PlayerTargets")
 	$Player.set_ammo(1000)
 	
+	player.enable_movement()
+	player.enable_melee()
+	player.enable_ranged()
+	
 	num_enemies = 100
 	initialize_remaining_enemies(num_enemies)
 	max_enemy_group = 1
@@ -52,15 +72,75 @@ func fight_one_hundred_enemies():
 	$EnemySpawnTimer.start()
 	
 	tutorial_complete = true
+	mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _on_dummy_enemy_died():
-	tutorial_completed.emit()
+	tutorial_stage = "Wrap Up"
+	instructions_screen.show_end()
 	
 func initialize_remaining_enemies(number: int):
 	remaining_enemies = number
-	$RemainingEnemiesUI/RemainingEnemiesBar.initialize(remaining_enemies)
-	$RemainingEnemiesUI.show()
+	$TutorialUI/RemainingEnemiesUI/RemainingEnemiesBar.initialize(remaining_enemies)
+	$TutorialUI/RemainingEnemiesUI.show()
 
 func _on_enemy_died():
 	remaining_enemies -= 1
-	$RemainingEnemiesUI/RemainingEnemiesBar.set_value(remaining_enemies)
+	$TutorialUI/RemainingEnemiesUI/RemainingEnemiesBar.set_value(remaining_enemies)
+
+func _on_instructions_screen_continue_pressed(title: String):
+	match title:
+		"Introduction":
+			tutorial_stage = "Movement"
+			instructions_screen.show_movement()
+		"Movement":
+			player.enable_movement()
+		"Melee Attacking":
+			player.enable_melee()
+			player.enable_movement()
+		"Melee Hit Options":
+			$TutorialTimer.start()
+		"Melee Failure":
+			$Player.add_to_group("PlayerTargets")
+			$Enemies/Enemy.melee_targets.append($Player)
+			$Enemies/Enemy.target = $Player
+		"Ranged Attacking":
+			player.disable_melee()
+			player.set_ammo(4)
+			player.enable_ranged()
+			player.enable_movement()
+			$Enemies/Enemy.health = 1
+		"Wrap Up":
+			tutorial_completed.emit()
+
+func _on_tutorial_timer_timeout():
+	match tutorial_stage:
+		"Introduction":
+			instructions_screen.show_intro()
+		"Movement":
+			tutorial_stage = "Melee Attacking"
+			player.disable_movement()
+			instructions_screen.show_melee()
+		"Melee Hit Options":
+			player.roll_pass_upper_threshold = 13
+			player.roll_fail_upper_threshold = 12
+			tutorial_stage = "Melee Failure"
+			instructions_screen.show_melee_failure()
+		"Melee Failure":
+			$Player.remove_from_group("PlayerTargets")
+			$Enemies/Enemy.melee_targets.erase($Player)
+			$Enemies/Enemy.target = null
+			tutorial_stage = "Ranged Attacking"
+			player.disable_movement()
+			player.disable_melee()
+			instructions_screen.show_ranged()
+
+func _on_player_attacking(player):
+	if tutorial_stage == "Melee Attacking":
+		tutorial_stage = "Melee Hit Options"
+		instructions_screen.show_hit_options()
+
+func _on_player_kicked():
+	if tutorial_stage == "Melee Failure":
+		player.roll_pass_upper_threshold = 9
+		player.roll_fail_upper_threshold = 3
+		$TutorialTimer.start()

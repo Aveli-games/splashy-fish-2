@@ -21,8 +21,8 @@ position = Vector2(1120, 377)
 visible = false
 offset_left = 1480.0
 offset_top = 377.0
-offset_right = 528.0
-offset_bottom = -71.0
+offset_right = 1.0
+offset_bottom = -377.0
 
 [node name="MenuScreens" type="Control" parent="."]
 visible = false

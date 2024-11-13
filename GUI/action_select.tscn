@@ -13,13 +13,16 @@ offset_right = -1560.0
 offset_bottom = -720.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 script = ExtResource("1_5lulk")
 
 [node name="ActionOptions" parent="." instance=ExtResource("2_v7832")]
 visible = false
+mouse_filter = 1
 
 [node name="DirectionInterface" parent="." instance=ExtResource("3_7apvt")]
 visible = false
+mouse_filter = 1
 
 [connection signal="option_chosen" from="ActionOptions" to="." method="_on_action_options_option_chosen"]
 [connection signal="direction_chosen" from="DirectionInterface" to="." method="_on_direction_interface_direction_chosen"]

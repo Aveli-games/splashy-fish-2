@@ -19,30 +19,11 @@ var game_ended = false
 
 var last_spawn_group_size = 1
 
+var mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	camera_controller = get_node("CameraController")
-	objective = get_node("Objective")
-	
-	# Move trees to pseudorandom locations for a more organic forest feel
-	if $Boundaries/TreeLines:
-		for tree_line in $Boundaries/TreeLines.get_children():
-			for tree in tree_line.get_children():
-				var tree_scale = Globals.rng.randf_range(2.4, 5)
-				tree.scale = Vector3(tree_scale, tree_scale, tree_scale)
-				tree.position.x = Globals.rng.randi_range(-25, -15)
-				if tree.has_method("snap_to_ground"):
-					tree.snap_to_ground()
-	
-	# Spawn in some bottles to make the play area a little more interesting
-	for n in 10:
-		var bottle = bottle_scene.instantiate()
-		
-		# Place the bottle a random distance from and y-axis rotation around the objective
-		bottle.global_position = objective.global_position + Vector3(Globals.rng.randi_range(2, 5), 0, 0).rotated(Vector3.UP, deg_to_rad(Globals.rng.randi_range(0, 360)))
-		
-		add_child(bottle)
+	initialize_self()
 
 func _process(delta):
 	if num_enemies <= 0 and get_tree().get_nodes_in_group("Enemies").size() == 0 and not game_ended:
@@ -111,9 +92,34 @@ func unfreeze_camera():
 	camera_controller.toggle_mouse_control(true)
 	
 func pause_play():
+	mouse_mode = Input.mouse_mode
 	freeze_camera()
 	get_tree().set_group_flags(0, "Level", "process_mode", PROCESS_MODE_DISABLED)
 
 func resume_play():
+	Input.mouse_mode = mouse_mode
 	unfreeze_camera()
 	get_tree().set_group_flags(0, "Level", "process_mode", PROCESS_MODE_ALWAYS)
+
+func initialize_self():
+	camera_controller = get_node("CameraController")
+	objective = get_node("Objective")
+	
+	# Move trees to pseudorandom locations for a more organic forest feel
+	if $Boundaries/TreeLines:
+		for tree_line in $Boundaries/TreeLines.get_children():
+			for tree in tree_line.get_children():
+				var tree_scale = Globals.rng.randf_range(2.4, 5)
+				tree.scale = Vector3(tree_scale, tree_scale, tree_scale)
+				tree.position.x = Globals.rng.randi_range(-25, -15)
+				if tree.has_method("snap_to_ground"):
+					tree.snap_to_ground()
+	
+	# Spawn in some bottles to make the play area a little more interesting
+	for n in 10:
+		var bottle = bottle_scene.instantiate()
+		
+		# Place the bottle a random distance from and y-axis rotation around the objective
+		bottle.global_position = objective.global_position + Vector3(Globals.rng.randi_range(2, 5), 0, 0).rotated(Vector3.UP, deg_to_rad(Globals.rng.randi_range(0, 360)))
+		
+		add_child(bottle)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://b20ptif3dcpca"]
+[gd_scene load_steps=21 format=3 uid="uid://b20ptif3dcpca"]
 
 [ext_resource type="Script" path="res://Levels/Level 0/tutorial.gd" id="1_rxfwi"]
 [ext_resource type="PackedScene" uid="uid://qt3pkvldp4ub" path="res://Enemy/enemy.tscn" id="2_xsjle"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://cfr5lrwpfhmgr" path="res://camera_controller.tscn" id="9_qu8gw"]
 [ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="10_2yrds"]
 [ext_resource type="PackedScene" uid="uid://cnpkw0qfs844s" path="res://counting_bar.tscn" id="11_x4ych"]
+[ext_resource type="PackedScene" uid="uid://bgxty6dkj53nj" path="res://instructions_screen.tscn" id="12_cch11"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pmljg"]
 size = Vector3(0, 50, 50)
@@ -42,9 +43,11 @@ _data = {
 }
 point_count = 5
 
-[node name="Tutorial" type="Node" groups=["Level"]]
+[node name="Tutorial" type="Node" node_paths=PackedStringArray("player", "instructions_screen") groups=["Level"]]
 process_mode = 3
 script = ExtResource("1_rxfwi")
+player = NodePath("Player")
+instructions_screen = NodePath("TutorialUI/InstructionsScreen")
 level_name = "Tutorial"
 enemy_scene = ExtResource("2_xsjle")
 bottle_scene = ExtResource("3_xy8ki")
@@ -686,26 +689,47 @@ omni_attenuation = 0.757858
 [node name="EnemySpawnTimer" type="Timer" parent="."]
 wait_time = 2.0
 
-[node name="RemainingEnemiesUI" type="HBoxContainer" parent="."]
+[node name="TutorialUI" type="Control" parent="."]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 1
+
+[node name="RemainingEnemiesUI" type="HBoxContainer" parent="TutorialUI"]
 visible = false
+layout_mode = 0
 offset_right = 735.0
 offset_bottom = 66.0
 
-[node name="Label" type="Label" parent="RemainingEnemiesUI"]
+[node name="Label" type="Label" parent="TutorialUI/RemainingEnemiesUI"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 42
 text = "Remaining enemies: "
 
-[node name="RemainingEnemiesBar" parent="RemainingEnemiesUI" instance=ExtResource("11_x4ych")]
+[node name="RemainingEnemiesBar" parent="TutorialUI/RemainingEnemiesUI" instance=ExtResource("11_x4ych")]
 layout_mode = 2
 
-[node name="Label" parent="RemainingEnemiesUI/RemainingEnemiesBar" index="0"]
+[node name="Label" parent="TutorialUI/RemainingEnemiesUI/RemainingEnemiesBar" index="0"]
 theme_override_font_sizes/font_size = 42
 
+[node name="InstructionsScreen" parent="TutorialUI" instance=ExtResource("12_cch11")]
+visible = false
+layout_mode = 0
+
+[node name="TutorialTimer" type="Timer" parent="."]
+one_shot = true
+autostart = true
+
 [connection signal="died" from="Player" to="." method="_on_player_died"]
+[connection signal="kicked" from="Player" to="." method="_on_player_kicked"]
 [connection signal="roll_requested" from="Player" to="." method="_on_player_roll_requested"]
+[connection signal="roll_requested" from="Player" to="." method="_on_player_attacking"]
 [connection signal="died" from="Enemies/Enemy" to="." method="_on_dummy_enemy_died"]
 [connection signal="died" from="Objective" to="." method="_on_objective_died"]
 [connection signal="timeout" from="EnemySpawnTimer" to="." method="_on_enemy_spawn_timer_timeout"]
+[connection signal="continue_pressed" from="TutorialUI/InstructionsScreen" to="." method="_on_instructions_screen_continue_pressed"]
+[connection signal="timeout" from="TutorialTimer" to="." method="_on_tutorial_timer_timeout"]
 
-[editable path="RemainingEnemiesUI/RemainingEnemiesBar"]
+[editable path="TutorialUI/RemainingEnemiesUI/RemainingEnemiesBar"]

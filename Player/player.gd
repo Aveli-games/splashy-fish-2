@@ -6,6 +6,7 @@ signal died
 signal roll_requested(player: Player)
 signal roll_result_recieved
 signal action_queue_set
+signal kicked
 
 @export var camera_controller : Marker3D
 @export var projectile_scene : PackedScene
@@ -277,6 +278,8 @@ func on_knockback(stamina_damage):
 	
 	if health > 0:
 		state = states.KNOCKBACK
+	
+	kicked.emit()
 
 func _on_melee_range_body_entered(body):
 	var enemies = get_tree().get_nodes_in_group("Enemies")
