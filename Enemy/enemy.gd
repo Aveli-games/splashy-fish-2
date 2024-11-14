@@ -59,7 +59,7 @@ func _physics_process(delta):
 	else:
 		match state:
 			states.MOVING:
-				move_state()
+				move_state(delta)
 			states.ATTACKING:
 				attack_state(delta)
 			states.HIT:
@@ -70,13 +70,6 @@ func _physics_process(delta):
 				block_state()
 			states.KICKING:
 				kick_state()
-		
-		if obstacles_colliding.size() > 0:
-			obstacle_avoid_angle = clamp(obstacle_avoid_angle + Globals.TURN_SPEED * delta / 5, deg_to_rad(0), deg_to_rad(180))
-		else:
-			obstacle_avoid_angle = clamp(obstacle_avoid_angle - Globals.TURN_SPEED * delta / 5, deg_to_rad(0), deg_to_rad(180))
-		
-		transform.basis = transform.basis.rotated(Vector3.UP, obstacle_avoid_angle)
 		
 		var current_rotation = transform.basis.get_rotation_quaternion()
 		velocity = (current_rotation.normalized() * $AnimationTree.get_root_motion_position()) / delta
@@ -93,9 +86,16 @@ func initialize(start_position, start_target):
 	add_to_group("Enemies")
 	set_target(start_target)
 	
-func move_state():
+func move_state(delta):
 	if target:
 		look_at(Vector3(target.global_position.x, global_position.y, target.global_position.z), Vector3.UP, true)
+		
+		if obstacles_colliding.size() > 0:
+			obstacle_avoid_angle = clamp(obstacle_avoid_angle + Globals.TURN_SPEED * delta / 5, deg_to_rad(0), deg_to_rad(180))
+		else:
+			obstacle_avoid_angle = clamp(obstacle_avoid_angle - Globals.TURN_SPEED * delta / 5, deg_to_rad(0), deg_to_rad(180))
+		
+		transform.basis = transform.basis.rotated(Vector3.UP, obstacle_avoid_angle)
 		
 		if target not in close_targets:
 			animation_state.travel("Walk")
