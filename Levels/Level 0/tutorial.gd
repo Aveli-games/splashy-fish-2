@@ -29,7 +29,8 @@ func _process(delta):
 
 func _input(event):
 	if tutorial_stage == "Movement" and (event.is_action("move_forward") or event.is_action("move_back") or event.is_action("move_left") or event.is_action("move_right")):
-		$TutorialTimer.start()
+		if not instructions_visible:
+			$TutorialTimer.start()
 
 func spawn_enemy(number: int):
 	if number > num_enemies:
