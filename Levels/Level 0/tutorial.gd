@@ -10,6 +10,10 @@ var tutorial_stage = "Introduction"
 
 @export var player: Player
 @export var instructions_screen: Control
+@export var objective_label: Label
+
+var play_paused = false
+var instructions_visible = false
 
 func _ready():
 	initialize_self()
@@ -24,7 +28,7 @@ func _process(delta):
 		won.emit()
 
 func _input(event):
-	if tutorial_stage == "Movement" and event.is_action("move_forward"):
+	if tutorial_stage == "Movement" and (event.is_action("move_forward") or event.is_action("move_back") or event.is_action("move_left") or event.is_action("move_right")):
 		$TutorialTimer.start()
 
 func spawn_enemy(number: int):
@@ -57,6 +61,20 @@ func spawn_enemy(number: int):
 		# Tutorial differs from other levels in that we want to track enemies dying to update the counter
 		enemy.died.connect(_on_enemy_died)
 
+func pause_play():
+	play_paused = true
+	freeze_camera()
+	get_tree().set_group_flags(0, "Level", "process_mode", PROCESS_MODE_DISABLED)
+
+func resume_play(mouse_mode: int):
+	if instructions_visible:
+		Input.mouse_mode = Input.MOUSE_MODE_CONFINED
+	else:
+		Input.mouse_mode = mouse_mode
+	play_paused = false
+	unfreeze_camera()
+	get_tree().set_group_flags(0, "Level", "process_mode", PROCESS_MODE_ALWAYS)
+
 func fight_one_hundred_enemies():
 	$Player.add_to_group("PlayerTargets")
 	$Player.set_ammo(1000)
@@ -80,19 +98,25 @@ func _on_dummy_enemy_died():
 	
 func initialize_remaining_enemies(number: int):
 	remaining_enemies = number
-	$TutorialUI/RemainingEnemiesUI/RemainingEnemiesBar.initialize(remaining_enemies)
-	$TutorialUI/RemainingEnemiesUI.show()
+	$TutorialUI/TutorialObjective/RemainingEnemiesBar.initialize(remaining_enemies)
+	objective_label.text = "Remaining Enemies"
+	$TutorialUI/TutorialObjective/RemainingEnemiesBar.show()
 
 func _on_enemy_died():
 	remaining_enemies -= 1
-	$TutorialUI/RemainingEnemiesUI/RemainingEnemiesBar.set_value(remaining_enemies)
+	$TutorialUI/TutorialObjective/RemainingEnemiesBar.set_value(remaining_enemies)
 
 func _on_instructions_screen_continue_pressed(title: String):
+	if play_paused:
+		Input.mouse_mode = Input.MOUSE_MODE_CONFINED
+	else:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	
 	match title:
 		"Introduction":
 			tutorial_stage = "Movement"
 			instructions_screen.show_movement()
-		"Movement":
+			objective_label.text = "Objective: Move around"
 			player.enable_movement()
 		"Melee Attacking":
 			player.enable_melee()
@@ -100,12 +124,13 @@ func _on_instructions_screen_continue_pressed(title: String):
 		"Melee Hit Options":
 			$TutorialTimer.start()
 		"Melee Failure":
-			$Player.add_to_group("PlayerTargets")
-			$Enemies/Enemy.melee_targets.append($Player)
-			$Enemies/Enemy.target = $Player
+			player.enable_movement()
+			player.enable_melee()
+			player.roll_pass_upper_threshold = 13
+			player.roll_fail_upper_threshold = 12
 		"Ranged Attacking":
 			player.disable_melee()
-			player.set_ammo(4)
+			player.set_ammo(1)
 			player.enable_ranged()
 			player.enable_movement()
 			$Enemies/Enemy.health = 1
@@ -116,15 +141,18 @@ func _on_tutorial_timer_timeout():
 	match tutorial_stage:
 		"Introduction":
 			instructions_screen.show_intro()
+			objective_label.text = "Objective: Welcome"
 		"Movement":
 			tutorial_stage = "Melee Attacking"
 			player.disable_movement()
 			instructions_screen.show_melee()
+			objective_label.text = "Objective: Punch the cat"
 		"Melee Hit Options":
-			player.roll_pass_upper_threshold = 13
-			player.roll_fail_upper_threshold = 12
+			player.disable_movement()
+			player.disable_melee()
 			tutorial_stage = "Melee Failure"
 			instructions_screen.show_melee_failure()
+			objective_label.text = "Objective: Fail a punch roll"
 		"Melee Failure":
 			$Player.remove_from_group("PlayerTargets")
 			$Enemies/Enemy.melee_targets.erase($Player)
@@ -133,14 +161,27 @@ func _on_tutorial_timer_timeout():
 			player.disable_movement()
 			player.disable_melee()
 			instructions_screen.show_ranged()
+			objective_label.text = "Objective: Throw a donut at the cat"
 
 func _on_player_attacking(player):
 	if tutorial_stage == "Melee Attacking":
 		tutorial_stage = "Melee Hit Options"
 		instructions_screen.show_hit_options()
-
+		objective_label.text = "Objective: Try out melee follow-up actions"
+	elif tutorial_stage == "Melee Failure":
+		$Player.add_to_group("PlayerTargets")
+		$Enemies/Enemy.target = $Player
+		$Enemies/Enemy.melee_targets.append($Player)
+	
 func _on_player_kicked():
 	if tutorial_stage == "Melee Failure":
 		player.roll_pass_upper_threshold = 9
 		player.roll_fail_upper_threshold = 3
 		$TutorialTimer.start()
+
+func _on_instructions_screen_hidden():
+	instructions_visible = false
+
+func _on_instructions_screen_shown():
+	Input.mouse_mode = Input.MOUSE_MODE_CONFINED
+	instructions_visible = true

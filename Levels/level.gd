@@ -92,11 +92,10 @@ func unfreeze_camera():
 	camera_controller.toggle_mouse_control(true)
 	
 func pause_play():
-	mouse_mode = Input.mouse_mode
 	freeze_camera()
 	get_tree().set_group_flags(0, "Level", "process_mode", PROCESS_MODE_DISABLED)
 
-func resume_play():
+func resume_play(mouse_mode: int):
 	Input.mouse_mode = mouse_mode
 	unfreeze_camera()
 	get_tree().set_group_flags(0, "Level", "process_mode", PROCESS_MODE_ALWAYS)

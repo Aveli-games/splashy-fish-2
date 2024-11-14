@@ -43,11 +43,12 @@ _data = {
 }
 point_count = 5
 
-[node name="Tutorial" type="Node" node_paths=PackedStringArray("player", "instructions_screen") groups=["Level"]]
+[node name="Tutorial" type="Node" node_paths=PackedStringArray("player", "instructions_screen", "objective_label") groups=["Level"]]
 process_mode = 3
 script = ExtResource("1_rxfwi")
 player = NodePath("Player")
 instructions_screen = NodePath("TutorialUI/InstructionsScreen")
+objective_label = NodePath("TutorialUI/TutorialObjective/Label")
 level_name = "Tutorial"
 enemy_scene = ExtResource("2_xsjle")
 bottle_scene = ExtResource("3_xy8ki")
@@ -697,21 +698,20 @@ offset_right = 1920.0
 offset_bottom = 1080.0
 mouse_filter = 1
 
-[node name="RemainingEnemiesUI" type="HBoxContainer" parent="TutorialUI"]
-visible = false
+[node name="TutorialObjective" type="HBoxContainer" parent="TutorialUI"]
 layout_mode = 0
 offset_right = 735.0
 offset_bottom = 66.0
 
-[node name="Label" type="Label" parent="TutorialUI/RemainingEnemiesUI"]
+[node name="Label" type="Label" parent="TutorialUI/TutorialObjective"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 42
-text = "Remaining enemies: "
 
-[node name="RemainingEnemiesBar" parent="TutorialUI/RemainingEnemiesUI" instance=ExtResource("11_x4ych")]
+[node name="RemainingEnemiesBar" parent="TutorialUI/TutorialObjective" instance=ExtResource("11_x4ych")]
+visible = false
 layout_mode = 2
 
-[node name="Label" parent="TutorialUI/RemainingEnemiesUI/RemainingEnemiesBar" index="0"]
+[node name="Label" parent="TutorialUI/TutorialObjective/RemainingEnemiesBar" index="0"]
 theme_override_font_sizes/font_size = 42
 
 [node name="InstructionsScreen" parent="TutorialUI" instance=ExtResource("12_cch11")]
@@ -724,12 +724,14 @@ autostart = true
 
 [connection signal="died" from="Player" to="." method="_on_player_died"]
 [connection signal="kicked" from="Player" to="." method="_on_player_kicked"]
-[connection signal="roll_requested" from="Player" to="." method="_on_player_roll_requested"]
 [connection signal="roll_requested" from="Player" to="." method="_on_player_attacking"]
+[connection signal="roll_requested" from="Player" to="." method="_on_player_roll_requested"]
 [connection signal="died" from="Enemies/Enemy" to="." method="_on_dummy_enemy_died"]
 [connection signal="died" from="Objective" to="." method="_on_objective_died"]
 [connection signal="timeout" from="EnemySpawnTimer" to="." method="_on_enemy_spawn_timer_timeout"]
 [connection signal="continue_pressed" from="TutorialUI/InstructionsScreen" to="." method="_on_instructions_screen_continue_pressed"]
+[connection signal="hidden" from="TutorialUI/InstructionsScreen" to="." method="_on_instructions_screen_hidden"]
+[connection signal="shown" from="TutorialUI/InstructionsScreen" to="." method="_on_instructions_screen_shown"]
 [connection signal="timeout" from="TutorialTimer" to="." method="_on_tutorial_timer_timeout"]
 
-[editable path="TutorialUI/RemainingEnemiesUI/RemainingEnemiesBar"]
+[editable path="TutorialUI/TutorialObjective/RemainingEnemiesBar"]
