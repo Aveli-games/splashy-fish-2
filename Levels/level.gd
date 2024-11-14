@@ -19,8 +19,6 @@ var game_ended = false
 
 var last_spawn_group_size = 1
 
-var mouse_mode = Input.MOUSE_MODE_CAPTURED
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	initialize_self()
