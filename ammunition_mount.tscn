@@ -1,0 +1,39 @@
+[gd_scene load_steps=3 format=3 uid="uid://b71h7xydyxrc"]
+
+[ext_resource type="PackedScene" uid="uid://dnr3gocfd72cc" path="res://donut.tscn" id="1_7e3pv"]
+[ext_resource type="Script" path="res://ammunition_mount.gd" id="1_cn16j"]
+
+[node name="AmmunitionMount" type="Node3D"]
+script = ExtResource("1_cn16j")
+ammo_scene = ExtResource("1_7e3pv")
+
+[node name="AmmoSlot1" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.052, 0, 0.107)
+
+[node name="Donut" parent="AmmoSlot1" instance=ExtResource("1_7e3pv")]
+
+[node name="AmmoSlot2" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.052, 0, 0.107)
+
+[node name="Donut" parent="AmmoSlot2" instance=ExtResource("1_7e3pv")]
+
+[node name="AmmoSlot3" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.052, 0, 0)
+
+[node name="Donut" parent="AmmoSlot3" instance=ExtResource("1_7e3pv")]
+
+[node name="AmmoSlot4" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.052, 0, 0)
+
+[node name="Donut" parent="AmmoSlot4" instance=ExtResource("1_7e3pv")]
+
+[node name="AmmoSlot5" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.052, 0, -0.107)
+
+[node name="Donut" parent="AmmoSlot5" instance=ExtResource("1_7e3pv")]
+
+[node name="AmmoSlot6" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.052, 0, -0.106623)
+
+[node name="Donut" parent="AmmoSlot6" instance=ExtResource("1_7e3pv")]
+transform = Transform3D(0.652536, 0, 0, 0, 0.652534, 0, 0, 0, 0.652534, 0, 0, 0)

@@ -1,6 +1,0 @@
-[gd_resource type="Environment" format=3 uid="uid://bueoqa7bvewfo"]
-
-[resource]
-fog_density = 0.1
-volumetric_fog_enabled = true
-volumetric_fog_density = 0.15

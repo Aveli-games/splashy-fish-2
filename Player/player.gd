@@ -6,6 +6,7 @@ signal died
 signal roll_requested(player: Player)
 signal roll_result_recieved
 signal action_queue_set
+signal kicked
 
 @export var camera_controller : Marker3D
 @export var projectile_scene : PackedScene
@@ -61,7 +62,7 @@ var roll_fail_upper_threshold = 3 # 2-3, ~8.33% chance to fail
 var roll_pass_upper_threshold = 9 # 4-9, ~75% chance to pass; 10-12, ~16.67 chance to critical success
 
 var targeted_times = 0
-var health_bar_modulate
+@export var health_bar_modulate: Color
 
 var running = false
 var cur_speed = WALK_SPEED
@@ -92,7 +93,7 @@ var cur_action = {"id": null, "name": "", "data": null}
 var melee_options = [
 	{"id": melee_attack_options.BLOCK, "name": "Block +1", "data": null},
 	{"id": melee_attack_options.RECOVER, "name": "Recover stamina", "data": null},
-	{"id": melee_attack_options.DAMAGE, "name": "Damage +1", "data": null},
+	#{"id": melee_attack_options.DAMAGE, "name": "Damage +1", "data": null},
 	{"id": melee_attack_options.COMBO, "name": "Combo +1", "data": null},
 	{
 		"id": melee_attack_options.DODGE,
@@ -117,26 +118,30 @@ var screen_center
 
 var ammo_holster: Node3D
 @export var starting_ammo = 4
+var has_ammo = false
+
+var can_move = true
+var can_melee = true
+var can_throw = true
 
 func _ready():
+	health = max_health
+	
 	# Make sure the player has the assigned number of donuts
 	ammo_holster = $Armature/Skeleton3D/BoneAttachment3D/AmmunitionMount
-	var available_ammo = ammo_holster.get_children()
-	while available_ammo.size() > starting_ammo:
-		available_ammo.pop_back().free()
+	has_ammo = starting_ammo > 0
+	set_ammo(starting_ammo)
 	
 	screen_center = get_viewport().size / 2
 	camera_y = camera_controller.global_position.y
 	animation_tree = $AnimationTree
 	animation_state = animation_tree.get("parameters/playback")
-	health_bar_modulate = $HealthBarView/HealthBar.modulate
 	
-	$HealthBarView/HealthLabel.text = str(health)
-	$HealthBarView/HealthBar.max_value = max_health
-	$HealthBarView/HealthBar.value = health
+	$HealthBarView/CountingBar.initialize(health)
+	$Abilities/Run/StaminaBarView/CountingBar.initialize_with_text(max_stamina, "Stamina")
 
 func _physics_process(delta):
-	if state != states.ATTACKING:
+	if state != states.ATTACKING and can_throw:
 		_toggle_ranged(Input.is_action_pressed("aim_ranged"))
 		
 	match state:
@@ -190,7 +195,9 @@ func move_state(delta):
 	if not Input.is_action_pressed("run") || stamina <= 0:
 		running = false
 	
-	var input_dir = Input.get_vector("move_right", "move_left", "move_back", "move_forward")
+	var input_dir = Vector2.ZERO
+	if can_move:
+		input_dir = Input.get_vector("move_right", "move_left", "move_back", "move_forward")
 	
 	if input_dir != Vector2.ZERO:
 		if running:
@@ -213,7 +220,7 @@ func move_state(delta):
 		velocity.x = move_toward(velocity.x, 0, cur_speed)
 		velocity.z = move_toward(velocity.z, 0, cur_speed)
 	
-	if (Input.is_action_just_pressed("attack") or combo > 0) and target:
+	if ((can_melee and not ranged_mode) or (can_throw and ranged_mode)) and (Input.is_action_just_pressed("attack") or combo > 0) and target:
 		attack_target = target
 		state = states.ATTACKING
 	else:
@@ -271,6 +278,8 @@ func on_knockback(stamina_damage):
 	
 	if health > 0:
 		state = states.KNOCKBACK
+	
+	kicked.emit()
 
 func _on_melee_range_body_entered(body):
 	var enemies = get_tree().get_nodes_in_group("Enemies")
@@ -287,12 +296,12 @@ func _on_melee_range_body_exited(body):
 
 func targeted():
 	targeted_times += 1
-	$HealthBarView/HealthBar.set_modulate(Color.CRIMSON)
+	$HealthBarView/CountingBar.set_bar_modulate(Color.CRIMSON)
 
 func untargeted():
 	targeted_times -= 1
 	if targeted_times <= 0:
-		$HealthBarView/HealthBar.set_modulate(health_bar_modulate)
+		$HealthBarView/CountingBar.set_bar_modulate(health_bar_modulate)
 	
 func attack_connects():
 	if attack_target and attack_hit:
@@ -398,7 +407,7 @@ func _on_far_range_body_exited(body):
 
 # Toggle ranged mode or not and take the first target that had entered the respective range
 func _toggle_ranged(is_ranged):
-	if ammo_holster.get_children().is_empty():
+	if not has_ammo:
 		is_ranged = false
 	if ranged_mode != is_ranged:
 		ranged_mode = not ranged_mode
@@ -430,9 +439,9 @@ func _get_new_target():
 
 func throw_donut():
 	if attack_target:
-		var available_ammo = ammo_holster.get_children()
-		if not available_ammo.is_empty():
-			available_ammo.pop_back().queue_free()
+		if has_ammo:
+			if ammo_holster.has_method("use_ammo"):
+				ammo_holster.use_ammo()
 			var right_hand_bone = $Armature/Skeleton3D.find_bone("mixamorig1_RightHand")
 			var right_hand_bone_position = $Armature/Skeleton3D.global_transform * $Armature/Skeleton3D.get_bone_global_pose(right_hand_bone)
 			var projectile = projectile_scene.instantiate()
@@ -442,12 +451,11 @@ func throw_donut():
 
 func _change_stamina(stamina_change):
 	stamina = clamp(stamina + stamina_change, 0, max_stamina)
-	$Abilities/Run/StaminaBarView/StaminaBar.value = stamina
+	$Abilities/Run/StaminaBarView/CountingBar.set_value(stamina)
 
 func _change_health(health_change):
 	health = clamp(health + health_change, 0, max_health)
-	$HealthBarView/HealthLabel.text = str(health)
-	$HealthBarView/HealthBar.value = health
+	$HealthBarView/CountingBar.set_value(health)
 	if health <= 0:
 		collision_layer = 0
 		collision_mask = 1
@@ -487,3 +495,29 @@ func _toggle_blocking(is_blocking: bool):
 
 func _on_block_timer_timeout():
 	_toggle_blocking(false)
+	
+func set_ammo(number: int):
+	if ammo_holster.has_method("set_ammo"):
+		ammo_holster.set_ammo(number)
+	has_ammo = number > 0
+
+func _on_ammo_depleted():
+	has_ammo = false
+
+func enable_movement():
+	can_move = true
+
+func disable_movement():
+	can_move = false
+
+func enable_melee():
+	can_melee = true
+
+func disable_melee():
+	can_melee = false
+
+func enable_ranged():
+	can_throw = true
+
+func disable_ranged():
+	can_throw = false

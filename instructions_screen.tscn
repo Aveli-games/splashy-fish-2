@@ -1,0 +1,79 @@
+[gd_scene load_steps=7 format=3 uid="uid://bgxty6dkj53nj"]
+
+[ext_resource type="Script" path="res://instructions_screen.gd" id="1_8jrmf"]
+[ext_resource type="Texture2D" uid="uid://ct2oqpkvfdxt7" path="res://GUI/fish_watercolor_neutral.png" id="1_fa5hv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1vbye"]
+bg_color = Color(1, 0.364706, 0, 0.317647)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f7k3x"]
+bg_color = Color(0.843137, 0.301961, 0, 0.317647)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fxdec"]
+bg_color = Color(0.940087, 0.340871, 7.70092e-07, 0.317647)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jgiae"]
+bg_color = Color(1, 0.509804, 0, 0.317647)
+
+[node name="InstructionsScreen" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_8jrmf")
+
+[node name="SplashyImage" type="TextureRect" parent="."]
+layout_mode = 2
+offset_left = -183.0
+offset_top = 837.0
+offset_right = 217.0
+offset_bottom = 1066.0
+rotation = -0.283731
+scale = Vector2(1.5, 1.5)
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource("1_fa5hv")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 443.0
+offset_top = 781.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+theme_override_constants/separation = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Title" type="Label" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 42
+theme_override_styles/normal = SubResource("StyleBoxFlat_1vbye")
+text = "Title"
+
+[node name="ContinueButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 42
+theme_override_styles/normal = SubResource("StyleBoxFlat_f7k3x")
+theme_override_styles/hover = SubResource("StyleBoxFlat_fxdec")
+text = " Continue "
+
+[node name="SpeechBox" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_jgiae")
+text = "Before a punch resolves, you get to choose follow-up actions! 1 action for success, 2 actions for a critical. 
+
+Block +1					- Negate all enemy attacks for 1 second
+Recover Stamina	- Refill stamina by 40%
+Combo +1					- Automatically punch an extra in-range enemy
+Dodge						- Choose a direction to roll with invulnerability"
+
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/ContinueButton" to="." method="_on_continue_button_pressed"]
