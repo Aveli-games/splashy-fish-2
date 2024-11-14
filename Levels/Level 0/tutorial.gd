@@ -15,6 +15,8 @@ var tutorial_stage = "Introduction"
 var play_paused = false
 var instructions_visible = false
 
+var mouse_mode = Input.MOUSE_MODE_CAPTURED
+
 func _ready():
 	initialize_self()
 	player.disable_movement()
