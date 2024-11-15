@@ -309,7 +309,6 @@ func attack_connects():
 	if attack_target and attack_hit:
 		attack_target.on_hit(melee_damage)
 		melee_damage = MELEE_DAMAGE_BASE
-		action_basis = camera_controller.transform.basis
 
 func attack_check():
 	if attack_target:
@@ -317,6 +316,7 @@ func attack_check():
 			combo -= 1
 			attack_hit = true
 		else:
+			action_basis = camera_controller.transform.basis
 			cur_action_options = melee_options
 			roll_requested.emit(self)
 			await roll_result_recieved
