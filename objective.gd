@@ -21,6 +21,7 @@ func on_hit(damage):
 		health = clamp(health - damage, 0, max_health)
 		$HealthBarView/HealthLabel.text = str(health)
 		$HealthBarView/HealthBar.value = health
+		$HitSound.play()
 		if health <= 0:
 			die()
 
