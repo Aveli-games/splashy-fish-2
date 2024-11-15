@@ -63,6 +63,7 @@ func _pause_play():
 	level.pause_play()
 	
 func show_main_menu():
+	level.bg_music.stop()
 	_pause_play()
 	Input.mouse_mode = Input.MOUSE_MODE_CONFINED
 	hud.show_main_menu()

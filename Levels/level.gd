@@ -11,6 +11,7 @@ signal won
 @export var bottle_scene: PackedScene
 @export var num_enemies = 10
 @export var max_enemy_group = 3
+@export var bg_music: AudioStreamPlayer
 
 var camera_controller
 var roll_requester
@@ -94,6 +95,8 @@ func pause_play():
 	get_tree().set_group_flags(0, "Level", "process_mode", PROCESS_MODE_DISABLED)
 
 func resume_play(mouse_mode: int):
+	if not bg_music.playing:
+		bg_music.play()
 	Input.mouse_mode = mouse_mode
 	unfreeze_camera()
 	get_tree().set_group_flags(0, "Level", "process_mode", PROCESS_MODE_ALWAYS)

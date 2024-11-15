@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://b20ptif3dcpca"]
+[gd_scene load_steps=22 format=3 uid="uid://b20ptif3dcpca"]
 
 [ext_resource type="Script" path="res://Levels/Level 0/tutorial.gd" id="1_rxfwi"]
 [ext_resource type="PackedScene" uid="uid://qt3pkvldp4ub" path="res://Enemy/enemy.tscn" id="2_xsjle"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="10_2yrds"]
 [ext_resource type="PackedScene" uid="uid://cnpkw0qfs844s" path="res://counting_bar.tscn" id="11_x4ych"]
 [ext_resource type="PackedScene" uid="uid://bgxty6dkj53nj" path="res://instructions_screen.tscn" id="12_cch11"]
+[ext_resource type="AudioStream" uid="uid://cirvw14j42tmx" path="res://Levels/Level 0/tutorial_track.tres" id="13_c2w3j"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pmljg"]
 size = Vector3(0, 50, 50)
@@ -43,7 +44,7 @@ _data = {
 }
 point_count = 5
 
-[node name="Tutorial" type="Node" node_paths=PackedStringArray("player", "instructions_screen", "objective_label") groups=["Level"]]
+[node name="Tutorial" type="Node" node_paths=PackedStringArray("player", "instructions_screen", "objective_label", "bg_music") groups=["Level"]]
 process_mode = 3
 script = ExtResource("1_rxfwi")
 player = NodePath("Player")
@@ -54,6 +55,7 @@ enemy_scene = ExtResource("2_xsjle")
 bottle_scene = ExtResource("3_xy8ki")
 num_enemies = 1
 max_enemy_group = 1
+bg_music = NodePath("AudioStreamPlayer")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("4_05wb5")
@@ -721,6 +723,11 @@ layout_mode = 0
 [node name="TutorialTimer" type="Timer" parent="."]
 one_shot = true
 autostart = true
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+process_mode = 3
+stream = ExtResource("13_c2w3j")
+volume_db = -10.0
 
 [connection signal="died" from="Player" to="." method="_on_player_died"]
 [connection signal="kicked" from="Player" to="." method="_on_player_kicked"]
