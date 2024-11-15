@@ -260,6 +260,7 @@ func on_hit(damage):
 	else:
 		damage = -abs(damage) # Make sure damage is negative
 		_change_health(damage)
+		$HitSound.play()
 		if health > 0 and state != states.ATTACKING:
 			state = states.HIT
 
@@ -271,6 +272,7 @@ func on_block():
 # TODO: react to kicks from different angles
 func on_knockback(stamina_damage):
 	stamina_damage = -abs(stamina_damage) # Make sure stam damage is negative
+	$KickedSound.play()
 	if stamina >= -stamina_damage / 2:
 		_change_stamina(stamina_damage)
 	else:

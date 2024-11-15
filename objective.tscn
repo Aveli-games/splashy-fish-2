@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://bidgyd2100su1"]
+[gd_scene load_steps=5 format=3 uid="uid://bidgyd2100su1"]
 
 [ext_resource type="PackedScene" uid="uid://dcgeg7y2cxnt1" path="res://mooshine_still.tscn" id="1_caq6c"]
 [ext_resource type="Script" path="res://Objective.gd" id="2_dh0ir"]
+[ext_resource type="AudioStream" uid="uid://cvkk28dm3xfm7" path="res://752072__artninja__metal_heavy_punch_with_crunch_and_glass_debris_sounds_08242024.mp3" id="3_6swga"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_i3olc"]
 viewport_path = NodePath("HealthBarView")
@@ -33,3 +34,7 @@ offset_bottom = 27.0
 max_value = 3.0
 value = 3.0
 show_percentage = false
+
+[node name="HitSound" type="AudioStreamPlayer" parent="." index="14"]
+stream = ExtResource("3_6swga")
+volume_db = -20.0
