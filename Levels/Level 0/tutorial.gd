@@ -70,6 +70,8 @@ func pause_play():
 	get_tree().set_group_flags(0, "Level", "process_mode", PROCESS_MODE_DISABLED)
 
 func resume_play(mouse_mode: int):
+	if not bg_music.playing:
+		bg_music.play()
 	if instructions_visible:
 		Input.mouse_mode = Input.MOUSE_MODE_CONFINED
 	else:
@@ -79,6 +81,7 @@ func resume_play(mouse_mode: int):
 	get_tree().set_group_flags(0, "Level", "process_mode", PROCESS_MODE_ALWAYS)
 
 func fight_one_hundred_enemies():
+	bg_music.stream = load("res://Levels/Level 0/fight_100_track.tres")
 	$Player.add_to_group("PlayerTargets")
 	$Player.set_ammo(1000)
 	
