@@ -114,7 +114,7 @@ var dodge_direction = DODGE_DIRECTION_DEFAULT
 var action_basis: Basis
 
 var ranged_camera_offset = Vector3(.5, 0, .5)
-var screen_center
+var reticle_center
 
 var ammo_holster: Node3D
 @export var starting_ammo = 4
@@ -132,7 +132,6 @@ func _ready():
 	has_ammo = starting_ammo > 0
 	set_ammo(starting_ammo)
 	
-	screen_center = get_viewport().size / 2
 	camera_y = camera_controller.global_position.y
 	animation_tree = $AnimationTree
 	animation_state = animation_tree.get("parameters/playback")
@@ -141,6 +140,8 @@ func _ready():
 	$Abilities/Run/StaminaBarView/CountingBar.initialize_with_text(max_stamina, "Stamina")
 
 func _physics_process(delta):
+	reticle_center = $Reticle/Label.global_position
+	print(reticle_center)
 	if state != states.ATTACKING and can_throw:
 		_toggle_ranged(Input.is_action_pressed("aim_ranged"))
 		
@@ -177,8 +178,8 @@ func _physics_process(delta):
 	# Raycast from the center of the screen/camera to target enemies
 	var camera = camera_controller.get_camera()
 	var space_state = camera_controller.get_world_3d().direct_space_state
-	var origin = camera.project_ray_origin(screen_center)
-	var end = origin + camera.project_ray_normal(screen_center) * 1000
+	var origin = camera.project_ray_origin(reticle_center)
+	var end = origin + camera.project_ray_normal(reticle_center) * 1000
 	var query = PhysicsRayQueryParameters3D.create(origin, end)
 	query.collide_with_bodies = true
 	query.collision_mask = collision_mask
