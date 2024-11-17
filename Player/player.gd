@@ -141,7 +141,6 @@ func _ready():
 
 func _physics_process(delta):
 	reticle_center = $Reticle/Label.global_position
-	print(reticle_center)
 	if state != states.ATTACKING and can_throw:
 		_toggle_ranged(Input.is_action_pressed("aim_ranged"))
 		

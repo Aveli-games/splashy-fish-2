@@ -38,8 +38,8 @@ func _on_action_options_option_chosen(number: int, selected_option: Dictionary):
 
 func show_direction_interface():
 	prev_mouse_mode = Input.mouse_mode
-	Input.mouse_mode = Input.MOUSE_MODE_CONFINED_HIDDEN
-	Input.warp_mouse(Vector2(get_viewport().size.x / 2, 0))
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	
 	$DirectionInterface.show()
 	$ActionOptions.hide()
 	

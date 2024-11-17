@@ -47,7 +47,7 @@ func _on_roll_finished(value):
 	_resume_play(Input.MOUSE_MODE_CAPTURED)
 
 func _on_hud_actions_chosen(action_queue: Array):
-	if roll_requester.has_method("set_action_queue"):
+	if roll_requester and roll_requester.has_method("set_action_queue"):
 		roll_requester.set_action_queue(action_queue)
 	_resume_play(Input.MOUSE_MODE_CAPTURED)
 	
