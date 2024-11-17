@@ -59,9 +59,11 @@ func _clear_menu():
 
 func show_menu_screens():
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	$ActionSelect.process_mode = Node.PROCESS_MODE_DISABLED
 	$MenuScreens.show()
 
 func hide_menu_screens():
+	$ActionSelect.process_mode = Node.PROCESS_MODE_INHERIT
 	_clear_menu()
 	$MenuScreens.hide()
 
