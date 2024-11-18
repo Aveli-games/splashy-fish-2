@@ -36,7 +36,7 @@ func _on_roll_finished(value):
 			Globals.roll_result_types.CRITICAL:
 				num_actions = 2
 	if num_actions > 0:
-		Input.mouse_mode = Input.MOUSE_MODE_CONFINED
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		if level.has_method("freeze_camera"):
 			level.freeze_camera()
 		if roll_requester.has_method("get_action_options"):
@@ -65,7 +65,7 @@ func _pause_play():
 func show_main_menu():
 	level.bg_music.stop()
 	_pause_play()
-	Input.mouse_mode = Input.MOUSE_MODE_CONFINED
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	hud.show_main_menu()
 
 func _on_quit_pressed():
