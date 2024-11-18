@@ -73,8 +73,7 @@ func pause_play():
 	get_tree().set_group_flags(0, "Level", "process_mode", PROCESS_MODE_DISABLED)
 
 func resume_play(mouse_mode: int):
-	if not bg_music.playing:
-		bg_music.play()
+	bg_music.stream_paused = false
 	if instructions_visible:
 		Input.mouse_mode = Input.MOUSE_MODE_CONFINED
 	else:
