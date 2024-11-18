@@ -81,6 +81,7 @@ func resume_play(mouse_mode: int):
 
 func fight_one_hundred_enemies():
 	bg_music.stream = fight_100_enemies_music
+	bg_music.play()
 	$Player.add_to_group("PlayerTargets")
 	$Player.set_ammo(1000)
 	
