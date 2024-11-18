@@ -59,14 +59,7 @@ theme_override_font_sizes/font_size = 36
 theme_override_styles/normal = ExtResource("2_y3ir5")
 text = "Controls"
 
-[node name="QuitButton" type="Button" parent="MenuContent/MenuButtons"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 36
-theme_override_styles/normal = ExtResource("2_y3ir5")
-text = "Quit"
-
 [connection signal="pressed" from="MenuContent/MenuButtons/PlayButton" to="." method="_on_play_button_pressed"]
 [connection signal="pressed" from="MenuContent/MenuButtons/LevelSelectButton" to="." method="_on_level_select_button_pressed"]
 [connection signal="pressed" from="MenuContent/MenuButtons/RestartButton" to="." method="_on_restart_button_pressed"]
 [connection signal="pressed" from="MenuContent/MenuButtons/ControlsButton" to="." method="_on_controls_button_pressed"]
-[connection signal="pressed" from="MenuContent/MenuButtons/QuitButton" to="." method="_on_quit_button_pressed"]

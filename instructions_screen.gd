@@ -51,6 +51,13 @@ Have fun!"}
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	_set_instruction_text(instructions["introduction"])
+	
+func _input(event):
+	if event is InputEventKey:
+		if visible and Input.is_action_just_pressed("continue"):
+			get_viewport().set_input_as_handled()
+			hide()
+			continue_pressed.emit($VBoxContainer/HBoxContainer/Title.text)
 
 func _set_instruction_text(instruction: Dictionary):
 	$VBoxContainer/HBoxContainer/Title.text = instruction["title"]
@@ -87,7 +94,3 @@ func show_end():
 func show_self():
 	show()
 	shown.emit()
-
-func _on_continue_button_pressed():
-	hide()
-	continue_pressed.emit($VBoxContainer/HBoxContainer/Title.text)

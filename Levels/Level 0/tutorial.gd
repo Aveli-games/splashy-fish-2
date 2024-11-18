@@ -75,10 +75,7 @@ func pause_play():
 func resume_play(mouse_mode: int):
 	if not bg_music.playing:
 		bg_music.play()
-	if instructions_visible:
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	else:
-		Input.mouse_mode = mouse_mode
+	Input.mouse_mode = mouse_mode
 	play_paused = false
 	unfreeze_camera()
 	get_tree().set_group_flags(0, "Level", "process_mode", PROCESS_MODE_ALWAYS)
@@ -116,11 +113,6 @@ func _on_enemy_died():
 	$TutorialUI/TutorialObjective/RemainingEnemiesBar.set_value(remaining_enemies)
 
 func _on_instructions_screen_continue_pressed(title: String):
-	if play_paused:
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	else:
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	
 	match title:
 		"Introduction":
 			tutorial_stage = "Movement"
@@ -192,5 +184,4 @@ func _on_instructions_screen_hidden():
 	instructions_visible = false
 
 func _on_instructions_screen_shown():
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	instructions_visible = true

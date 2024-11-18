@@ -13,6 +13,12 @@
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_w38b1")
 
+[node name="Label" type="Label" parent="."]
+offset_left = 1844.0
+offset_right = 1914.0
+offset_bottom = 23.0
+text = "P - Pause"
+
 [node name="DiceRollCanvas" parent="." instance=ExtResource("2_v2x7h")]
 visible = false
 position = Vector2(1120, 377)

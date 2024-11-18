@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bgxty6dkj53nj"]
+[gd_scene load_steps=6 format=3 uid="uid://bgxty6dkj53nj"]
 
 [ext_resource type="Script" path="res://instructions_screen.gd" id="1_8jrmf"]
 [ext_resource type="Texture2D" uid="uid://ct2oqpkvfdxt7" path="res://GUI/fish_watercolor_neutral.png" id="1_fa5hv"]
@@ -6,11 +6,8 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1vbye"]
 bg_color = Color(1, 0.364706, 0, 0.317647)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f7k3x"]
-bg_color = Color(0.843137, 0.301961, 0, 0.317647)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fxdec"]
-bg_color = Color(0.940087, 0.340871, 7.70092e-07, 0.317647)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i6tmt"]
+bg_color = Color(0.870588, 0.313726, 0, 0.317647)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jgiae"]
 bg_color = Color(1, 0.509804, 0, 0.317647)
@@ -57,12 +54,12 @@ theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_1vbye")
 text = "Title"
 
-[node name="ContinueButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+[node name="ContinueLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 1
 theme_override_font_sizes/font_size = 42
-theme_override_styles/normal = SubResource("StyleBoxFlat_f7k3x")
-theme_override_styles/hover = SubResource("StyleBoxFlat_fxdec")
-text = " Continue "
+theme_override_styles/normal = SubResource("StyleBoxFlat_i6tmt")
+text = "Press C to continue"
 
 [node name="SpeechBox" type="Label" parent="VBoxContainer"]
 layout_mode = 2
@@ -75,5 +72,3 @@ Block +1					- Negate all enemy attacks for 1 second
 Recover Stamina	- Refill stamina by 40%
 Combo +1					- Automatically punch an extra in-range enemy
 Dodge						- Choose a direction to roll with invulnerability"
-
-[connection signal="pressed" from="VBoxContainer/HBoxContainer/ContinueButton" to="." method="_on_continue_button_pressed"]

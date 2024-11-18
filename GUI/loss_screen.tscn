@@ -41,12 +41,5 @@ theme_override_font_sizes/font_size = 36
 theme_override_styles/normal = ExtResource("1_kt3cy")
 text = "Restart Level"
 
-[node name="QuitButton" type="Button" parent="MenuContent/MenuButtons"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 36
-theme_override_styles/normal = ExtResource("1_kt3cy")
-text = "Quit"
-
 [connection signal="pressed" from="MenuContent/MenuButtons/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
 [connection signal="pressed" from="MenuContent/MenuButtons/RestartButton" to="." method="_on_restart_button_pressed"]
-[connection signal="pressed" from="MenuContent/MenuButtons/QuitButton" to="." method="_on_quit_button_pressed"]
