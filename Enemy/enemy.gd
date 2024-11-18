@@ -91,9 +91,9 @@ func move_state(delta):
 		look_at(Vector3(target.global_position.x, global_position.y, target.global_position.z), Vector3.UP, true)
 		
 		if obstacles_colliding.size() > 0:
-			obstacle_avoid_angle = clamp(obstacle_avoid_angle + Globals.TURN_SPEED * delta / 5, deg_to_rad(0), deg_to_rad(180))
+			obstacle_avoid_angle = clamp(obstacle_avoid_angle + Globals.TURN_SPEED * delta / 5, deg_to_rad(0), deg_to_rad(270))
 		else:
-			obstacle_avoid_angle = clamp(obstacle_avoid_angle - Globals.TURN_SPEED * delta / 5, deg_to_rad(0), deg_to_rad(180))
+			obstacle_avoid_angle = clamp(obstacle_avoid_angle - Globals.TURN_SPEED * delta / 5, deg_to_rad(0), deg_to_rad(270))
 		
 		transform.basis = transform.basis.rotated(Vector3.UP, obstacle_avoid_angle)
 		
