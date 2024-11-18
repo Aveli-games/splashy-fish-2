@@ -92,6 +92,8 @@ func move_state(delta):
 		
 		if obstacles_colliding.size() > 0:
 			obstacle_avoid_angle = clamp(obstacle_avoid_angle + Globals.TURN_SPEED * delta / 5, deg_to_rad(0), deg_to_rad(270))
+			if obstacle_avoid_angle > deg_to_rad(260) and $ObstacleResetTimer.is_stopped():
+				$ObstacleResetTimer.start()
 		else:
 			obstacle_avoid_angle = clamp(obstacle_avoid_angle - Globals.TURN_SPEED * delta / 5, deg_to_rad(0), deg_to_rad(270))
 		
@@ -226,3 +228,6 @@ func _on_wall_collider_body_entered(body):
 
 func _on_wall_collider_body_exited(body):
 	obstacles_colliding.erase(body)
+
+func _on_obstacle_reset_timer_timeout():
+	obstacles_colliding.clear()
