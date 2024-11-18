@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://bidgyd2100su1"]
 
 [ext_resource type="PackedScene" uid="uid://dcgeg7y2cxnt1" path="res://mooshine_still.tscn" id="1_caq6c"]
-[ext_resource type="Script" path="res://Objective.gd" id="2_dh0ir"]
+[ext_resource type="Script" path="res://objective.gd" id="2_n0eth"]
 [ext_resource type="AudioStream" uid="uid://cvkk28dm3xfm7" path="res://752072__artninja__metal_heavy_punch_with_crunch_and_glass_debris_sounds_08242024.mp3" id="3_6swga"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_i3olc"]
@@ -10,7 +10,7 @@ viewport_path = NodePath("HealthBarView")
 [node name="Objective" instance=ExtResource("1_caq6c")]
 transform = Transform3D(2.985, 0, 0, 0, 2.985, 0, 0, 0, 2.985, 0, 0, 0)
 collision_layer = 8
-script = ExtResource("2_dh0ir")
+script = ExtResource("2_n0eth")
 
 [node name="HealthBarSprite" type="Sprite3D" parent="." index="12"]
 transform = Transform3D(0.435, 0, 0, 0, 0.435, 0, 0, 0, 0.435, 0, 0.66693, 0)
