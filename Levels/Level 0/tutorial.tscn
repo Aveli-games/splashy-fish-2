@@ -731,8 +731,8 @@ volume_db = -10.0
 
 [connection signal="died" from="Player" to="." method="_on_player_died"]
 [connection signal="kicked" from="Player" to="." method="_on_player_kicked"]
-[connection signal="roll_requested" from="Player" to="." method="_on_player_roll_requested"]
 [connection signal="roll_requested" from="Player" to="." method="_on_player_attacking"]
+[connection signal="roll_requested" from="Player" to="." method="_on_player_roll_requested"]
 [connection signal="died" from="Enemies/Enemy" to="." method="_on_dummy_enemy_died"]
 [connection signal="died" from="Objective" to="." method="_on_objective_died"]
 [connection signal="timeout" from="EnemySpawnTimer" to="." method="_on_enemy_spawn_timer_timeout"]
