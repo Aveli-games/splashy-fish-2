@@ -18,3 +18,6 @@ func _on_restart_button_pressed():
 
 func _on_quit_button_pressed():
 	button_pressed.emit("Quit")
+
+func _on_next_level_button_pressed():
+	button_pressed.emit("Next Level")

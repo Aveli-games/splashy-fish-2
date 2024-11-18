@@ -88,6 +88,12 @@ func show_tutorial_win_screen():
 func show_win_screen():
 	_clear_menu()
 	show_menu_screens()
+	if Globals.cur_level in $MenuScreens/LevelSelectScreen.levels:
+		var next_level_index = $MenuScreens/LevelSelectScreen.levels.find(Globals.cur_level) + 1
+		if not next_level_index > $MenuScreens/LevelSelectScreen.levels.size():
+			$MenuScreens/EndScreen.show()
+			return
+	
 	$MenuScreens/WinScreen.show()
 	
 func show_loss_screen():

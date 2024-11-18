@@ -1,14 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://v65h1k4msxhb"]
+[gd_scene load_steps=3 format=3 uid="uid://cieoym7nsycw3"]
 
-[ext_resource type="StyleBox" uid="uid://1mss4twkxib3" path="res://button_box.tres" id="1_mm3s4"]
-[ext_resource type="Script" path="res://GUI/win_screen.gd" id="1_ypahy"]
+[ext_resource type="Script" path="res://GUI/win_screen.gd" id="1_tf86a"]
+[ext_resource type="StyleBox" uid="uid://1mss4twkxib3" path="res://button_box.tres" id="2_xrqik"]
 
-[node name="WinScreen" type="Control"]
+[node name="EndScreen" type="Control"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
-script = ExtResource("1_ypahy")
+script = ExtResource("1_tf86a")
 
 [node name="MenuContent" type="VBoxContainer" parent="."]
 layout_mode = 0
@@ -20,7 +20,7 @@ alignment = 1
 [node name="Title" type="Label" parent="MenuContent"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 72
-text = "You win!"
+text = "Thanks for playing!"
 horizontal_alignment = 1
 
 [node name="MenuButtons" type="VBoxContainer" parent="MenuContent"]
@@ -28,26 +28,18 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 20
 
-[node name="NextLevelButton" type="Button" parent="MenuContent/MenuButtons"]
-custom_minimum_size = Vector2(255, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 36
-theme_override_styles/normal = ExtResource("1_mm3s4")
-text = "Next Level"
-
 [node name="MainMenuButton" type="Button" parent="MenuContent/MenuButtons"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 36
-theme_override_styles/normal = ExtResource("1_mm3s4")
+theme_override_styles/normal = ExtResource("2_xrqik")
 text = "Main Menu"
 
 [node name="RestartButton" type="Button" parent="MenuContent/MenuButtons"]
 custom_minimum_size = Vector2(255, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 36
-theme_override_styles/normal = ExtResource("1_mm3s4")
+theme_override_styles/normal = ExtResource("2_xrqik")
 text = "Replay Level"
 
-[connection signal="pressed" from="MenuContent/MenuButtons/NextLevelButton" to="." method="_on_next_level_button_pressed"]
 [connection signal="pressed" from="MenuContent/MenuButtons/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
 [connection signal="pressed" from="MenuContent/MenuButtons/RestartButton" to="." method="_on_restart_button_pressed"]

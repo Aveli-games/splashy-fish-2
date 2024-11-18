@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://do7dpbgd6ku6n"]
+[gd_scene load_steps=11 format=3 uid="uid://do7dpbgd6ku6n"]
 
 [ext_resource type="Script" path="res://GUI/hud.gd" id="1_w38b1"]
 [ext_resource type="PackedScene" uid="uid://l05ikx7q6r3l" path="res://GUI/Dice Roller/dice_roll_canvas.tscn" id="2_v2x7h"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://temjlvcxcb3r" path="res://GUI/loss_screen.tscn" id="7_8h0it"]
 [ext_resource type="PackedScene" uid="uid://2new4fdhnmq3" path="res://GUI/tutorial_win_screen.tscn" id="7_tasgw"]
 [ext_resource type="PackedScene" uid="uid://xssfsut5eoxl" path="res://GUI/level_select_screen.tscn" id="8_jns4j"]
+[ext_resource type="PackedScene" uid="uid://cieoym7nsycw3" path="res://GUI/end_screen.tscn" id="10_3m0yc"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_w38b1")
@@ -61,6 +62,9 @@ visible = false
 [node name="LevelSelectScreen" parent="MenuScreens" instance=ExtResource("8_jns4j")]
 visible = false
 
+[node name="EndScreen" parent="MenuScreens" instance=ExtResource("10_3m0yc")]
+visible = false
+
 [connection signal="roll_finished" from="DiceRollCanvas" to="." method="_on_roll_finished"]
 [connection signal="actions_chosen" from="ActionSelect" to="." method="_on_action_select_actions_chosen"]
 [connection signal="button_pressed" from="MenuScreens/MainMenu" to="." method="_on_game_menu_button_pressed"]
@@ -69,3 +73,4 @@ visible = false
 [connection signal="button_pressed" from="MenuScreens/TutorialWinScreen" to="." method="_on_game_menu_button_pressed"]
 [connection signal="button_pressed" from="MenuScreens/LossScreen" to="." method="_on_game_menu_button_pressed"]
 [connection signal="level_selected" from="MenuScreens/LevelSelectScreen" to="." method="_on_level_selected"]
+[connection signal="button_pressed" from="MenuScreens/EndScreen" to="." method="_on_game_menu_button_pressed"]
