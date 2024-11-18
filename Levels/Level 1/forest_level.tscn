@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://pbib5hidrktf" path="res://xxx_bottle.tscn" id="3_bthar"]
 [ext_resource type="PackedScene" uid="uid://detjvvnieryge" path="res://Player/player.tscn" id="3_nfjxn"]
 [ext_resource type="PackedScene" uid="uid://d18skw3klu537" path="res://outhouses.tscn" id="4_a7wwd"]
-[ext_resource type="Environment" uid="uid://bueoqa7bvewfo" path="res://Levels/Level 1/level_1_environment.tres" id="4_o1cvi"]
+[ext_resource type="Environment" uid="uid://cj3q4wrtip4g5" path="res://web_fog_1.tres" id="4_ben21"]
 [ext_resource type="PackedScene" uid="uid://cfr5lrwpfhmgr" path="res://camera_controller.tscn" id="5_iv0di"]
 [ext_resource type="PackedScene" uid="uid://bidgyd2100su1" path="res://objective.tscn" id="6_l8t2e"]
 [ext_resource type="AudioStream" uid="uid://bu4lnx1aa4bdj" path="res://Levels/Level 1/forest_level_track.tres" id="11_ml0ox"]
@@ -187,7 +187,7 @@ max_enemy_group = 1
 bg_music = NodePath("AudioStreamPlayer")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = ExtResource("4_o1cvi")
+environment = ExtResource("4_ben21")
 
 [node name="Boundaries" type="Node3D" parent="."]
 

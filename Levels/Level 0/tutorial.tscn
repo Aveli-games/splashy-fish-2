@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Levels/Level 0/tutorial.gd" id="1_rxfwi"]
 [ext_resource type="PackedScene" uid="uid://qt3pkvldp4ub" path="res://Enemy/enemy.tscn" id="2_xsjle"]
 [ext_resource type="PackedScene" uid="uid://pbib5hidrktf" path="res://xxx_bottle.tscn" id="3_xy8ki"]
-[ext_resource type="Environment" uid="uid://bueoqa7bvewfo" path="res://Levels/Level 1/level_1_environment.tres" id="4_05wb5"]
+[ext_resource type="Environment" uid="uid://cj3q4wrtip4g5" path="res://web_fog_1.tres" id="4_mjg4m"]
 [ext_resource type="Material" uid="uid://c38h7tiy1wqbw" path="res://grass.tres" id="5_1b1kr"]
 [ext_resource type="PackedScene" uid="uid://cc8g11lvq6my3" path="res://tree.tscn" id="6_rapy6"]
 [ext_resource type="PackedScene" uid="uid://detjvvnieryge" path="res://Player/player.tscn" id="7_q7106"]
@@ -58,7 +58,7 @@ max_enemy_group = 1
 bg_music = NodePath("AudioStreamPlayer")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = ExtResource("4_05wb5")
+environment = ExtResource("4_mjg4m")
 
 [node name="Boundaries" type="Node3D" parent="."]
 
@@ -731,8 +731,8 @@ volume_db = -10.0
 
 [connection signal="died" from="Player" to="." method="_on_player_died"]
 [connection signal="kicked" from="Player" to="." method="_on_player_kicked"]
-[connection signal="roll_requested" from="Player" to="." method="_on_player_roll_requested"]
 [connection signal="roll_requested" from="Player" to="." method="_on_player_attacking"]
+[connection signal="roll_requested" from="Player" to="." method="_on_player_roll_requested"]
 [connection signal="died" from="Enemies/Enemy" to="." method="_on_dummy_enemy_died"]
 [connection signal="died" from="Objective" to="." method="_on_objective_died"]
 [connection signal="timeout" from="EnemySpawnTimer" to="." method="_on_enemy_spawn_timer_timeout"]
