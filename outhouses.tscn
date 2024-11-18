@@ -271,7 +271,7 @@ data = PackedVector3Array(-1, -1, 1, -1, 1, -0.3792, -1, 1, 1, -1, -1, 1, -1, -1
 backface_collision = true
 
 [node name="Outhouses" type="StaticBody3D"]
-collision_layer = 8
+collision_layer = 9
 
 [node name="Out House 1" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.572395, 0, -0.819978, 0, 1, 0, 0.819978, 0, 0.572395, 1.20598, 1.00807, -5)
