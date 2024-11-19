@@ -90,7 +90,8 @@ func show_win_screen():
 	show_menu_screens()
 	if Globals.cur_level in $MenuScreens/LevelSelectScreen.levels:
 		var next_level_index = $MenuScreens/LevelSelectScreen.levels.find(Globals.cur_level) + 1
-		if not next_level_index > $MenuScreens/LevelSelectScreen.levels.size():
+		print(next_level_index, " ", $MenuScreens/LevelSelectScreen.levels.size())
+		if next_level_index >= $MenuScreens/LevelSelectScreen.levels.size():
 			$MenuScreens/EndScreen.show()
 			return
 	
